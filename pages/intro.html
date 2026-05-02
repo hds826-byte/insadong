@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>동아리 소개 — GenAI 학습동아리</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.member-card {
+  display: flex; gap: 1rem; align-items: flex-start;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.25rem;
+  transition: all .2s;
+}
+.member-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.member-av {
+  width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+  background: var(--em-dim); border: 1px solid rgba(0,212,160,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: var(--em); font-size: .95rem;
+}
+.member-name { font-weight: 700; color: var(--text); }
+.member-dept { font-size: .78rem; color: var(--text2); }
+.member-role { }
+
+.vision-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1rem; }
+@media(max-width:640px){ .vision-row { grid-template-columns: 1fr; } }
+
+.vision-block {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.4rem; text-align: center;
+}
+.vision-icon { font-size: 1.8rem; margin-bottom: .5rem; }
+.vision-num {
+  font-family: 'Fraunces', serif; font-size: 2.2rem;
+  color: var(--em); line-height: 1; margin-bottom: .3rem;
+}
+.vision-title { font-weight: 700; font-size: .9rem; margin-bottom: .4rem; }
+.vision-desc { font-size: .8rem; color: var(--text2); line-height: 1.65; }
+
+.direction-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+@media(max-width:600px){ .direction-grid { grid-template-columns: 1fr; } }
+.dir-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.25rem;
+}
+.dir-num { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--em); margin-bottom: .4rem; }
+.dir-title { font-weight: 700; margin-bottom: .4rem; }
+.dir-desc { font-size: .82rem; color: var(--text2); line-height: 1.7; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="topnav-logo" href="../index.html">✦ GenAI 동아리</a>
+  <div class="topnav-links">
+    <a href="intro.html" class="active">소개</a>
+    <a href="schedule.html">학습일정</a>
+    <a href="vote.html">대면투표</a>
+    <a href="news.html">뉴스</a>
+    <a href="meeting.html">회의록</a>
+    <a href="board.html">게시판</a>
+  </div>
+  <a href="admin.html" class="topnav-admin">⚙ 관리자</a>
+  <a href="register.html" class="topnav-join">회원가입</a>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">동아리 소개</div>
+    <a class="sidebar-item active" href="intro.html" data-page="intro.html"><span class="si-icon">🏠</span>개요·비전</a>
+    <a class="sidebar-item" href="schedule.html" data-page="schedule.html"><span class="si-icon">📅</span>학습 일정</a>
+    <a class="sidebar-item" href="members.html" data-page="members.html"><span class="si-icon">👥</span>멤버 현황</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">학습 활동</div>
+    <a class="sidebar-item" href="vote.html"><span class="si-icon">🗳️</span>대면일 투표</a>
+    <a class="sidebar-item" href="meeting.html"><span class="si-icon">📝</span>회의록</a>
+    <a class="sidebar-item" href="idea.html"><span class="si-icon">💡</span>아이디어 보드</a>
+    <a class="sidebar-item" href="task.html"><span class="si-icon">✅</span>과제·To-Do</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">정보 공유</div>
+    <a class="sidebar-item" href="news.html"><span class="si-icon">📰</span>AI 뉴스</a>
+    <a class="sidebar-item" href="contest.html"><span class="si-icon">🏅</span>AI 공모전</a>
+    <a class="sidebar-item" href="board.html"><span class="si-icon">💬</span>자유 게시판</a>
+    <a class="sidebar-item" href="resource.html"><span class="si-icon">📎</span>자료실</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">운영 관리</div>
+    <a class="sidebar-item" href="admin.html"><span class="si-icon">🛡️</span>관리자</a>
+    <a class="sidebar-item" href="notice.html"><span class="si-icon">📣</span>공지사항</a>
+    <a class="sidebar-item" href="register.html"><span class="si-icon">🙋</span>회원가입</a>
+  </div>
+</aside>
+
+<div class="page-wrap">
+<div class="page-content">
+  <div class="page-header">
+    <div class="breadcrumb">🏠 홈 <span>›</span> 동아리 소개 <span>›</span> 개요·비전</div>
+    <h1>동아리 소개</h1>
+    <p>생성형 AI 학습동아리의 비전, 목표, 멤버를 소개합니다.</p>
+  </div>
+
+  <!-- 비전·목표 -->
+  <div class="sec-label">🎯 핵심 가치</div>
+  <div class="vision-row mb-3">
+    <div class="vision-block">
+      <div class="vision-num">01</div>
+      <div class="vision-title">학습 목표</div>
+      <div class="vision-desc">매월 1개 실용 앱 개발<br>8개월 8개 앱 완성 (5~12월)</div>
+    </div>
+    <div class="vision-block">
+      <div class="vision-num">02</div>
+      <div class="vision-title">비전</div>
+      <div class="vision-desc">AI 기반 업무혁신 선도<br>부서 간 디지털 전환 가속화</div>
+    </div>
+    <div class="vision-block">
+      <div class="vision-num">03</div>
+      <div class="vision-title">운영 방식</div>
+      <div class="vision-desc">월 1회 대면 + 수시 온라인<br>이론 → 실습 → 업무 적용</div>
+    </div>
+  </div>
+
+  <!-- 추진 방향 -->
+  <div class="sec-label mb-1">🧭 추진 방향</div>
+  <div class="direction-grid mb-3">
+    <div class="dir-card"><div class="dir-num">Phase 1</div><div class="dir-title">기초 역량 강화 (5~6월)</div><div class="dir-desc">생성형 AI 개요, 주요 도구 사용법, 프롬프트 엔지니어링 기초 습득</div></div>
+    <div class="dir-card"><div class="dir-num">Phase 2</div><div class="dir-title">실전 개발 역량 (7~8월)</div><div class="dir-desc">API 활용, RAG 구현, 실무 적용 앱 개발 실습</div></div>
+    <div class="dir-card"><div class="dir-num">Phase 3</div><div class="dir-title">고도화·확산 (9~10월)</div><div class="dir-desc">AI 에이전트, 업무 자동화, 공모전 준비</div></div>
+    <div class="dir-card"><div class="dir-num">Phase 4</div><div class="dir-title">성과 정리·공유 (11~12월)</div><div class="dir-desc">연간 성과 발표, 공모전 출품, 차년도 계획 수립</div></div>
+  </div>
+
+  <!-- 멤버 소개 -->
+  <div class="sec-label mb-1">👥 멤버 소개</div>
+  <div class="card-grid card-grid-2 mb-3">
+    <div class="member-card">
+      <div class="member-av">지현</div>
+      <div>
+        <div class="member-name">지현석</div>
+        <div class="member-dept">정보화팀</div>
+        <div class="member-role mt-1"><span class="badge badge-em">리더</span></div>
+        <p class="text-sm text-muted mt-1">전체 운영·기술 총괄, 학습 커리큘럼 설계</p>
+      </div>
+    </div>
+    <div class="member-card">
+      <div class="member-av">최효</div>
+      <div>
+        <div class="member-name">최효진</div>
+        <div class="member-dept">시설평가부</div>
+        <div class="member-role mt-1"><span class="badge badge-blue">매니저</span></div>
+        <p class="text-sm text-muted mt-1">일정 조율, 회의록 관리, 과제 추적</p>
+      </div>
+    </div>
+    <div class="member-card">
+      <div class="member-av">이찬</div>
+      <div>
+        <div class="member-name">이찬영</div>
+        <div class="member-dept">시설평가부</div>
+        <div class="member-role mt-1"><span class="badge badge-muted">회원</span></div>
+        <p class="text-sm text-muted mt-1">학습 참여, 실습 과제 수행</p>
+      </div>
+    </div>
+    <div class="member-card">
+      <div class="member-av">유병</div>
+      <div>
+        <div class="member-name">유병찬</div>
+        <div class="member-dept">혁신기획부</div>
+        <div class="member-role mt-1"><span class="badge badge-muted">회원</span></div>
+        <p class="text-sm text-muted mt-1">학습 참여, 혁신 아이디어 제안</p>
+      </div>
+    </div>
+    <div class="member-card">
+      <div class="member-av">조유</div>
+      <div>
+        <div class="member-name">조유리</div>
+        <div class="member-dept">지역협력부</div>
+        <div class="member-role mt-1"><span class="badge badge-muted">회원</span></div>
+        <p class="text-sm text-muted mt-1">학습 참여, 지역협력 AI 활용 탐구</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 학습 장소 & 기타 -->
+  <div class="sec-label mb-1">📍 운영 정보</div>
+  <div class="card-grid card-grid-3">
+    <div class="card"><div style="font-size:1.4rem;margin-bottom:.5rem">📍</div><div style="font-weight:700;margin-bottom:.4rem">학습 장소</div><p class="text-sm text-muted">정보화팀 회의실 (2층)<br>대면 시 기본 장소 사용<br>필요 시 화상 병행</p></div>
+    <div class="card"><div style="font-size:1.4rem;margin-bottom:.5rem">⏰</div><div style="font-weight:700;margin-bottom:.4rem">학습 주기</div><p class="text-sm text-muted">월 1회 대면 정기 모임<br>수시 온라인 자료 공유<br>투표로 날짜 결정</p></div>
+    <div class="card"><div style="font-size:1.4rem;margin-bottom:.5rem">🎓</div><div style="font-weight:700;margin-bottom:.4rem">주요 학습 주제</div><p class="text-sm text-muted">
+      <span class="tag">프롬프트 엔지니어링</span>
+      <span class="tag">Claude API</span>
+      <span class="tag">RAG</span>
+      <span class="tag">업무 자동화</span>
+      <span class="tag">공공 AI 정책</span>
+    </p></div>
+  </div>
+
+</div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/common.js"></script>
+</body>
+</html>
