@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenAI 동아리 — 생성형 AI 학습공동체</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ── INDEX 전용 ── */
+body{background:var(--bg)}
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:var(--nav-h) 2rem 4rem;position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 45% at 80% 50%, rgba(184,255,87,.35) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 15% 70%, rgba(61,139,255,.1) 0%, transparent 55%);
+}
+/* marquee strip */
+.marquee-strip{
+  position:absolute;top:50%;left:0;right:0;
+  transform:translateY(-50%) rotate(-12deg);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(5rem,12vw,9rem);
+  color:rgba(15,15,15,.04);white-space:nowrap;
+  letter-spacing:-.04em;pointer-events:none;
+  overflow:hidden;line-height:1;
+}
+.hero-inner{
+  position:relative;z-index:1;
+  max-width:900px;margin:0 auto;width:100%;
+}
+.hero-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:var(--lime);
+  font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  padding:6px 16px;border-radius:20px;margin-bottom:2rem;
+  opacity:0;animation:slideUp .5s ease forwards .05s;
+}
+.blink-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);animation:pulse 1.8s ease infinite}
+
+h1.hero-h{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(3.2rem,7.5vw,6rem);
+  line-height:1;letter-spacing:-.04em;
+  opacity:0;animation:slideUp .7s ease forwards .15s;
+}
+h1.hero-h .line2{
+  display:block;font-family:'DM Serif Display',serif;
+  font-style:italic;font-weight:400;
+  color:var(--ink3);
+}
+.hero-accent{
+  display:inline-block;
+  background:var(--lime);color:var(--ink);
+  padding:0 10px;border-radius:6px;
+  border:2px solid var(--ink);
+}
+
+.hero-sub{
+  max-width:520px;color:var(--ink3);font-size:1rem;line-height:1.8;
+  margin-top:1.75rem;
+  opacity:0;animation:slideUp .7s ease forwards .3s;
+}
+
+.hero-members{
+  display:flex;align-items:center;gap:1rem;margin-top:2.5rem;
+  opacity:0;animation:slideUp .7s ease forwards .45s;
+}
+.av-group{display:flex}
+.av{
+  width:38px;height:38px;border-radius:50%;
+  border:2.5px solid var(--bg);
+  background:var(--bg3);display:flex;align-items:center;justify-content:center;
+  font-size:.68rem;font-weight:700;font-family:'Syne',sans-serif;
+  color:var(--ink);margin-left:-10px;transition:transform .2s;
+  box-shadow:var(--shadow);
+}
+.av:first-child{margin-left:0}
+.av:nth-child(2){background:#c8f587}
+.av:nth-child(3){background:#ffd6cc}
+.av:nth-child(4){background:#d4e8ff}
+.av:nth-child(5){background:#fff2cc}
+.av:hover{transform:translateY(-4px);z-index:5}
+.member-info .m-cnt{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem}
+.member-info .m-sub{font-size:.72rem;color:var(--ink3)}
+
+.hero-cta{
+  display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem;
+  opacity:0;animation:slideUp .7s ease forwards .6s;
+}
+.hero-cta .btn{padding:13px 28px;font-size:.9rem}
+
+/* FEATURED CARDS */
+.featured{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:1px;background:var(--border);
+  border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;
+  margin:0 2rem 4rem;max-width:1100px;margin-left:auto;margin-right:auto;
+}
+.feat-card{
+  background:var(--bg2);padding:2rem;
+  transition:background .18s;cursor:pointer;display:block;text-decoration:none;
+}
+.feat-card:hover{background:var(--bg3)}
+.feat-num{
+  font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;
+  letter-spacing:-.04em;line-height:1;color:var(--ink);
+  opacity:.12;margin-bottom:.5rem;
+}
+.feat-icon{font-size:1.6rem;margin-bottom:.75rem}
+.feat-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.35rem}
+.feat-desc{font-size:.8rem;color:var(--ink3);line-height:1.65}
+.feat-arrow{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:50%;background:var(--ink);
+  color:var(--lime);font-size:.8rem;margin-top:.75rem;
+  transition:transform .2s;
+}
+.feat-card:hover .feat-arrow{transform:translate(3px,-3px)}
+@media(max-width:768px){.featured{grid-template-columns:1fr}}
+
+/* SECTIONS */
+.index-section{padding:4rem 2rem;max-width:1100px;margin:0 auto}
+.sec-eyebrow{
+  font-family:'Syne',sans-serif;font-size:.65rem;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);
+  margin-bottom:.75rem;
+}
+.sec-headline{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(1.8rem,3.5vw,2.5rem);letter-spacing:-.03em;
+  margin-bottom:.5rem;
+}
+.sec-sub{color:var(--ink3);font-size:.9rem;margin-bottom:2.5rem;max-width:500px}
+
+/* MENU GRID */
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem}
+.menu-tile{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:1.25rem;
+  transition:all .18s;display:block;text-decoration:none;
+}
+.menu-tile:hover{border-color:var(--ink);background:var(--ink);color:var(--bg);transform:translateY(-2px)}
+.menu-tile:hover .mt-desc{color:rgba(245,242,235,.6)}
+.menu-tile:hover .mt-arr{background:var(--lime);color:var(--ink)}
+.mt-icon{font-size:1.3rem;margin-bottom:.6rem}
+.mt-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;margin-bottom:.3rem}
+.mt-desc{font-size:.75rem;color:var(--ink3);line-height:1.6;transition:color .18s}
+.mt-arr{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--bg3);color:var(--ink);font-size:.7rem;
+  margin-top:.6rem;transition:all .18s;
+}
+.cat-strip{
+  display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;
+  padding-bottom:1rem;border-bottom:1.5px solid var(--border);
+}
+.cat-strip-icon{font-size:1.2rem}
+.cat-strip-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem}
+.cat-strip-desc{font-size:.78rem;color:var(--ink3)}
+
+/* FOOTER */
+.site-footer{
+  background:var(--ink);color:rgba(245,242,235,.6);
+  padding:3rem 2rem;text-align:center;font-size:.8rem;
+}
+.site-footer .fl{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;
+  color:var(--lime);display:block;margin-bottom:.75rem;letter-spacing:-.02em;
+}
+.site-footer a{color:rgba(245,242,235,.5)}
+.site-footer a:hover{color:var(--lime)}
+
+/* STATS TICKER */
+.stats-ticker{
+  background:var(--ink);padding:1.25rem 2rem;
+  display:flex;align-items:center;justify-content:center;gap:3rem;
+  flex-wrap:wrap;
+}
+.tick-item{text-align:center}
+.tick-num{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;color:var(--lime);line-height:1}
+.tick-lbl{font-size:.7rem;color:rgba(245,242,235,.5);margin-top:2px;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<!-- mock banner -->
+<div id="mock-banner" style="display:none;background:var(--amber);color:var(--ink);text-align:center;padding:9px 1rem;font-size:.78rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.02em">
+  ⚠ DEMO MODE — <code>assets/common.js</code>의 <code>API_URL</code>을 설정하면 실제 데이터와 연결됩니다
+</div>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a class="nav-logo" href="index.html">
+    <div class="logo-dot">AI</div>
+    GENAI 동아리
+  </a>
+  <div class="nav-links">
+    <a href="pages/intro.html">소개</a>
+    <a href="pages/schedule.html">일정</a>
+    <a href="pages/vote.html">투표</a>
+    <a href="pages/news.html">뉴스</a>
+    <a href="pages/meeting.html">회의록</a>
+    <a href="pages/board.html">게시판</a>
+  </div>
+  <button class="nav-btn nav-btn-ghost" onclick="location.href='pages/admin.html'">⚙ 관리자</button>
+  <button class="nav-btn nav-btn-primary" onclick="location.href='pages/register.html'">회원가입</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="marquee-strip">AI AI AI AI AI AI AI AI</div>
+  <div class="hero-inner">
+    <div class="hero-kicker"><div class="blink-dot"></div>2026 생성형 AI 학습동아리</div>
+    <h1 class="hero-h">
+      MAKE<br>
+      <span class="hero-accent">AI</span> HAPPEN<br>
+      <span class="line2">함께, 지금, 실전으로</span>
+    </h1>
+    <p class="hero-sub">
+      정보화팀 · 시설평가부 · 혁신기획부 · 지역협력부가 함께하는 AI 실전 학습공동체.
+      매월 1개 앱을 직접 만들며 생성형 AI 업무 역량을 키웁니다.
+    </p>
+    <div class="hero-members">
+      <div class="av-group">
+        <div class="av" title="지현석">지현</div>
+        <div class="av" title="최효진">최효</div>
+        <div class="av" title="이찬영">이찬</div>
+        <div class="av" title="유병찬">유병</div>
+        <div class="av" title="조유리">조유</div>
+      </div>
+      <div class="member-info">
+        <div class="m-cnt">5명의 멤버</div>
+        <div class="m-sub">현재 활동 중</div>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="location.href='pages/vote.html'">🗳 대면일 투표하기</button>
+      <button class="btn btn-ghost" onclick="location.href='pages/intro.html'">동아리 소개 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STATS TICKER -->
+<div class="stats-ticker">
+  <div class="tick-item"><div class="tick-num">5</div><div class="tick-lbl">활동 멤버</div></div>
+  <div class="tick-item"><div class="tick-num">8</div><div class="tick-lbl">학습 예정 회차</div></div>
+  <div class="tick-item"><div class="tick-num">8</div><div class="tick-lbl">개발 목표 앱</div></div>
+  <div class="tick-item"><div class="tick-num">2026</div><div class="tick-lbl">운영 연도</div></div>
+</div>
+
+<!-- FEATURED QUICK ACCESS -->
+<div class="featured" style="margin-top:4rem">
+  <a class="feat-card" href="pages/vote.html">
+    <div class="feat-num">01</div>
+    <div class="feat-icon">🗳️</div>
+    <div class="feat-title">대면일 투표</div>
+    <div class="feat-desc">다음 모임 날짜를 함께 정해요. 투표 진행 중!</div>
+    <div class="feat-arrow">↗</div>
+  </a>
+  <a class="feat-card" href="pages/meeting.html">
+    <div class="feat-num">02</div>
+    <div class="feat-icon">📝</div>
+    <div class="feat-title">회의록 · 아이디어</div>
+    <div class="feat-desc">대면 학습 회의록 작성 + AI 아이디어 도출</div>
+    <div class="feat-arrow">↗</div>
+  </a>
+  <a class="feat-card" href="pages/news.html">
+    <div class="feat-num">03</div>
+    <div class="feat-icon">📰</div>
+    <div class="feat-title">AI 뉴스</div>
+    <div class="feat-desc">매일 오전 7시 생성형 AI 최신 뉴스 5건 자동 업데이트</div>
+    <div class="feat-arrow">↗</div>
+  </a>
+</div>
+
+<!-- FULL MENU -->
+<div class="index-section">
+  <div class="sec-eyebrow">All Menus</div>
+  <div class="sec-headline">전체 메뉴</div>
+  <div class="sec-sub">학습동아리의 모든 기능을 한눈에 확인하세요.</div>
+
+  <!-- 동아리 소개 -->
+  <div class="cat-strip">
+    <div class="cat-strip-icon">🏠</div>
+    <div>
+      <div class="cat-strip-title">동아리 소개</div>
+      <div class="cat-strip-desc">비전, 멤버, 일정, 활동 목표</div>
+    </div>
+  </div>
+  <div class="menu-grid mb-3">
+    <a class="menu-tile" href="pages/intro.html"><div class="mt-icon">📋</div><div class="mt-title">동아리 개요·비전</div><div class="mt-desc">멤버 소개, 목표, 추진방향, 운영 계획</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/schedule.html"><div class="mt-icon">📅</div><div class="mt-title">학습 일정</div><div class="mt-desc">2026년 5~12월 커리큘럼 + 앱 개발 로드맵</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/members.html"><div class="mt-icon">👥</div><div class="mt-title">멤버 현황</div><div class="mt-desc">회원 목록, 역할, 출석 현황 확인</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/notice.html"><div class="mt-icon">📣</div><div class="mt-title">공지사항</div><div class="mt-desc">동아리 공지, 안내, 중요 메시지</div><div class="mt-arr">↗</div></a>
+  </div>
+
+  <!-- 학습 활동 -->
+  <div class="cat-strip">
+    <div class="cat-strip-icon">📚</div>
+    <div>
+      <div class="cat-strip-title">학습 활동</div>
+      <div class="cat-strip-desc">대면 모임, 회의, 아이디어, 과제</div>
+    </div>
+  </div>
+  <div class="menu-grid mb-3">
+    <a class="menu-tile" href="pages/vote.html"><div class="mt-icon">🗳️</div><div class="mt-title">대면일 투표</div><div class="mt-desc">모임 날짜·시간 후보 투표 (중복 선택 가능)</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/meeting.html"><div class="mt-icon">📝</div><div class="mt-title">회의록</div><div class="mt-desc">대면 학습 회의록 작성, 조회, AI 요약</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/idea.html"><div class="mt-icon">💡</div><div class="mt-title">아이디어 보드</div><div class="mt-desc">회의 기반 아이디어 도출 + 찬성 투표</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/task.html"><div class="mt-icon">✅</div><div class="mt-title">과제·To-Do</div><div class="mt-desc">개인·팀 과제 등록 및 완료 현황 추적</div><div class="mt-arr">↗</div></a>
+  </div>
+
+  <!-- 정보 공유 -->
+  <div class="cat-strip">
+    <div class="cat-strip-icon">🌐</div>
+    <div>
+      <div class="cat-strip-title">정보 공유</div>
+      <div class="cat-strip-desc">AI 뉴스, 공모전, 자유 토론, 자료</div>
+    </div>
+  </div>
+  <div class="menu-grid mb-3">
+    <a class="menu-tile" href="pages/news.html"><div class="mt-icon">📰</div><div class="mt-title">AI 뉴스</div><div class="mt-desc">매일 오전 7시 자동 업데이트 생성형 AI 뉴스</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/contest.html"><div class="mt-icon">🏅</div><div class="mt-title">AI 공모전</div><div class="mt-desc">공공기관·지자체 AI 관련 공모전 정보 모음</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/board.html"><div class="mt-icon">💬</div><div class="mt-title">자유 게시판</div><div class="mt-desc">학습 질문, 자료 공유, 자유 토론</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/resource.html"><div class="mt-icon">📎</div><div class="mt-title">자료실</div><div class="mt-desc">발표 자료, 참고 링크, 학습 파일 모음</div><div class="mt-arr">↗</div></a>
+  </div>
+
+  <!-- 운영 관리 -->
+  <div class="cat-strip">
+    <div class="cat-strip-icon">⚙️</div>
+    <div>
+      <div class="cat-strip-title">운영 관리</div>
+      <div class="cat-strip-desc">관리자 대시보드, 회원 관리, 가입</div>
+    </div>
+  </div>
+  <div class="menu-grid">
+    <a class="menu-tile" href="pages/admin.html"><div class="mt-icon">🛡️</div><div class="mt-title">관리자 대시보드</div><div class="mt-desc">전체 현황 · 회원 · 게시물 통합 관리</div><div class="mt-arr">↗</div></a>
+    <a class="menu-tile" href="pages/register.html"><div class="mt-icon">🙋</div><div class="mt-title">회원가입</div><div class="mt-desc">개인정보 동의 후 동아리 가입 신청</div><div class="mt-arr">↗</div></a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span class="fl">GENAI 동아리</span>
+  <p>© 2026 생성형 AI 학습동아리 · 정보화팀 운영 · 리더: 지현석</p>
+  <p style="margin-top:.4rem"><a href="https://sheets.google.com" target="_blank">Google Sheets</a> 기반 · 문의: 정보화팀</p>
+</footer>
+
+<div id="toast"></div>
+<script src="assets/common.js"></script>
+</body>
+</html>

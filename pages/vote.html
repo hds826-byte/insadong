@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대면일 투표 — GenAI 학습동아리</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.vote-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .85rem; margin-bottom: 2rem; }
+.vote-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.2rem 1rem;
+  text-align: center; cursor: pointer; transition: all .2s;
+  user-select: none; position: relative;
+}
+.vote-card:hover { border-color: var(--border2); background: var(--bg3); }
+.vote-card.sel { border-color: var(--em); background: rgba(0,212,160,.07); }
+.vote-card.sel::after { content: '✓'; position: absolute; top: 8px; right: 10px; font-size: .72rem; color: var(--em); font-weight: 700; }
+.vc-month { font-size: .72rem; color: var(--text2); margin-bottom: 2px; }
+.vc-day { font-family: 'Fraunces', serif; font-size: 2rem; line-height: 1; color: var(--text); margin-bottom: 2px; }
+.vc-dow { font-size: .72rem; color: var(--text2); margin-bottom: 4px; }
+.vc-time { font-size: .82rem; color: var(--em); font-weight: 600; margin-bottom: .6rem; }
+.vc-bar-wrap { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.vc-bar { height: 100%; background: var(--em); border-radius: 2px; transition: width .5s ease; }
+.vc-cnt { font-size: .72rem; color: var(--text2); margin-top: 4px; }
+.voter-names { font-size: .7rem; color: var(--text3); margin-top: 3px; }
+
+.vote-form { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 1.4rem; }
+.admin-panel { background: var(--bg2); border: 1px solid rgba(245,166,35,.2); border-radius: var(--r); padding: 1.4rem; margin-bottom: 2rem; }
+.admin-panel-title { display: flex; align-items: center; gap: .5rem; font-weight: 700; margin-bottom: 1rem; color: var(--amber); }
+.opt-list { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
+.opt-row { display: flex; gap: .5rem; align-items: center; background: var(--bg3); border-radius: var(--r2); padding: .5rem .75rem; }
+.opt-row span { flex: 1; font-size: .85rem; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="topnav-logo" href="../index.html">✦ GenAI 동아리</a>
+  <div class="topnav-links">
+    <a href="intro.html">소개</a><a href="schedule.html">학습일정</a>
+    <a href="vote.html" class="active">대면투표</a><a href="news.html">뉴스</a>
+    <a href="meeting.html">회의록</a><a href="board.html">게시판</a>
+  </div>
+  <a href="admin.html" class="topnav-admin">⚙ 관리자</a>
+  <a href="register.html" class="topnav-join">회원가입</a>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">동아리 소개</div>
+    <a class="sidebar-item" href="intro.html"><span class="si-icon">🏠</span>개요·비전</a>
+    <a class="sidebar-item" href="schedule.html"><span class="si-icon">📅</span>학습 일정</a>
+    <a class="sidebar-item" href="members.html"><span class="si-icon">👥</span>멤버 현황</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">학습 활동</div>
+    <a class="sidebar-item active" href="vote.html"><span class="si-icon">🗳️</span>대면일 투표</a>
+    <a class="sidebar-item" href="meeting.html"><span class="si-icon">📝</span>회의록</a>
+    <a class="sidebar-item" href="idea.html"><span class="si-icon">💡</span>아이디어 보드</a>
+    <a class="sidebar-item" href="task.html"><span class="si-icon">✅</span>과제·To-Do</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">정보 공유</div>
+    <a class="sidebar-item" href="news.html"><span class="si-icon">📰</span>AI 뉴스</a>
+    <a class="sidebar-item" href="contest.html"><span class="si-icon">🏅</span>AI 공모전</a>
+    <a class="sidebar-item" href="board.html"><span class="si-icon">💬</span>자유 게시판</a>
+    <a class="sidebar-item" href="resource.html"><span class="si-icon">📎</span>자료실</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">운영 관리</div>
+    <a class="sidebar-item" href="admin.html"><span class="si-icon">🛡️</span>관리자</a>
+    <a class="sidebar-item" href="notice.html"><span class="si-icon">📣</span>공지사항</a>
+    <a class="sidebar-item" href="register.html"><span class="si-icon">🙋</span>회원가입</a>
+  </div>
+</aside>
+<div class="page-wrap">
+<div class="page-content">
+  <div class="page-header">
+    <div class="breadcrumb">🏠 홈 <span>›</span> 학습 활동 <span>›</span> 대면일 투표</div>
+    <h1>대면일 투표</h1>
+    <p>다음 모임 날짜를 함께 정해요. 원하는 날짜를 모두 선택 후 이름을 입력하고 투표하세요.</p>
+  </div>
+
+  <!-- 관리자 패널 -->
+  <div class="admin-panel">
+    <div class="admin-panel-title">⚙ 관리자 — 날짜 후보 설정</div>
+    <p class="text-sm text-muted mb-2">날짜와 시간을 입력해 투표 후보를 추가합니다. 회원들에게는 아래 투표 섹션이 표시됩니다.</p>
+    <div class="opt-list" id="opt-admin-list"></div>
+    <div class="form-row" style="margin-bottom:.75rem">
+      <div>
+        <div class="form-label">날짜</div>
+        <input type="date" id="add-date">
+      </div>
+      <div>
+        <div class="form-label">시간</div>
+        <input type="time" id="add-time" value="14:00">
+      </div>
+      <div>
+        <div class="form-label">표시 레이블 (선택)</div>
+        <input type="text" id="add-label" placeholder="예: 오후 2시 (회의실)">
+      </div>
+    </div>
+    <button class="btn btn-amber btn-sm" onclick="addOption()">+ 날짜 추가</button>
+  </div>
+
+  <!-- 투표 영역 -->
+  <div class="sec-label mb-2">🗳 날짜를 선택하세요 (중복 선택 가능)</div>
+  <div class="vote-grid" id="vote-grid">
+    <div class="spinner-wrap" style="grid-column:1/-1"><div class="spinner"></div></div>
+  </div>
+
+  <div class="vote-form">
+    <div style="font-weight:700;margin-bottom:1rem">📝 투표 정보 입력</div>
+    <div class="form-row" style="margin-bottom:.75rem">
+      <div class="form-group" style="margin:0">
+        <label class="form-label">이름 <span class="req">*</span></label>
+        <input type="text" id="voter-name" placeholder="본인 이름">
+      </div>
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-primary" id="vote-submit-btn" onclick="submitVote()">투표하기 →</button>
+      <span class="text-sm text-muted" id="sel-count">선택한 날짜: 0개</span>
+    </div>
+    <p class="text-xs text-muted mt-2">날짜 후보는 관리자가 위 패널에서 추가합니다. Sheets <code>vote_options</code> 시트와 연동됩니다.</p>
+  </div>
+</div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/common.js"></script>
+<script>
+const DAYS = ['일','월','화','수','목','금','토'];
+let options = [];
+let results = {};
+let selected = new Set();
+
+const MOCK_OPTS = [
+  { id:1, date:'2026-07-05', time:'14:00', label:'오후 2시 (회의실)' },
+  { id:2, date:'2026-07-12', time:'10:00', label:'오전 10시' },
+  { id:3, date:'2026-07-19', time:'14:00', label:'오후 2시' },
+  { id:4, date:'2026-07-26', time:'13:00', label:'오후 1시' },
+];
+const MOCK_RES = { 1:['지현석','최효진'], 2:['이찬영','유병찬','조유리'], 3:['지현석'], 4:['최효진','이찬영'] };
+
+async function loadVote() {
+  if (CFG.isMock) { options = MOCK_OPTS; results = MOCK_RES; renderAll(); return; }
+  try {
+    const [opts, res] = await Promise.all([apiGet({action:'getVoteOptions'}), apiGet({action:'getVotes'})]);
+    options = Array.isArray(opts) ? opts : [];
+    results = res && !res.error ? res : {};
+    renderAll();
+  } catch { document.getElementById('vote-grid').innerHTML = emptyHTML('⚠','불러오기 실패'); }
+}
+
+function renderAll() { renderAdminList(); renderGrid(); }
+
+function renderAdminList() {
+  document.getElementById('opt-admin-list').innerHTML = options.length
+    ? options.map(o => `<div class="opt-row"><span>📅 ${o.date} ${o.time} ${o.label ? '· '+o.label : ''}</span><button class="btn btn-danger btn-xs" onclick="removeOption(${o.id})">삭제</button></div>`).join('')
+    : `<div class="text-sm text-muted">등록된 날짜 후보가 없습니다.</div>`;
+}
+
+function renderGrid() {
+  const el = document.getElementById('vote-grid');
+  if (!options.length) { el.innerHTML = emptyHTML('📅','날짜 후보를 추가해 주세요. (위 관리자 패널 이용)'); return; }
+  const max = Math.max(1, ...options.map(o => (results[o.id]||[]).length));
+  el.innerHTML = options.map(o => {
+    const cnt = (results[o.id]||[]).length;
+    const pct = Math.round((cnt/max)*100);
+    const d = new Date(o.date);
+    const m = d.getMonth()+1, dd = d.getDate(), dow = DAYS[d.getDay()];
+    const isSel = selected.has(String(o.id));
+    const voters = (results[o.id]||[]).slice(0,3).join(', ');
+    return `<div class="vote-card${isSel?' sel':''}" onclick="toggle('${o.id}')">
+      <div class="vc-month">${m}월</div>
+      <div class="vc-day">${dd}</div>
+      <div class="vc-dow">${dow}요일</div>
+      <div class="vc-time">${o.time||''}${o.label?' ('+o.label+')':''}</div>
+      <div class="vc-bar-wrap"><div class="vc-bar" style="width:${pct}%"></div></div>
+      <div class="vc-cnt">${cnt}명 참여</div>
+      ${voters ? `<div class="voter-names">${voters}${cnt>3?` 외 ${cnt-3}명`:''}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggle(id) {
+  const sid = String(id);
+  if (selected.has(sid)) selected.delete(sid); else selected.add(sid);
+  renderGrid();
+  const cnt = selected.size;
+  document.getElementById('sel-count').textContent = `선택한 날짜: ${cnt}개`;
+  document.getElementById('vote-submit-btn').textContent = cnt ? `${cnt}개 날짜 투표하기 →` : '투표하기 →';
+}
+
+async function addOption() {
+  const date = document.getElementById('add-date').value;
+  const time = document.getElementById('add-time').value;
+  const label = document.getElementById('add-label').value.trim();
+  if (!date) { toast('날짜를 선택해 주세요.', 'e'); return; }
+
+  const newOpt = { id: Date.now(), date, time, label };
+  if (CFG.isMock) { options.push(newOpt); renderAll(); toast('날짜 후보가 추가됐습니다.', 's'); return; }
+  try {
+    const r = await apiPost({ action: 'addVoteOption', date, time, label });
+    if (r.success) { await loadVote(); toast('추가됐습니다.', 's'); }
+    else toast(r.error || '오류', 'e');
+  } catch { toast('서버 오류', 'e'); }
+}
+
+async function removeOption(id) {
+  if (!await confirm2('이 날짜 후보를 삭제할까요?')) return;
+  if (CFG.isMock) { options = options.filter(o => o.id != id); delete results[id]; renderAll(); toast('삭제됐습니다.', 's'); return; }
+  try {
+    const r = await apiPost({ action: 'deleteVoteOption', id });
+    if (r.success) { await loadVote(); toast('삭제됐습니다.', 's'); }
+    else toast(r.error || '오류', 'e');
+  } catch { toast('서버 오류', 'e'); }
+}
+
+async function submitVote() {
+  const name = document.getElementById('voter-name').value.trim();
+  if (!name) { toast('이름을 입력해 주세요.', 'e'); return; }
+  if (!selected.size) { toast('날짜를 하나 이상 선택해 주세요.', 'e'); return; }
+
+  if (CFG.isMock) {
+    selected.forEach(id => { if (!results[id]) results[id] = []; if (!results[id].includes(name)) results[id].push(name); });
+    selected.clear(); document.getElementById('voter-name').value = '';
+    document.getElementById('vote-submit-btn').textContent = '투표하기 →';
+    document.getElementById('sel-count').textContent = '선택한 날짜: 0개';
+    renderGrid(); toast('투표 완료! 감사합니다 🙌', 's'); return;
+  }
+  try {
+    const r = await apiPost({ action: 'addVote', voter: name, optionIds: [...selected] });
+    if (r.success) {
+      selected.clear(); document.getElementById('voter-name').value = '';
+      document.getElementById('vote-submit-btn').textContent = '투표하기 →';
+      document.getElementById('sel-count').textContent = '선택한 날짜: 0개';
+      await loadVote(); toast('투표 완료! 감사합니다 🙌', 's');
+    } else toast(r.error || '오류', 'e');
+  } catch { toast('서버 오류', 'e'); }
+}
+
+document.addEventListener('DOMContentLoaded', loadVote);
+</script>
+</body>
+</html>

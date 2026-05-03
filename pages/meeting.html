@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회의록 — GenAI 학습동아리</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.meeting-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.4rem; margin-bottom: 1rem;
+  transition: border-color .2s; cursor: pointer;
+}
+.meeting-card:hover { border-color: var(--border2); }
+.meeting-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: .75rem; }
+.meeting-title { font-weight: 700; font-size: 1rem; }
+.meeting-meta { display: flex; gap: .75rem; font-size: .75rem; color: var(--text2); flex-wrap: wrap; }
+.meeting-preview { font-size: .85rem; color: var(--text2); line-height: 1.7; }
+.meeting-actions { display: flex; gap: .5rem; margin-top: .75rem; }
+
+.detail-section { margin-bottom: 1.5rem; }
+.detail-section h4 { font-weight: 700; color: var(--em); font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; margin-bottom: .6rem; }
+.detail-section p, .detail-section ul { font-size: .88rem; color: var(--text2); line-height: 1.8; }
+.detail-section ul { padding-left: 1.2rem; }
+.ai-summary-box {
+  background: var(--em-dim); border: 1px solid rgba(0,212,160,.2);
+  border-radius: var(--r2); padding: 1rem; font-size: .85rem; line-height: 1.8;
+}
+.ai-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--em); color: #07090f; font-size: .65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: .5rem; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="topnav-logo" href="../index.html">✦ GenAI 동아리</a>
+  <div class="topnav-links">
+    <a href="intro.html">소개</a><a href="schedule.html">학습일정</a>
+    <a href="vote.html">대면투표</a><a href="news.html">뉴스</a>
+    <a href="meeting.html" class="active">회의록</a><a href="board.html">게시판</a>
+  </div>
+  <a href="admin.html" class="topnav-admin">⚙ 관리자</a>
+  <a href="register.html" class="topnav-join">회원가입</a>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">동아리 소개</div>
+    <a class="sidebar-item" href="intro.html"><span class="si-icon">🏠</span>개요·비전</a>
+    <a class="sidebar-item" href="schedule.html"><span class="si-icon">📅</span>학습 일정</a>
+    <a class="sidebar-item" href="members.html"><span class="si-icon">👥</span>멤버 현황</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">학습 활동</div>
+    <a class="sidebar-item" href="vote.html"><span class="si-icon">🗳️</span>대면일 투표</a>
+    <a class="sidebar-item active" href="meeting.html"><span class="si-icon">📝</span>회의록</a>
+    <a class="sidebar-item" href="idea.html"><span class="si-icon">💡</span>아이디어 보드</a>
+    <a class="sidebar-item" href="task.html"><span class="si-icon">✅</span>과제·To-Do</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">정보 공유</div>
+    <a class="sidebar-item" href="news.html"><span class="si-icon">📰</span>AI 뉴스</a>
+    <a class="sidebar-item" href="contest.html"><span class="si-icon">🏅</span>AI 공모전</a>
+    <a class="sidebar-item" href="board.html"><span class="si-icon">💬</span>자유 게시판</a>
+    <a class="sidebar-item" href="resource.html"><span class="si-icon">📎</span>자료실</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">운영 관리</div>
+    <a class="sidebar-item" href="admin.html"><span class="si-icon">🛡️</span>관리자</a>
+    <a class="sidebar-item" href="notice.html"><span class="si-icon">📣</span>공지사항</a>
+    <a class="sidebar-item" href="register.html"><span class="si-icon">🙋</span>회원가입</a>
+  </div>
+</aside>
+<div class="page-wrap">
+<div class="page-content">
+  <div class="page-header">
+    <div class="breadcrumb">🏠 홈 <span>›</span> 학습 활동 <span>›</span> 회의록</div>
+    <h1>회의록</h1>
+    <p>대면 학습 모임의 회의록을 작성하고 조회합니다. AI가 핵심 내용을 자동 요약합니다.</p>
+    <div class="page-header-actions">
+      <button class="btn btn-primary" onclick="openModal('write-modal')">+ 새 회의록 작성</button>
+    </div>
+  </div>
+
+  <!-- 목록 -->
+  <div id="meeting-list">
+    <div class="spinner-wrap"><div class="spinner"></div>불러오는 중...</div>
+  </div>
+</div>
+</div>
+
+<!-- 작성 모달 -->
+<div class="overlay" id="write-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3>📝 새 회의록 작성</h3>
+      <p>대면 학습 모임 내용을 기록하세요. AI가 자동으로 핵심 내용을 요약합니다.</p>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">모임 날짜 <span class="req">*</span></label>
+        <input type="date" id="m-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">작성자 <span class="req">*</span></label>
+        <input type="text" id="m-author" placeholder="이름">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">회의 제목 <span class="req">*</span></label>
+      <input type="text" id="m-title" placeholder="예: 2026년 5월 정기 모임 — 프롬프트 엔지니어링 실습">
+    </div>
+    <div class="form-group">
+      <label class="form-label">참석자</label>
+      <input type="text" id="m-attendees" placeholder="예: 지현석, 최효진, 이찬영, 유병찬, 조유리">
+    </div>
+    <div class="form-group">
+      <label class="form-label">학습 내용 <span class="req">*</span></label>
+      <textarea id="m-content" rows="5" placeholder="이번 모임에서 학습한 내용, 실습 결과 등을 자유롭게 기록하세요."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">결정 사항</label>
+      <textarea id="m-decisions" rows="3" placeholder="이번 모임에서 결정된 내용 (다음 모임 일정, 과제 등)"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">다음 모임 과제</label>
+      <textarea id="m-tasks" rows="2" placeholder="다음 모임 전까지 각자 해올 과제"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('write-modal')">취소</button>
+      <button class="btn btn-amber btn-sm" id="ai-summary-btn" onclick="getAISummary()">✨ AI 요약 생성</button>
+      <button class="btn btn-primary btn-sm" onclick="submitMeeting()">저장하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 상세 보기 모달 -->
+<div class="overlay" id="detail-modal">
+  <div class="modal modal-lg">
+    <div id="detail-content"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('detail-modal')">닫기</button>
+      <button class="btn btn-amber btn-sm" onclick="generateIdeaFromMeeting()">💡 아이디어 도출</button>
+      <button class="btn btn-danger btn-sm" id="detail-delete-btn">삭제</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/common.js"></script>
+<script>
+let meetings = [];
+let currentMeetingId = null;
+
+const MOCK_MEETINGS = [
+  { id:1, date:'2026-05-15', title:'5월 정기 모임 — AI 개요 & 도구 체험', author:'지현석', attendees:'지현석, 최효진, 이찬영, 유병찬, 조유리', content:'ChatGPT, Claude, Gemini 세 가지 도구를 비교 체험했다. 각 도구의 특성과 강점을 파악하고, 기본 프롬프트 작성법을 실습했다. 특히 Claude의 긴 문맥 처리 능력이 인상적이었다는 의견이 많았다.', decisions:'다음 모임 주제: 프롬프트 엔지니어링 심화. 각자 업무에서 AI를 사용해 보고 사례 공유하기로 결정.', tasks:'각자 업무에서 AI 활용 사례 1가지 이상 발굴해서 공유', summary:'ChatGPT·Claude·Gemini 3개 도구 비교 체험 완료. Claude의 문맥 처리 능력이 우수. 다음 달 프롬프트 심화 학습 예정. 5명 전원 참석.', timestamp:'2026-05-15T14:00:00.000Z' },
+  { id:2, date:'2026-06-12', title:'6월 정기 모임 — 프롬프트 엔지니어링 심화', author:'최효진', attendees:'지현석, 최효진, 이찬영, 유병찬', content:'Few-shot prompting, Chain-of-Thought, Role prompting 세 가지 기법을 실습했다. 각자 업무 보고서를 AI로 초안 작성해보는 실습을 진행했으며, 품질이 상당히 높다는 평가.', decisions:'7월 모임 주제: Claude API 직접 호출 실습. 환경 설정 사전 준비 필요.', tasks:'Claude API 계정 발급 및 API 키 발급해 오기', summary:'3가지 프롬프트 기법 실습 완료. 업무 보고서 자동 초안 생성 결과 긍정적. 4명 참석 (조유리 불참).', timestamp:'2026-06-12T14:00:00.000Z' },
+];
+
+async function loadMeetings() {
+  if (CFG.isMock) { meetings = MOCK_MEETINGS; renderList(); return; }
+  try {
+    const data = await apiGet({ action: 'getMeetings' });
+    meetings = Array.isArray(data) ? data : [];
+    renderList();
+  } catch { document.getElementById('meeting-list').innerHTML = emptyHTML('⚠','불러오기 실패'); }
+}
+
+function renderList() {
+  const el = document.getElementById('meeting-list');
+  if (!meetings.length) { el.innerHTML = emptyHTML('📝','회의록이 없습니다. 첫 회의록을 작성해 보세요!'); return; }
+  el.innerHTML = [...meetings].reverse().map(m => `
+    <div class="meeting-card" onclick="showDetail(${m.id})">
+      <div class="meeting-card-head">
+        <div>
+          <div class="meeting-title">${esc(m.title)}</div>
+          <div class="meeting-meta">
+            <span>📅 ${m.date}</span>
+            <span>✍ ${esc(m.author)}</span>
+            <span>👥 ${esc(m.attendees)}</span>
+          </div>
+        </div>
+        ${m.summary ? '<span class="badge badge-em">AI요약</span>' : ''}
+      </div>
+      <div class="meeting-preview">${esc(m.content).slice(0,120)}...</div>
+      <div class="meeting-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-ghost btn-xs" onclick="showDetail(${m.id})">상세 보기</button>
+        <button class="btn btn-amber btn-xs" onclick="generateIdeaFromId(${m.id})">💡 아이디어 도출</button>
+      </div>
+    </div>`).join('');
+}
+
+function showDetail(id) {
+  const m = meetings.find(x => x.id == id);
+  if (!m) return;
+  currentMeetingId = id;
+  document.getElementById('detail-content').innerHTML = `
+    <div class="modal-header">
+      <h3>${esc(m.title)}</h3>
+      <p>📅 ${m.date} · ✍ ${esc(m.author)} · 👥 ${esc(m.attendees)}</p>
+    </div>
+    ${m.summary ? `<div class="ai-summary-box mb-2"><div class="ai-badge">✨ AI 요약</div><p>${esc(m.summary)}</p></div>` : ''}
+    <div class="detail-section"><h4>학습 내용</h4><p>${esc(m.content).replace(/\n/g,'<br>')}</p></div>
+    ${m.decisions ? `<div class="detail-section"><h4>결정 사항</h4><p>${esc(m.decisions).replace(/\n/g,'<br>')}</p></div>` : ''}
+    ${m.tasks ? `<div class="detail-section"><h4>다음 모임 과제</h4><p>${esc(m.tasks).replace(/\n/g,'<br>')}</p></div>` : ''}
+  `;
+  openModal('detail-modal');
+}
+
+async function getAISummary() {
+  const content = document.getElementById('m-content').value.trim();
+  const decisions = document.getElementById('m-decisions').value.trim();
+  if (!content) { toast('학습 내용을 먼저 입력해 주세요.', 'e'); return; }
+  const btn = document.getElementById('ai-summary-btn');
+  btn.textContent = '⏳ AI 요약 중...'; btn.disabled = true;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 300,
+        messages: [{ role: 'user', content: `다음 회의록을 3~4문장으로 핵심만 요약해줘:\n\n학습 내용: ${content}\n결정 사항: ${decisions}` }]
+      })
+    });
+    const data = await resp.json();
+    const summary = data.content?.[0]?.text || '';
+    if (summary) {
+      toast('AI 요약이 생성됐습니다!', 's');
+      // 요약 미리보기 표시
+      let preview = document.getElementById('ai-preview');
+      if (!preview) { preview = document.createElement('div'); preview.id = 'ai-preview'; preview.className = 'ai-summary-box mt-2'; document.getElementById('m-tasks').parentElement.after(preview); }
+      preview.innerHTML = `<div class="ai-badge">✨ AI 요약</div><p>${esc(summary)}</p>`;
+      preview._summary = summary;
+    }
+  } catch {
+    toast('AI 요약 API 호출 실패. API_URL 확인 후 재시도하거나 수동 작성해 주세요.', 'w');
+  }
+  btn.textContent = '✨ AI 요약 생성'; btn.disabled = false;
+}
+
+async function submitMeeting() {
+  const date = document.getElementById('m-date').value;
+  const author = document.getElementById('m-author').value.trim();
+  const title = document.getElementById('m-title').value.trim();
+  const attendees = document.getElementById('m-attendees').value.trim();
+  const content = document.getElementById('m-content').value.trim();
+  const decisions = document.getElementById('m-decisions').value.trim();
+  const tasks = document.getElementById('m-tasks').value.trim();
+  const preview = document.getElementById('ai-preview');
+  const summary = preview?._summary || '';
+
+  if (!date || !author || !title || !content) { toast('필수 항목을 입력해 주세요.', 'e'); return; }
+
+  if (CFG.isMock) {
+    meetings.push({ id: Date.now(), date, author, title, attendees, content, decisions, tasks, summary, timestamp: new Date().toISOString() });
+    renderList(); closeModal('write-modal'); toast('회의록이 저장됐습니다!', 's'); return;
+  }
+  try {
+    const r = await apiPost({ action: 'addMeeting', date, author, title, attendees, content, decisions, tasks, summary });
+    if (r.success) { await loadMeetings(); closeModal('write-modal'); toast('저장 완료!', 's'); }
+    else toast(r.error || '오류', 'e');
+  } catch { toast('서버 오류', 'e'); }
+}
+
+function generateIdeaFromMeeting() {
+  closeModal('detail-modal');
+  const m = meetings.find(x => x.id == currentMeetingId);
+  if (m) sessionStorage.setItem('ideaSource', JSON.stringify({ from: m.title, content: m.content }));
+  location.href = 'idea.html';
+}
+function generateIdeaFromId(id) {
+  const m = meetings.find(x => x.id == id);
+  if (m) sessionStorage.setItem('ideaSource', JSON.stringify({ from: m.title, content: m.content }));
+  location.href = 'idea.html';
+}
+
+document.addEventListener('DOMContentLoaded', loadMeetings);
+</script>
+</body>
+</html>

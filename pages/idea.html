@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>아이디어 보드 — GenAI 학습동아리</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.idea-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.idea-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.3rem;
+  transition: all .2s; display: flex; flex-direction: column; gap: .6rem;
+}
+.idea-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.idea-card.voted { border-color: var(--em); }
+.idea-cat { }
+.idea-title { font-weight: 700; font-size: .95rem; line-height: 1.4; }
+.idea-body { font-size: .82rem; color: var(--text2); line-height: 1.7; flex: 1; }
+.idea-footer { display: flex; justify-content: space-between; align-items: center; padding-top: .6rem; border-top: 1px solid var(--border); }
+.vote-count { font-size: .78rem; color: var(--text2); }
+.vote-count b { color: var(--em); font-size: 1rem; }
+.idea-from { font-size: .7rem; color: var(--text3); margin-top: .25rem; }
+
+.ai-generate-box {
+  background: var(--bg2); border: 1px solid rgba(0,212,160,.2);
+  border-radius: var(--r); padding: 1.5rem; margin-bottom: 2rem;
+}
+.ai-generate-box h3 { font-weight: 700; margin-bottom: .4rem; }
+.ai-generate-box p { font-size: .85rem; color: var(--text2); margin-bottom: 1rem; }
+.ai-result-list { display: flex; flex-direction: column; gap: .5rem; margin-top: 1rem; }
+.ai-result-item {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: .75rem 1rem;
+  font-size: .85rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+}
+.status-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="topnav-logo" href="../index.html">✦ GenAI 동아리</a>
+  <div class="topnav-links">
+    <a href="intro.html">소개</a><a href="schedule.html">학습일정</a>
+    <a href="vote.html">대면투표</a><a href="news.html">뉴스</a>
+    <a href="meeting.html">회의록</a><a href="board.html">게시판</a>
+  </div>
+  <a href="admin.html" class="topnav-admin">⚙ 관리자</a>
+  <a href="register.html" class="topnav-join">회원가입</a>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">동아리 소개</div>
+    <a class="sidebar-item" href="intro.html"><span class="si-icon">🏠</span>개요·비전</a>
+    <a class="sidebar-item" href="schedule.html"><span class="si-icon">📅</span>학습 일정</a>
+    <a class="sidebar-item" href="members.html"><span class="si-icon">👥</span>멤버 현황</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">학습 활동</div>
+    <a class="sidebar-item" href="vote.html"><span class="si-icon">🗳️</span>대면일 투표</a>
+    <a class="sidebar-item" href="meeting.html"><span class="si-icon">📝</span>회의록</a>
+    <a class="sidebar-item active" href="idea.html"><span class="si-icon">💡</span>아이디어 보드</a>
+    <a class="sidebar-item" href="task.html"><span class="si-icon">✅</span>과제·To-Do</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">정보 공유</div>
+    <a class="sidebar-item" href="news.html"><span class="si-icon">📰</span>AI 뉴스</a>
+    <a class="sidebar-item" href="contest.html"><span class="si-icon">🏅</span>AI 공모전</a>
+    <a class="sidebar-item" href="board.html"><span class="si-icon">💬</span>자유 게시판</a>
+    <a class="sidebar-item" href="resource.html"><span class="si-icon">📎</span>자료실</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">운영 관리</div>
+    <a class="sidebar-item" href="admin.html"><span class="si-icon">🛡️</span>관리자</a>
+    <a class="sidebar-item" href="notice.html"><span class="si-icon">📣</span>공지사항</a>
+    <a class="sidebar-item" href="register.html"><span class="si-icon">🙋</span>회원가입</a>
+  </div>
+</aside>
+<div class="page-wrap">
+<div class="page-content">
+  <div class="page-header">
+    <div class="breadcrumb">🏠 홈 <span>›</span> 학습 활동 <span>›</span> 아이디어 보드</div>
+    <h1>아이디어 보드</h1>
+    <p>회의에서 나온 아이디어를 정리하고, AI로 새 아이디어를 도출합니다. 투표로 우선순위를 결정하세요.</p>
+    <div class="page-header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="sortIdeas('votes')">🔥 인기순</button>
+      <button class="btn btn-ghost btn-sm" onclick="sortIdeas('newest')">🕐 최신순</button>
+      <button class="btn btn-primary" onclick="openModal('add-idea-modal')">+ 아이디어 추가</button>
+    </div>
+  </div>
+
+  <!-- AI 도출 패널 -->
+  <div class="ai-generate-box">
+    <h3>✨ AI 아이디어 도출</h3>
+    <p>회의록 내용 또는 주제를 입력하면 Claude AI가 실용적인 앱 아이디어를 제안합니다.</p>
+    <div id="idea-source-notice" style="display:none;background:var(--em-dim);border-radius:var(--r2);padding:.6rem 1rem;font-size:.82rem;color:var(--em);margin-bottom:.75rem"></div>
+    <div class="form-row">
+      <textarea id="ai-input" rows="3" placeholder="예: '이번 모임에서 RAG를 학습했고 공공기관 문서 검색 시스템을 만들어보고 싶다' 처럼 자유롭게 입력하세요."></textarea>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:.75rem;flex-wrap:wrap">
+      <button class="btn btn-amber" id="ai-gen-btn" onclick="generateIdeas()">✨ AI 아이디어 생성</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ai-input').value=''">초기화</button>
+    </div>
+    <div id="ai-results" class="ai-result-list"></div>
+  </div>
+
+  <!-- 필터 -->
+  <div class="status-row">
+    <button class="btn btn-ghost btn-sm active-filter" onclick="filterIdea('all',this)">전체</button>
+    <button class="btn btn-ghost btn-sm" onclick="filterIdea('검토중',this)">🔵 검토 중</button>
+    <button class="btn btn-ghost btn-sm" onclick="filterIdea('채택',this)">🟢 채택</button>
+    <button class="btn btn-ghost btn-sm" onclick="filterIdea('보류',this)">🟡 보류</button>
+  </div>
+
+  <!-- 아이디어 카드 그리드 -->
+  <div class="idea-grid" id="idea-grid">
+    <div class="spinner-wrap" style="grid-column:1/-1"><div class="spinner"></div>불러오는 중...</div>
+  </div>
+</div>
+</div>
+
+<!-- 아이디어 추가 모달 -->
+<div class="overlay" id="add-idea-modal">
+  <div class="modal">
+    <div class="modal-header"><h3>💡 아이디어 추가</h3><p>개발하고 싶은 앱 아이디어를 등록해 주세요.</p></div>
+    <div class="form-group"><label class="form-label">카테고리</label>
+      <select id="idea-cat">
+        <option>업무 자동화</option><option>데이터 분석</option><option>챗봇·Q&A</option>
+        <option>문서 처리</option><option>이미지 생성</option><option>기타</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">아이디어 제목 <span class="req">*</span></label><input type="text" id="idea-title" placeholder="앱 이름 또는 아이디어 제목"></div>
+    <div class="form-group"><label class="form-label">설명 <span class="req">*</span></label><textarea id="idea-body" rows="4" placeholder="어떤 문제를 해결하는 앱인지, 어떻게 동작하는지 설명해 주세요."></textarea></div>
+    <div class="form-group"><label class="form-label">제안자</label><input type="text" id="idea-author" placeholder="이름"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('add-idea-modal')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="submitIdea()">등록</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/common.js"></script>
+<script>
+let ideas = [];
+let myVotes = new Set(JSON.parse(localStorage.getItem('myVotes')||'[]'));
+
+const MOCK_IDEAS = [
+  { id:1, cat:'문서 처리', title:'공문서 자동 분류 및 요약 도구', body:'업로드된 공문서를 AI가 자동으로 분류하고 핵심 내용을 요약해 주는 도구. 시설평가부의 문서 처리 업무 시간을 대폭 단축 가능.', author:'이찬영', votes:4, status:'채택', from:'6월 정기 모임', timestamp:'2026-06-12T14:00:00.000Z' },
+  { id:2, cat:'업무 자동화', title:'회의록 자동 작성 어시스턴트', body:'음성 녹음 또는 텍스트 입력으로 회의 내용을 받아 자동으로 회의록 형식으로 정리해 주는 앱.', author:'최효진', votes:3, status:'검토중', from:'5월 킥오프 모임', timestamp:'2026-05-15T14:00:00.000Z' },
+  { id:3, cat:'챗봇·Q&A', title:'부서별 사내 규정 Q&A 챗봇', body:'각 부서의 업무 규정, 지침을 학습시켜 "이 경우에 어떤 절차를 따라야 해?"라고 물으면 바로 답변해 주는 챗봇.', author:'유병찬', votes:2, status:'검토중', from:'자유 제안', timestamp:'2026-06-01T10:00:00.000Z' },
+  { id:4, cat:'데이터 분석', title:'시설 점검 데이터 AI 분석 대시보드', body:'시설 점검 결과 데이터를 자동으로 시각화하고 이상 패턴을 AI가 분석해 알려주는 대시보드.', author:'이찬영', votes:1, status:'보류', from:'6월 정기 모임', timestamp:'2026-06-12T15:00:00.000Z' },
+];
+
+async function loadIdeas() {
+  if (CFG.isMock) { ideas = MOCK_IDEAS; renderGrid(ideas); return; }
+  try {
+    const data = await apiGet({ action: 'getIdeas' });
+    ideas = Array.isArray(data) ? data : [];
+    renderGrid(ideas);
+  } catch { document.getElementById('idea-grid').innerHTML = emptyHTML('⚠','불러오기 실패'); }
+}
+
+function renderGrid(list) {
+  const el = document.getElementById('idea-grid');
+  if (!list.length) { el.innerHTML = emptyHTML('💡','아이디어가 없습니다. 첫 번째 아이디어를 등록해 보세요!'); return; }
+  const statusMap = { '채택':'badge-em', '검토중':'badge-blue', '보류':'badge-amber' };
+  el.innerHTML = list.map(i => `
+    <div class="idea-card${myVotes.has(i.id)?' voted':''}">
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <span class="badge badge-muted">${esc(i.cat)}</span>
+        <span class="badge ${statusMap[i.status]||'badge-muted'}">${esc(i.status)}</span>
+      </div>
+      <div class="idea-title">${esc(i.title)}</div>
+      <div class="idea-body">${esc(i.body)}</div>
+      <div class="idea-from">출처: ${esc(i.from||'자유 제안')} · ${esc(i.author)}</div>
+      <div class="idea-footer">
+        <div class="vote-count"><b>${i.votes}</b> 추천</div>
+        <button class="btn btn-sm ${myVotes.has(i.id)?'btn-ghost':'btn-primary'}" onclick="voteIdea(${i.id})">
+          ${myVotes.has(i.id) ? '✓ 추천함' : '👍 추천'}
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+async function voteIdea(id) {
+  if (myVotes.has(id)) { toast('이미 추천한 아이디어입니다.', 'w'); return; }
+  myVotes.add(id); localStorage.setItem('myVotes', JSON.stringify([...myVotes]));
+  const idea = ideas.find(i => i.id == id);
+  if (idea) idea.votes++;
+  renderGrid(getCurrentFilter());
+  if (!CFG.isMock) {
+    try { await apiPost({ action:'voteIdea', id }); } catch { /* silent */ }
+  }
+  toast('추천했습니다! 👍', 's');
+}
+
+function sortIdeas(by) {
+  if (by === 'votes') ideas.sort((a,b) => b.votes - a.votes);
+  else ideas.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+  renderGrid(ideas);
+}
+
+let _filter = 'all';
+function filterIdea(f, btn) {
+  _filter = f;
+  document.querySelectorAll('.active-filter').forEach(b => b.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  renderGrid(f === 'all' ? ideas : ideas.filter(i => i.status === f));
+}
+function getCurrentFilter() { return _filter === 'all' ? ideas : ideas.filter(i => i.status === _filter); }
+
+async function generateIdeas() {
+  const input = document.getElementById('ai-input').value.trim();
+  if (!input) { toast('아이디어 도출에 사용할 내용을 입력해 주세요.', 'e'); return; }
+  const btn = document.getElementById('ai-gen-btn');
+  btn.textContent = '⏳ AI 생각 중...'; btn.disabled = true;
+  document.getElementById('ai-results').innerHTML = `<div class="spinner-wrap"><div class="spinner"></div></div>`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 600,
+        messages: [{ role: 'user', content: `다음 내용을 바탕으로 공공기관 업무에 실용적인 AI 앱 아이디어 4가지를 제안해줘. 각 아이디어는 "제목: [앱 이름]\n설명: [2문장 이내 설명]" 형식으로 작성해줘.\n\n${input}` }]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content?.[0]?.text || '';
+    const items = text.split(/\n(?=제목:)/).filter(Boolean);
+    document.getElementById('ai-results').innerHTML = items.map(item => {
+      const titleMatch = item.match(/제목:\s*(.+)/);
+      const descMatch = item.match(/설명:\s*(.+)/);
+      const t = titleMatch ? titleMatch[1].trim() : item.slice(0,40);
+      const d = descMatch ? descMatch[1].trim() : '';
+      return `<div class="ai-result-item">
+        <div><strong>${esc(t)}</strong>${d ? `<br><span style="color:var(--text2);font-size:.8rem">${esc(d)}</span>` : ''}</div>
+        <button class="btn btn-primary btn-xs" onclick="addFromAI('${esc(t)}','${esc(d)}')">+ 등록</button>
+      </div>`;
+    }).join('') || emptyHTML('🤔','아이디어를 생성하지 못했습니다. 입력을 더 구체적으로 해보세요.');
+  } catch {
+    document.getElementById('ai-results').innerHTML = `<div class="text-sm text-muted" style="padding:.75rem">AI API 연결 오류. API 키 설정을 확인해 주세요.</div>`;
+  }
+  btn.textContent = '✨ AI 아이디어 생성'; btn.disabled = false;
+}
+
+function addFromAI(title, body) {
+  document.getElementById('idea-title').value = title;
+  document.getElementById('idea-body').value = body;
+  openModal('add-idea-modal');
+}
+
+async function submitIdea() {
+  const cat = document.getElementById('idea-cat').value;
+  const title = document.getElementById('idea-title').value.trim();
+  const body = document.getElementById('idea-body').value.trim();
+  const author = document.getElementById('idea-author').value.trim();
+  if (!title || !body) { toast('필수 항목을 입력해 주세요.', 'e'); return; }
+
+  const newIdea = { id: Date.now(), cat, title, body, author, votes: 0, status: '검토중', from: '자유 제안', timestamp: new Date().toISOString() };
+  if (CFG.isMock) {
+    ideas.unshift(newIdea); renderGrid(ideas); closeModal('add-idea-modal'); toast('아이디어가 등록됐습니다!', 's'); return;
+  }
+  try {
+    const r = await apiPost({ action: 'addIdea', cat, title, body, author });
+    if (r.success) { await loadIdeas(); closeModal('add-idea-modal'); toast('등록 완료!', 's'); }
+    else toast(r.error || '오류', 'e');
+  } catch { toast('서버 오류', 'e'); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadIdeas();
+  // 회의록에서 넘어온 경우
+  const src = sessionStorage.getItem('ideaSource');
+  if (src) {
+    const obj = JSON.parse(src);
+    document.getElementById('ai-input').value = `회의 "${obj.from}" 내용:\n${obj.content}`;
+    const notice = document.getElementById('idea-source-notice');
+    notice.style.display = 'block';
+    notice.textContent = `📝 "${obj.from}" 회의록에서 자동으로 가져온 내용입니다.`;
+    sessionStorage.removeItem('ideaSource');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학습 일정 — GenAI 학습동아리</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: linear-gradient(to bottom, var(--em), rgba(0,212,160,.1));
+}
+.tl-item {
+  position: relative; margin-bottom: 2rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.4rem;
+  transition: border-color .2s;
+}
+.tl-item:hover { border-color: var(--border2); }
+.tl-item.current { border-color: var(--em); background: rgba(0,212,160,.04); }
+.tl-dot {
+  position: absolute; left: -2.5rem; top: 1.4rem;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--bg3); border: 2px solid var(--em);
+  display: flex; align-items: center; justify-content: center;
+}
+.tl-dot.current { background: var(--em); }
+.tl-dot.current::after {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: #07090f;
+}
+.tl-month {
+  display: inline-block; background: var(--em-dim); color: var(--em);
+  font-weight: 700; font-size: .75rem; padding: 2px 10px; border-radius: 20px; margin-bottom: .6rem;
+}
+.tl-topic { font-weight: 700; font-size: 1rem; margin-bottom: .3rem; }
+.tl-app { font-size: .85rem; color: var(--em); font-weight: 600; margin-bottom: .5rem; }
+.tl-detail { font-size: .82rem; color: var(--text2); line-height: 1.75; }
+.tl-tags { margin-top: .6rem; }
+.tl-note { margin-top: .75rem; padding: .5rem .75rem; background: var(--amber-dim); border-radius: var(--r2); font-size: .78rem; color: var(--amber); }
+
+.progress-bar-wrap { background: var(--bg3); border-radius: 4px; height: 8px; margin-top: .75rem; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--em), #00ffcc); border-radius: 4px; transition: width .6s ease; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="topnav-logo" href="../index.html">✦ GenAI 동아리</a>
+  <div class="topnav-links">
+    <a href="intro.html">소개</a>
+    <a href="schedule.html" class="active">학습일정</a>
+    <a href="vote.html">대면투표</a>
+    <a href="news.html">뉴스</a>
+    <a href="meeting.html">회의록</a>
+    <a href="board.html">게시판</a>
+  </div>
+  <a href="admin.html" class="topnav-admin">⚙ 관리자</a>
+  <a href="register.html" class="topnav-join">회원가입</a>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">동아리 소개</div>
+    <a class="sidebar-item" href="intro.html"><span class="si-icon">🏠</span>개요·비전</a>
+    <a class="sidebar-item active" href="schedule.html" data-page="schedule.html"><span class="si-icon">📅</span>학습 일정</a>
+    <a class="sidebar-item" href="members.html"><span class="si-icon">👥</span>멤버 현황</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">학습 활동</div>
+    <a class="sidebar-item" href="vote.html"><span class="si-icon">🗳️</span>대면일 투표</a>
+    <a class="sidebar-item" href="meeting.html"><span class="si-icon">📝</span>회의록</a>
+    <a class="sidebar-item" href="idea.html"><span class="si-icon">💡</span>아이디어 보드</a>
+    <a class="sidebar-item" href="task.html"><span class="si-icon">✅</span>과제·To-Do</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">정보 공유</div>
+    <a class="sidebar-item" href="news.html"><span class="si-icon">📰</span>AI 뉴스</a>
+    <a class="sidebar-item" href="contest.html"><span class="si-icon">🏅</span>AI 공모전</a>
+    <a class="sidebar-item" href="board.html"><span class="si-icon">💬</span>자유 게시판</a>
+    <a class="sidebar-item" href="resource.html"><span class="si-icon">📎</span>자료실</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">운영 관리</div>
+    <a class="sidebar-item" href="admin.html"><span class="si-icon">🛡️</span>관리자</a>
+    <a class="sidebar-item" href="notice.html"><span class="si-icon">📣</span>공지사항</a>
+    <a class="sidebar-item" href="register.html"><span class="si-icon">🙋</span>회원가입</a>
+  </div>
+</aside>
+<div class="page-wrap">
+<div class="page-content">
+  <div class="page-header">
+    <div class="breadcrumb">🏠 홈 <span>›</span> 동아리 소개 <span>›</span> 학습 일정</div>
+    <h1>2026년 학습 일정</h1>
+    <p>5월부터 12월까지 8개월 커리큘럼 — 매월 1개 실용 앱 개발</p>
+    <div class="page-header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 인쇄</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('add-schedule-modal')">+ 일정 수정 제안</button>
+    </div>
+  </div>
+
+  <!-- 진행 현황 -->
+  <div class="card mb-3">
+    <div style="font-weight:700;margin-bottom:.75rem">📊 연간 진행 현황</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem">
+      <div class="stat-card"><div class="stat-num" id="done-cnt">0</div><div class="stat-label">완료 모임</div></div>
+      <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">전체 계획</div></div>
+      <div class="stat-card"><div class="stat-num" id="remain-cnt">8</div><div class="stat-label">남은 모임</div></div>
+      <div class="stat-card"><div class="stat-num" id="prog-pct">0%</div><div class="stat-label">진행률</div></div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="main-progress" style="width:0%"></div></div>
+  </div>
+
+  <!-- 타임라인 -->
+  <div class="sec-label mb-2">📅 월별 커리큘럼</div>
+  <div class="timeline" id="timeline">
+    <!-- JS로 렌더링 -->
+  </div>
+</div>
+</div>
+
+<!-- 일정 수정 제안 모달 -->
+<div class="overlay" id="add-schedule-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>일정 수정 제안</h3>
+      <p>학습 주제나 앱 아이디어를 제안해 주세요. 리더가 검토 후 반영합니다.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">대상 월 <span class="req">*</span></label>
+      <select id="prop-month">
+        <option>5월</option><option>6월</option><option>7월</option>
+        <option>8월</option><option>9월</option><option>10월</option>
+        <option>11월</option><option>12월</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">제안 내용 <span class="req">*</span></label>
+      <textarea id="prop-content" placeholder="변경하고 싶은 학습 주제나 개발 앱 아이디어를 작성해 주세요." rows="4"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">제안자</label>
+      <input type="text" id="prop-author" placeholder="이름">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('add-schedule-modal')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="submitProposal()">제안 제출</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/common.js"></script>
+<script>
+const SCHEDULE = [
+  { month:'5월', date:'2026-05', topic:'생성형 AI 개요 & 주요 도구 체험', app:'AI 텍스트 요약 도구', detail:'ChatGPT·Claude·Gemini 비교 체험, 기본 프롬프트 작성법 학습', tags:['ChatGPT','Claude','프롬프트 기초'], note:'킥오프 모임 — 자기소개 + 목표 설정' },
+  { month:'6월', date:'2026-06', topic:'프롬프트 엔지니어링 심화', app:'업무 보고서 자동 초안 생성기', detail:'Few-shot, CoT, Role prompting 기법 실습, 업무 문서 적용 사례', tags:['프롬프트 엔지니어링','Chain-of-Thought'], note:'' },
+  { month:'7월', date:'2026-07', topic:'Claude / OpenAI API 실습', app:'부서 맞춤형 Q&A 챗봇', detail:'API 키 발급, fetch() 호출, 간단한 챗봇 인터페이스 제작', tags:['API','JavaScript','챗봇'], note:'대면일 투표 결과 확인 후 날짜 확정' },
+  { month:'8월', date:'2026-08', topic:'RAG(검색 증강 생성) 이론과 실습', app:'사내 문서 검색 AI', detail:'벡터 DB 개념, 임베딩 이해, 간단한 RAG 파이프라인 구축', tags:['RAG','Vector DB','임베딩'], note:'' },
+  { month:'9월', date:'2026-09', topic:'이미지·멀티모달 AI 활용', app:'홍보물 자동 생성기', detail:'DALL-E, Stable Diffusion, GPT-4o Vision 활용, 실무 이미지 생성', tags:['멀티모달','이미지생성','Vision'], note:'중간 성과 공유 세션' },
+  { month:'10월', date:'2026-10', topic:'AI 에이전트 & 업무 자동화', app:'일정 관리 AI 어시스턴트', detail:'LangChain Agent 개념, 툴 사용, 반복 업무 자동화 시나리오', tags:['AI Agent','LangChain','자동화'], note:'공모전 준비 시작' },
+  { month:'11월', date:'2026-11', topic:'공공 AI 정책·윤리 & 보안', app:'개인정보 마스킹 도구', detail:'AI 윤리 프레임워크, KISA 가이드라인, 공공기관 AI 도입 사례 분석', tags:['AI윤리','공공정책','보안'], note:'공모전 출품 도전' },
+  { month:'12월', date:'2026-12', topic:'연간 성과 정리 & 발표', app:'성과 발표 자료 자동 생성기', detail:'8개월 학습 성과 정리, 팀별 미니 발표, 차년도 계획 수립', tags:['성과발표','총정리'], note:'🎉 연말 성과 발표회' },
+];
+
+const now = new Date();
+const nowM = now.getFullYear() * 100 + (now.getMonth() + 1);
+
+function renderTimeline() {
+  let done = 0;
+  const html = SCHEDULE.map((s, i) => {
+    const [y, m] = s.date.split('-').map(Number);
+    const itemM = y * 100 + m;
+    const isCurrent = nowM === itemM;
+    const isDone = nowM > itemM;
+    if (isDone) done++;
+    return `
+    <div class="tl-item${isCurrent ? ' current' : ''}">
+      <div class="tl-dot${isCurrent ? ' current' : ''}"></div>
+      <div class="tl-month">${s.month} ${isDone ? '✓ 완료' : isCurrent ? '▶ 진행 중' : '예정'}</div>
+      <div class="tl-topic">${s.topic}</div>
+      <div class="tl-app">🛠 개발 앱: ${s.app}</div>
+      <div class="tl-detail">${s.detail}</div>
+      <div class="tl-tags">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      ${s.note ? `<div class="tl-note">📌 ${s.note}</div>` : ''}
+    </div>`;
+  }).join('');
+  document.getElementById('timeline').innerHTML = html;
+
+  const pct = Math.round((done / SCHEDULE.length) * 100);
+  document.getElementById('done-cnt').textContent = done;
+  document.getElementById('remain-cnt').textContent = SCHEDULE.length - done;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('main-progress').style.width = pct + '%';
+}
+
+async function submitProposal() {
+  const month = document.getElementById('prop-month').value;
+  const content = document.getElementById('prop-content').value.trim();
+  const author = document.getElementById('prop-author').value.trim();
+  if (!content) { toast('제안 내용을 입력해 주세요.', 'e'); return; }
+
+  if (!CFG.isMock) {
+    try {
+      const r = await apiPost({ action:'addProposal', month, content, author });
+      if (r.success) { toast('제안이 제출됐습니다! 리더가 검토합니다.', 's'); closeModal('add-schedule-modal'); }
+      else toast(r.error || '오류', 'e');
+    } catch { toast('서버 오류', 'e'); }
+  } else {
+    toast('제안이 제출됐습니다! (샘플 모드)', 's');
+    closeModal('add-schedule-modal');
+  }
+}
+
+renderTimeline();
+</script>
+</body>
+</html>

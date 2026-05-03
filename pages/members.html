@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>멤버 현황 — GenAI 동아리</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.member-hero{
+  background:var(--ink);color:var(--bg);
+  padding:3rem 2rem;border-radius:var(--r);margin-bottom:2rem;
+  position:relative;overflow:hidden;
+}
+.member-hero::before{
+  content:'TEAM';position:absolute;right:-1rem;top:50%;transform:translateY(-50%);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:8rem;
+  color:rgba(184,255,87,.08);line-height:1;pointer-events:none;letter-spacing:-.05em;
+}
+.member-hero h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;letter-spacing:-.03em;margin-bottom:.3rem}
+.member-hero p{color:rgba(245,242,235,.6);font-size:.88rem}
+
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:2rem}
+.member-card{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:1.5rem;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.member-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--lime);
+}
+.member-card.leader::before{background:var(--ink)}
+.member-card.manager::before{background:var(--sky)}
+.member-card:hover{transform:translateY(-3px);box-shadow:var(--shadow2);border-color:var(--border2)}
+
+.mc-av{
+  width:60px;height:60px;border-radius:50%;
+  background:var(--bg3);border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;
+  margin-bottom:1rem;
+}
+.mc-av.leader{background:var(--ink);color:var(--lime)}
+.mc-av.manager{background:var(--sky);color:#fff}
+.mc-av.m3{background:#c8f587;color:var(--ink)}
+.mc-av.m4{background:#ffd6cc;color:var(--ink)}
+.mc-av.m5{background:#d4e8ff;color:var(--ink)}
+
+.mc-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;margin-bottom:.2rem}
+.mc-dept{font-size:.78rem;color:var(--ink3);margin-bottom:.6rem}
+.mc-desc{font-size:.8rem;color:var(--ink2);line-height:1.7}
+.mc-skills{margin-top:.75rem}
+
+.attend-table-wrap{overflow-x:auto}
+.attend-dot{
+  width:10px;height:10px;border-radius:50%;display:inline-block;
+}
+.attend-dot.o{background:var(--lime2);border:1px solid var(--ink)}
+.attend-dot.x{background:var(--ink4);border:1px solid var(--border)}
+.attend-dot.yet{background:var(--bg3);border:1px dashed var(--ink4)}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="nav-logo" href="../index.html"><div class="logo-dot">AI</div>GENAI 동아리</a>
+  <div class="nav-links">
+    <a href="intro.html">소개</a><a href="schedule.html">일정</a>
+    <a href="vote.html">투표</a><a href="news.html">뉴스</a>
+    <a href="meeting.html">회의록</a><a href="board.html">게시판</a>
+  </div>
+  <button class="nav-btn nav-btn-ghost" onclick="location.href='admin.html'">⚙ 관리자</button>
+  <button class="nav-btn nav-btn-primary" onclick="location.href='register.html'">회원가입</button>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-sec"><div class="sidebar-sec-label">동아리 소개</div>
+    <a class="sidebar-link" href="intro.html" data-p="intro.html"><span class="sidebar-icon">🏠</span>개요·비전</a>
+    <a class="sidebar-link" href="schedule.html" data-p="schedule.html"><span class="sidebar-icon">📅</span>학습 일정</a>
+    <a class="sidebar-link active" href="members.html" data-p="members.html"><span class="sidebar-icon">👥</span>멤버 현황</a>
+    <a class="sidebar-link" href="notice.html" data-p="notice.html"><span class="sidebar-icon">📣</span>공지사항</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">학습 활동</div>
+    <a class="sidebar-link" href="vote.html"><span class="sidebar-icon">🗳️</span>대면일 투표</a>
+    <a class="sidebar-link" href="meeting.html"><span class="sidebar-icon">📝</span>회의록</a>
+    <a class="sidebar-link" href="idea.html"><span class="sidebar-icon">💡</span>아이디어 보드</a>
+    <a class="sidebar-link" href="task.html"><span class="sidebar-icon">✅</span>과제·To-Do</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">정보 공유</div>
+    <a class="sidebar-link" href="news.html"><span class="sidebar-icon">📰</span>AI 뉴스</a>
+    <a class="sidebar-link" href="contest.html"><span class="sidebar-icon">🏅</span>AI 공모전</a>
+    <a class="sidebar-link" href="board.html"><span class="sidebar-icon">💬</span>자유 게시판</a>
+    <a class="sidebar-link" href="resource.html"><span class="sidebar-icon">📎</span>자료실</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">운영 관리</div>
+    <a class="sidebar-link" href="admin.html"><span class="sidebar-icon">🛡️</span>관리자</a>
+    <a class="sidebar-link" href="register.html"><span class="sidebar-icon">🙋</span>회원가입</a>
+  </div>
+</aside>
+
+<div class="page-wrap">
+<div class="page-body">
+  <div class="page-hd">
+    <div class="breadcrumb">홈 <span class="sep">›</span> 동아리 소개 <span class="sep">›</span> 멤버 현황</div>
+    <h1>멤버 현황</h1>
+    <p>GenAI 학습동아리 구성원 소개 및 출석 현황</p>
+    <div class="page-hd-actions">
+      <button class="btn btn-ghost btn-sm" onclick="openModal('invite-modal')">+ 멤버 초대</button>
+    </div>
+  </div>
+
+  <!-- 멤버 히어로 -->
+  <div class="member-hero mb-3">
+    <h2>우리가 함께합니다</h2>
+    <p>5개 부서, 5명의 멤버가 생성형 AI 시대를 함께 개척합니다</p>
+    <div style="display:flex;gap:2rem;margin-top:1.5rem;flex-wrap:wrap">
+      <div><div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--lime)">5</div><div style="font-size:.72rem;color:rgba(245,242,235,.5);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.06em">총 멤버</div></div>
+      <div><div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--lime)" id="total-attend">—</div><div style="font-size:.72rem;color:rgba(245,242,235,.5);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.06em">총 출석</div></div>
+      <div><div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--lime)" id="avg-rate">—</div><div style="font-size:.72rem;color:rgba(245,242,235,.5);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.06em">평균 출석률</div></div>
+    </div>
+  </div>
+
+  <!-- 멤버 카드 -->
+  <div class="member-grid" id="member-grid">
+    <div class="loading-row"><div class="spin"></div>불러오는 중...</div>
+  </div>
+
+  <!-- 출석 현황 -->
+  <div class="syne fw700 mb-2" style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem">📊 출석 현황 (2026년)</div>
+  <div class="tbl-box attend-table-wrap mb-3">
+    <table class="tbl" id="attend-tbl">
+      <thead><tr>
+        <th>멤버</th><th>5월</th><th>6월</th><th>7월</th><th>8월</th><th>9월</th><th>10월</th><th>11월</th><th>12월</th><th>출석률</th>
+      </tr></thead>
+      <tbody id="attend-body"></tbody>
+    </table>
+  </div>
+
+  <!-- 가입 회원 목록 -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem">📋 가입 회원 목록</div>
+    <button class="btn btn-ghost btn-sm" onclick="loadRegistered()">새로고침</button>
+  </div>
+  <div class="tbl-box">
+    <table class="tbl">
+      <thead><tr><th>이름</th><th>이메일</th><th>소속</th><th>가입일</th><th>상태</th></tr></thead>
+      <tbody id="reg-body"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--ink4)">로딩 중...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- 초대 모달 -->
+<div class="overlay" id="invite-modal">
+  <div class="modal">
+    <div class="modal-hd"><h3>멤버 초대</h3><p>초대할 분의 이메일을 입력하면 가입 링크를 안내합니다.</p></div>
+    <div class="form-group"><label class="form-label">이메일</label><input type="email" id="inv-email" placeholder="example@company.co.kr"></div>
+    <div class="form-group"><label class="form-label">메시지 (선택)</label><textarea id="inv-msg" rows="3" placeholder="초대 메시지를 입력하세요."></textarea></div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('invite-modal')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="sendInvite()">초대 링크 복사</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/common.js"></script>
+<script>
+const CORE_MEMBERS = [
+  {name:'지현석',dept:'정보화팀',role:'leader',role_label:'리더',avClass:'leader',desc:'전체 운영 · 기술 총괄 · 학습 커리큘럼 설계',skills:['정보화','AI 기획','시스템 운영'],attend:[1,1,0,0,0,0,0,0]},
+  {name:'최효진',dept:'시설평가부',role:'manager',role_label:'매니저',avClass:'manager',desc:'일정 조율 · 회의록 관리 · 과제 추적 · 총무',skills:['일정관리','문서화','소통'],attend:[1,1,0,0,0,0,0,0]},
+  {name:'이찬영',dept:'시설평가부',role:'member',role_label:'회원',avClass:'m3',desc:'학습 참여 · 실습 과제 수행 · 시설 AI 활용 탐구',skills:['시설평가','데이터 분석'],attend:[1,0,0,0,0,0,0,0]},
+  {name:'유병찬',dept:'혁신기획부',role:'member',role_label:'회원',avClass:'m4',desc:'학습 참여 · 혁신 아이디어 제안 · 기획 적용',skills:['혁신기획','아이디어 도출'],attend:[1,1,0,0,0,0,0,0]},
+  {name:'조유리',dept:'지역협력부',role:'member',role_label:'회원',avClass:'m5',desc:'학습 참여 · 지역협력 AI 활용 탐구 · 콘텐츠',skills:['지역협력','콘텐츠','소통'],attend:[0,0,0,0,0,0,0,0]},
+];
+const MONTHS = ['5월','6월','7월','8월','9월','10월','11월','12월'];
+
+function renderCards(){
+  const badgeMap = {leader:'bdg-ink',manager:'bdg-sky',member:'bdg-ghost'};
+  document.getElementById('member-grid').innerHTML = CORE_MEMBERS.map(m=>`
+    <div class="member-card ${m.role}">
+      <div class="mc-av ${m.avClass}">${m.name.slice(0,2)}</div>
+      <div class="mc-name">${m.name}</div>
+      <div class="mc-dept">${m.dept} · <span class="badge ${badgeMap[m.role]}">${m.role_label}</span></div>
+      <div class="mc-desc">${m.desc}</div>
+      <div class="mc-skills">${m.skills.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+function renderAttend(){
+  const nowM = new Date().getMonth()-4; // 5월=0
+  let totalO=0, total=0;
+  document.getElementById('attend-body').innerHTML = CORE_MEMBERS.map(m=>{
+    const done = m.attend.filter(v=>v===1).length;
+    const possible = Math.min(nowM+1,8);
+    const rate = possible>0?Math.round(done/possible*100):0;
+    totalO+=done; total+=possible;
+    const dots = m.attend.map((v,i)=>{
+      const cls = i>nowM?'yet':v?'o':'x';
+      return `<td style="text-align:center"><div class="attend-dot ${cls}" title="${MONTHS[i]}: ${cls==='yet'?'예정':cls==='o'?'출석':'결석'}"></div></td>`;
+    }).join('');
+    return `<tr><td><strong>${m.name}</strong><br><span style="font-size:.72rem;color:var(--ink3)">${m.dept}</span></td>${dots}<td><strong>${rate}%</strong></td></tr>`;
+  }).join('');
+  const avgRate = total>0?Math.round(totalO/total*100):0;
+  document.getElementById('total-attend').textContent = totalO;
+  document.getElementById('avg-rate').textContent = avgRate+'%';
+}
+
+async function loadRegistered(){
+  if(CFG.isMock){
+    document.getElementById('reg-body').innerHTML=`
+      <tr><td>지현석</td><td>jihyun@company.kr</td><td>정보화팀</td><td>2026-04-28</td><td><span class="badge bdg-lime">활동중</span></td></tr>
+      <tr><td>최효진</td><td>choi@company.kr</td><td>시설평가부</td><td>2026-04-28</td><td><span class="badge bdg-lime">활동중</span></td></tr>
+      <tr><td>이찬영</td><td>lee@company.kr</td><td>시설평가부</td><td>2026-04-29</td><td><span class="badge bdg-lime">활동중</span></td></tr>
+      <tr><td>유병찬</td><td>yoo@company.kr</td><td>혁신기획부</td><td>2026-04-29</td><td><span class="badge bdg-lime">활동중</span></td></tr>
+      <tr><td>조유리</td><td>cho@company.kr</td><td>지역협력부</td><td>2026-04-30</td><td><span class="badge bdg-lime">활동중</span></td></tr>`;
+    return;
+  }
+  try{
+    const data=await apiGet({action:'getMembers'});
+    if(!Array.isArray(data)||!data.length){document.getElementById('reg-body').innerHTML=`<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--ink4)">가입 회원 없음</td></tr>`;return;}
+    document.getElementById('reg-body').innerHTML=data.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.email)}</td><td>${esc(m.dept||'-')}</td><td>${fmtDateShort(m.joined_at)}</td><td><span class="badge bdg-lime">활동중</span></td></tr>`).join('');
+  }catch{document.getElementById('reg-body').innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--ink4)">오류 발생</td></tr>`}
+}
+
+function sendInvite(){
+  const url=location.origin+'/pages/register.html';
+  navigator.clipboard.writeText(url).then(()=>{toast('가입 링크가 복사됐습니다!','s');closeModal('invite-modal');}).catch(()=>toast('복사 실패. 수동으로 복사해주세요.','e'));
+}
+
+renderCards();renderAttend();loadRegistered();
+</script>
+</body>
+</html>

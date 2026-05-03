@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 공모전 — GenAI 동아리</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.contest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.contest-card{
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);
+  padding:1.4rem;display:flex;flex-direction:column;gap:.5rem;
+  transition:all .2s;
+}
+.contest-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow2)}
+.contest-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.cc-title{font-weight:700;font-size:.95rem;line-height:1.45;flex:1}
+.cc-org{font-size:.78rem;color:var(--ink3)}
+.cc-desc{font-size:.8rem;color:var(--ink2);line-height:1.7;flex:1}
+.cc-meta{display:flex;justify-content:space-between;align-items:center;margin-top:.4rem}
+.cc-deadline{font-size:.75rem;font-weight:700}
+.cc-deadline.urgent{color:var(--coral)}
+.cc-deadline.soon{color:var(--amber)}
+.cc-deadline.ok{color:var(--ink3)}
+.cc-link{font-size:.78rem;font-weight:700;color:var(--ink);text-decoration:none;font-family:'Syne',sans-serif}
+.cc-link:hover{color:var(--lime2)}
+.filter-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.flt{
+  padding:5px 14px;border-radius:20px;font-size:.75rem;font-weight:600;
+  border:1.5px solid var(--border);background:var(--bg2);color:var(--ink3);
+  cursor:pointer;transition:all .18s;font-family:'Noto Sans KR',sans-serif;
+}
+.flt.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}
+.dday-badge{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-family:'Syne',sans-serif;font-size:.65rem;font-weight:800;
+}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="nav-logo" href="../index.html"><div class="logo-dot">AI</div>GENAI 동아리</a>
+  <div class="nav-links">
+    <a href="intro.html">소개</a><a href="schedule.html">일정</a>
+    <a href="vote.html">투표</a><a href="news.html">뉴스</a>
+    <a href="meeting.html">회의록</a><a href="board.html">게시판</a>
+  </div>
+  <button class="nav-btn nav-btn-ghost" onclick="location.href='admin.html'">⚙ 관리자</button>
+  <button class="nav-btn nav-btn-primary" onclick="location.href='register.html'">회원가입</button>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-sec"><div class="sidebar-sec-label">동아리 소개</div>
+    <a class="sidebar-link" href="intro.html"><span class="sidebar-icon">🏠</span>개요·비전</a>
+    <a class="sidebar-link" href="schedule.html"><span class="sidebar-icon">📅</span>학습 일정</a>
+    <a class="sidebar-link" href="members.html"><span class="sidebar-icon">👥</span>멤버 현황</a>
+    <a class="sidebar-link" href="notice.html"><span class="sidebar-icon">📣</span>공지사항</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">학습 활동</div>
+    <a class="sidebar-link" href="vote.html"><span class="sidebar-icon">🗳️</span>대면일 투표</a>
+    <a class="sidebar-link" href="meeting.html"><span class="sidebar-icon">📝</span>회의록</a>
+    <a class="sidebar-link" href="idea.html"><span class="sidebar-icon">💡</span>아이디어 보드</a>
+    <a class="sidebar-link" href="task.html"><span class="sidebar-icon">✅</span>과제·To-Do</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">정보 공유</div>
+    <a class="sidebar-link" href="news.html"><span class="sidebar-icon">📰</span>AI 뉴스</a>
+    <a class="sidebar-link active" href="contest.html" data-p="contest.html"><span class="sidebar-icon">🏅</span>AI 공모전</a>
+    <a class="sidebar-link" href="board.html"><span class="sidebar-icon">💬</span>자유 게시판</a>
+    <a class="sidebar-link" href="resource.html"><span class="sidebar-icon">📎</span>자료실</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">운영 관리</div>
+    <a class="sidebar-link" href="admin.html"><span class="sidebar-icon">🛡️</span>관리자</a>
+    <a class="sidebar-link" href="register.html"><span class="sidebar-icon">🙋</span>회원가입</a>
+  </div>
+</aside>
+<div class="page-wrap">
+<div class="page-body">
+  <div class="page-hd">
+    <div class="breadcrumb">홈 <span class="sep">›</span> 정보 공유 <span class="sep">›</span> AI 공모전</div>
+    <h1>AI 공모전</h1>
+    <p>공공기관·지자체·민간 AI 활용 공모전 정보를 한눈에 확인하세요. 관리자가 Sheets에서 직접 관리합니다.</p>
+    <div class="page-hd-actions">
+      <button class="btn btn-ghost btn-sm" onclick="openModal('add-contest-modal')">+ 공모전 등록 (관리자)</button>
+    </div>
+  </div>
+  <div class="grid-4 mb-3">
+    <div class="stat-card"><div class="stat-num" id="cc-total">0</div><div class="stat-label">전체 공모전</div></div>
+    <div class="stat-card"><div class="stat-num c-coral" id="cc-urgent">0</div><div class="stat-label">마감 임박 (7일)</div></div>
+    <div class="stat-card"><div class="stat-num" id="cc-open">0</div><div class="stat-label">진행 중</div></div>
+    <div class="stat-card"><div class="stat-num" id="cc-closed">0</div><div class="stat-label">마감</div></div>
+  </div>
+  <div class="filter-row">
+    <button class="flt on" onclick="fltContest('all',this)">전체</button>
+    <button class="flt" onclick="fltContest('중앙부처',this)">중앙부처</button>
+    <button class="flt" onclick="fltContest('공공기관',this)">공공기관</button>
+    <button class="flt" onclick="fltContest('지자체',this)">지자체</button>
+    <button class="flt" onclick="fltContest('민간',this)">민간</button>
+    <button class="flt" onclick="fltContest('open',this)">🟢 진행 중</button>
+  </div>
+  <div class="contest-grid" id="contest-grid"><div class="loading-row"><div class="spin"></div></div></div>
+</div>
+</div>
+
+<div class="overlay" id="add-contest-modal">
+  <div class="modal modal-lg">
+    <div class="modal-hd"><h3>공모전 등록</h3><p>공모전 정보를 입력하세요. Sheets에 저장됩니다.</p></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">공모전명 <span class="req">*</span></label><input type="text" id="co-title" placeholder="공모전 이름"></div>
+      <div class="form-group"><label class="form-label">주최기관 <span class="req">*</span></label><input type="text" id="co-org" placeholder="행정안전부"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">카테고리</label><select id="co-cat"><option>중앙부처</option><option>공공기관</option><option>지자체</option><option>민간</option></select></div>
+      <div class="form-group"><label class="form-label">마감일</label><input type="date" id="co-deadline"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">시상금·혜택</label><input type="text" id="co-prize" placeholder="최우수 500만원"></div>
+      <div class="form-group"><label class="form-label">공모전 URL</label><input type="url" id="co-url" placeholder="https://..."></div>
+    </div>
+    <div class="form-group"><label class="form-label">설명</label><textarea id="co-desc" rows="3" placeholder="공모전 개요, 지원 자격 등"></textarea></div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('add-contest-modal')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="addContest()">등록</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/common.js"></script>
+<script>
+let contests=[];
+const MOCK_CONTESTS=[
+  {id:1,title:'2026 공공데이터 AI 활용 아이디어 공모전',org:'행정안전부',cat:'중앙부처',deadline:'2026-08-31',prize:'장관상·500만원',url:'#',desc:'공공데이터와 AI를 결합한 혁신 서비스 아이디어 발굴. 공공기관 소속 누구나 참여 가능.'},
+  {id:2,title:'스마트시티 AI 솔루션 경진대회',org:'국토교통부',cat:'중앙부처',deadline:'2026-09-15',prize:'최우수·300만원',url:'#',desc:'도시 문제 해결을 위한 AI 솔루션 개발 및 시연.'},
+  {id:3,title:'서울시 AI 혁신 서비스 공모전',org:'서울특별시',cat:'지자체',deadline:'2026-07-05',prize:'시장상·200만원',url:'#',desc:'서울시민 생활 편의 향상을 위한 AI 서비스 개발.'},
+  {id:4,title:'공공기관 AI 업무혁신 사례 공모전',org:'NIA',cat:'공공기관',deadline:'2026-10-31',prize:'우수상·표창장',url:'#',desc:'AI 도입을 통한 업무혁신 우수 사례 발굴 및 공유.'},
+  {id:5,title:'생성형 AI 앱 개발 해커톤',org:'카카오',cat:'민간',deadline:'2026-07-20',prize:'대상·1,000만원',url:'#',desc:'Claude·GPT API 활용 혁신 서비스 개발 경쟁. 48시간 해커톤.'},
+  {id:6,title:'지역 AI 디지털 혁신 공모전',org:'경기도',cat:'지자체',deadline:'2026-08-10',prize:'도지사상·150만원',url:'#',desc:'경기도 소재 공공기관 AI 기반 지역사회 혁신 아이디어.'},
+];
+
+function ddayClass(d){if(!d)return'ok';const diff=Math.ceil((new Date(d)-new Date())/86400000);return diff<0?'closed':diff<=7?'urgent':diff<=30?'soon':'ok'}
+function ddayLabel(d){const v=dDay(d);return v}
+function deadlineClass(d){const c=ddayClass(d);return{closed:'c-muted',urgent:'urgent',soon:'soon',ok:'ok'}[c]}
+
+function renderContests(list){
+  const el=document.getElementById('contest-grid');
+  if(!list.length){el.innerHTML=emptyHTML('🏅','공모전 정보가 없습니다.');return;}
+  const now=new Date();
+  const catBdg={중앙부처:'bdg-ink',공공기관:'bdg-sky',지자체:'bdg-lime',민간:'bdg-amber'};
+  el.innerHTML=list.map(c=>{
+    const dd=dDay(c.deadline),isClosed=dd==='마감';
+    return`<div class="contest-card">
+      <div class="contest-card-top">
+        <div><span class="badge ${catBdg[c.cat]||'bdg-ghost'}">${esc(c.cat)}</span></div>
+        <span class="dday-badge ${ddayClass(c.deadline)==='urgent'?'bdg-coral':ddayClass(c.deadline)==='soon'?'bdg-amber':'bdg-ghost'}" style="white-space:nowrap">${dd}</span>
+      </div>
+      <div class="cc-title">${esc(c.title)}</div>
+      <div class="cc-org">📌 ${esc(c.org)}</div>
+      ${c.desc?`<div class="cc-desc">${esc(c.desc)}</div>`:''}
+      <div class="cc-meta">
+        <span class="cc-deadline ${deadlineClass(c.deadline)}">🗓 마감: ${c.deadline||'미정'}</span>
+        ${c.prize?`<span class="txs c-muted">🏆 ${esc(c.prize)}</span>`:''}
+      </div>
+      ${c.url&&c.url!=='#'?`<a class="cc-link" href="${esc(c.url)}" target="_blank">자세히 보기 ↗</a>`:''}
+    </div>`;
+  }).join('');
+  const now2=new Date();
+  document.getElementById('cc-total').textContent=contests.length;
+  document.getElementById('cc-urgent').textContent=contests.filter(c=>c.deadline&&Math.ceil((new Date(c.deadline)-now2)/86400000)<=7&&Math.ceil((new Date(c.deadline)-now2)/86400000)>=0).length;
+  document.getElementById('cc-open').textContent=contests.filter(c=>!c.deadline||new Date(c.deadline)>=now2).length;
+  document.getElementById('cc-closed').textContent=contests.filter(c=>c.deadline&&new Date(c.deadline)<now2).length;
+}
+
+function fltContest(f,btn){
+  document.querySelectorAll('.flt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const now=new Date();
+  if(f==='all')renderContests(contests);
+  else if(f==='open')renderContests(contests.filter(c=>!c.deadline||new Date(c.deadline)>=now));
+  else renderContests(contests.filter(c=>c.cat===f));
+}
+
+async function addContest(){
+  const title=document.getElementById('co-title').value.trim();
+  const org=document.getElementById('co-org').value.trim();
+  if(!title||!org){toast('공모전명과 주최기관은 필수입니다.','e');return;}
+  const c={id:Date.now(),title,org,cat:document.getElementById('co-cat').value,deadline:document.getElementById('co-deadline').value,prize:document.getElementById('co-prize').value.trim(),url:document.getElementById('co-url').value.trim(),desc:document.getElementById('co-desc').value.trim()};
+  contests.unshift(c);renderContests(contests);closeModal('add-contest-modal');toast('공모전이 등록됐습니다!','s');
+  if(!CFG.isMock)await apiPost({action:'addContest',...c}).catch(()=>{});
+}
+
+async function load(){
+  if(CFG.isMock){contests=MOCK_CONTESTS;renderContests(contests);return;}
+  try{const d=await apiGet({action:'getContests'});contests=Array.isArray(d)?d:[];renderContests(contests);}
+  catch{contests=MOCK_CONTESTS;renderContests(contests);}
+}
+load();
+</script>
+</body>
+</html>

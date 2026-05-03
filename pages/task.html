@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>과제·To-Do — GenAI 동아리</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:768px){.kanban{grid-template-columns:1fr}}
+.kanban-col{background:var(--bg3);border-radius:var(--r);padding:1rem;min-height:300px}
+.kanban-col-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:.75rem;padding-bottom:.75rem;border-bottom:1.5px solid var(--border);
+}
+.kanban-col-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;display:flex;align-items:center;gap:.4rem}
+.kanban-col-cnt{
+  background:var(--ink);color:var(--lime);
+  font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;
+  padding:1px 7px;border-radius:10px;
+}
+.task-card{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:var(--r2);padding:1rem;margin-bottom:.6rem;
+  transition:all .18s;cursor:grab;
+}
+.task-card:hover{border-color:var(--border2);box-shadow:var(--shadow);transform:translateY(-1px)}
+.task-card.done .task-title{text-decoration:line-through;color:var(--ink4)}
+.task-title{font-weight:600;font-size:.88rem;margin-bottom:.3rem;line-height:1.4}
+.task-meta{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-top:.5rem}
+.task-due{font-size:.7rem;color:var(--ink3)}
+.task-due.overdue{color:var(--coral);font-weight:700}
+.task-actions{display:flex;gap:.3rem;margin-top:.6rem}
+.priority-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.p-high{background:var(--coral)}.p-mid{background:var(--amber)}.p-low{background:var(--lime2)}
+
+.filter-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.flt-btn{
+  padding:5px 14px;border-radius:20px;font-size:.75rem;font-weight:600;
+  border:1.5px solid var(--border);background:var(--bg2);color:var(--ink3);
+  cursor:pointer;transition:all .18s;font-family:'Noto Sans KR',sans-serif;
+}
+.flt-btn.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}
+.flt-btn:hover:not(.on){background:var(--bg3)}
+.view-toggle{display:flex;gap:.3rem}
+.vt-btn{
+  padding:6px 12px;border-radius:var(--r3);font-size:.75rem;border:1.5px solid var(--border);
+  background:var(--bg2);cursor:pointer;transition:all .18s;color:var(--ink3);
+  font-family:'Noto Sans KR',sans-serif;
+}
+.vt-btn.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="nav-logo" href="../index.html"><div class="logo-dot">AI</div>GENAI 동아리</a>
+  <div class="nav-links">
+    <a href="intro.html">소개</a><a href="schedule.html">일정</a>
+    <a href="vote.html">투표</a><a href="news.html">뉴스</a>
+    <a href="meeting.html">회의록</a><a href="board.html">게시판</a>
+  </div>
+  <button class="nav-btn nav-btn-ghost" onclick="location.href='admin.html'">⚙ 관리자</button>
+  <button class="nav-btn nav-btn-primary" onclick="location.href='register.html'">회원가입</button>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-sec"><div class="sidebar-sec-label">동아리 소개</div>
+    <a class="sidebar-link" href="intro.html"><span class="sidebar-icon">🏠</span>개요·비전</a>
+    <a class="sidebar-link" href="schedule.html"><span class="sidebar-icon">📅</span>학습 일정</a>
+    <a class="sidebar-link" href="members.html"><span class="sidebar-icon">👥</span>멤버 현황</a>
+    <a class="sidebar-link" href="notice.html"><span class="sidebar-icon">📣</span>공지사항</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">학습 활동</div>
+    <a class="sidebar-link" href="vote.html"><span class="sidebar-icon">🗳️</span>대면일 투표</a>
+    <a class="sidebar-link" href="meeting.html"><span class="sidebar-icon">📝</span>회의록</a>
+    <a class="sidebar-link" href="idea.html"><span class="sidebar-icon">💡</span>아이디어 보드</a>
+    <a class="sidebar-link active" href="task.html" data-p="task.html"><span class="sidebar-icon">✅</span>과제·To-Do</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">정보 공유</div>
+    <a class="sidebar-link" href="news.html"><span class="sidebar-icon">📰</span>AI 뉴스</a>
+    <a class="sidebar-link" href="contest.html"><span class="sidebar-icon">🏅</span>AI 공모전</a>
+    <a class="sidebar-link" href="board.html"><span class="sidebar-icon">💬</span>자유 게시판</a>
+    <a class="sidebar-link" href="resource.html"><span class="sidebar-icon">📎</span>자료실</a>
+  </div>
+  <div class="sidebar-sec"><div class="sidebar-sec-label">운영 관리</div>
+    <a class="sidebar-link" href="admin.html"><span class="sidebar-icon">🛡️</span>관리자</a>
+    <a class="sidebar-link" href="register.html"><span class="sidebar-icon">🙋</span>회원가입</a>
+  </div>
+</aside>
+
+<div class="page-wrap">
+<div class="page-body">
+  <div class="page-hd">
+    <div class="breadcrumb">홈 <span class="sep">›</span> 학습 활동 <span class="sep">›</span> 과제·To-Do</div>
+    <h1>과제 · To-Do</h1>
+    <p>개인 및 팀 과제를 등록하고 진행 현황을 추적합니다.</p>
+    <div class="page-hd-actions">
+      <div class="view-toggle">
+        <button class="vt-btn on" id="vt-kanban" onclick="setView('kanban')">칸반 보드</button>
+        <button class="vt-btn" id="vt-list" onclick="setView('list')">목록 보기</button>
+      </div>
+      <button class="btn btn-lime" onclick="openModal('add-task-modal')">+ 과제 추가</button>
+    </div>
+  </div>
+
+  <!-- 통계 -->
+  <div class="grid-4 mb-3">
+    <div class="stat-card"><div class="stat-num" id="st-total">0</div><div class="stat-label">전체 과제</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-done">0</div><div class="stat-label">완료</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-prog">0</div><div class="stat-label">진행 중</div></div>
+    <div class="stat-card"><div class="stat-num c-coral" id="st-over">0</div><div class="stat-label">기한 초과</div></div>
+  </div>
+
+  <!-- 필터 -->
+  <div class="filter-bar mb-2">
+    <button class="flt-btn on" onclick="filterTask('all',this)">전체</button>
+    <button class="flt-btn" onclick="filterTask('개인',this)">개인 과제</button>
+    <button class="flt-btn" onclick="filterTask('팀',this)">팀 과제</button>
+    <button class="flt-btn" onclick="filterTask('high',this)">🔴 긴급</button>
+  </div>
+
+  <!-- 칸반 보드 -->
+  <div id="view-kanban">
+    <div class="kanban">
+      <div class="kanban-col">
+        <div class="kanban-col-hd">
+          <div class="kanban-col-title">📋 할 일 <span class="kanban-col-cnt" id="cnt-todo">0</span></div>
+        </div>
+        <div id="col-todo"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-hd">
+          <div class="kanban-col-title">⚙ 진행 중 <span class="kanban-col-cnt" id="cnt-prog">0</span></div>
+        </div>
+        <div id="col-prog"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-hd">
+          <div class="kanban-col-title">✅ 완료 <span class="kanban-col-cnt" id="cnt-done">0</span></div>
+        </div>
+        <div id="col-done"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 목록 보기 -->
+  <div id="view-list" style="display:none">
+    <div class="tbl-box">
+      <table class="tbl">
+        <thead><tr><th>우선순위</th><th>과제명</th><th>담당</th><th>유형</th><th>기한</th><th>상태</th><th>액션</th></tr></thead>
+        <tbody id="task-tbl-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 과제 추가 모달 -->
+<div class="overlay" id="add-task-modal">
+  <div class="modal">
+    <div class="modal-hd"><h3>+ 과제 추가</h3><p>새 과제 또는 To-Do를 등록합니다.</p></div>
+    <div class="form-group"><label class="form-label">과제명 <span class="req">*</span></label><input type="text" id="t-title" placeholder="과제 내용을 간략히 입력하세요"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">유형</label>
+        <select id="t-type"><option>개인</option><option>팀</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">우선순위</label>
+        <select id="t-priority"><option value="high">🔴 높음</option><option value="mid" selected>🟡 중간</option><option value="low">🟢 낮음</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">담당자</label><input type="text" id="t-assignee" placeholder="이름 입력"></div>
+      <div class="form-group"><label class="form-label">기한</label><input type="date" id="t-due"></div>
+    </div>
+    <div class="form-group"><label class="form-label">설명</label><textarea id="t-desc" rows="2" placeholder="추가 설명 (선택)"></textarea></div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('add-task-modal')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="addTask()">등록</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/common.js"></script>
+<script>
+let tasks=[];
+let currentView='kanban';
+let currentFilter='all';
+const MOCK_TASKS=[
+  {id:1,title:'Claude API 계정 발급 및 키 발급',type:'개인',priority:'high',assignee:'전체',due:'2026-06-30',status:'todo',desc:'다음 모임 전까지 각자 Claude API 키 발급'},
+  {id:2,title:'6월 회의록 초안 작성',type:'개인',priority:'mid',assignee:'최효진',due:'2026-06-15',status:'prog',desc:''},
+  {id:3,title:'프롬프트 엔지니어링 실습 자료 정리',type:'팀',priority:'mid',assignee:'지현석',due:'2026-06-20',status:'prog',desc:'5월 실습 내용 정리 후 자료실 업로드'},
+  {id:4,title:'5월 킥오프 회의록 작성',type:'개인',priority:'low',assignee:'최효진',due:'2026-05-20',status:'done',desc:''},
+  {id:5,title:'AI 도구 비교 보고서',type:'팀',priority:'mid',assignee:'유병찬',due:'2026-05-31',status:'done',desc:'ChatGPT vs Claude vs Gemini 비교'},
+  {id:6,title:'RAG 개념 사전 학습',type:'개인',priority:'high',assignee:'전체',due:'2026-07-10',status:'todo',desc:'8월 모임 전까지 RAG 기초 개념 학습'},
+];
+
+function pDot(p){return`<div class="priority-dot p-${p}" title="${{high:'높음',mid:'중간',low:'낮음'}[p]}"></div>`}
+function dueCls(d){if(!d)return'';const diff=(new Date(d)-new Date())/86400000;return diff<0?'overdue':''}
+
+function renderKanban(list){
+  const todo=list.filter(t=>t.status==='todo');
+  const prog=list.filter(t=>t.status==='prog');
+  const done=list.filter(t=>t.status==='done');
+  const card=(t)=>`
+    <div class="task-card ${t.status==='done'?'done':''}" data-id="${t.id}">
+      <div style="display:flex;align-items:flex-start;gap:.5rem">
+        ${pDot(t.priority)}
+        <div class="task-title">${esc(t.title)}</div>
+      </div>
+      <div class="task-meta">
+        <span class="badge ${t.type==='팀'?'bdg-sky':'bdg-ghost'}">${t.type}</span>
+        ${t.assignee?`<span class="txs c-muted">${esc(t.assignee)}</span>`:''}
+        ${t.due?`<span class="task-due ${dueCls(t.due)}">📅 ${t.due}</span>`:''}
+      </div>
+      <div class="task-actions">
+        ${t.status!=='done'?`<button class="btn btn-xs btn-lime" onclick="moveTask(${t.id},'${t.status==='todo'?'prog':'done'}')">→ ${t.status==='todo'?'진행':'완료'}</button>`:''}
+        ${t.status==='done'?`<button class="btn btn-xs btn-ghost" onclick="moveTask(${t.id},'todo')">↩ 되돌리기</button>`:''}
+        <button class="btn btn-xs btn-danger" onclick="deleteTask(${t.id})">삭제</button>
+      </div>
+    </div>`;
+  ['todo','prog','done'].forEach((s,i)=>{
+    const cols=[todo,prog,done][i];
+    document.getElementById('col-'+s).innerHTML=cols.map(card).join('')||`<div style="text-align:center;padding:1.5rem;color:var(--ink4);font-size:.78rem">과제 없음</div>`;
+    document.getElementById('cnt-'+s).textContent=cols.length;
+  });
+}
+
+function renderList(list){
+  const prMap={high:'🔴',mid:'🟡',low:'🟢'};
+  const stMap={todo:'<span class="badge bdg-ghost">할 일</span>',prog:'<span class="badge bdg-amber">진행 중</span>',done:'<span class="badge bdg-lime">완료</span>'};
+  document.getElementById('task-tbl-body').innerHTML=list.map(t=>`
+    <tr>
+      <td>${prMap[t.priority]||'—'}</td>
+      <td><strong>${esc(t.title)}</strong>${t.desc?`<br><span class="txs c-muted">${esc(t.desc)}</span>`:''}</td>
+      <td>${esc(t.assignee||'-')}</td>
+      <td><span class="badge ${t.type==='팀'?'bdg-sky':'bdg-ghost'}">${t.type}</span></td>
+      <td class="${dueCls(t.due)}">${t.due||'-'}</td>
+      <td>${stMap[t.status]}</td>
+      <td style="display:flex;gap:.3rem">
+        ${t.status!=='done'?`<button class="btn btn-xs btn-lime" onclick="moveTask(${t.id},'${t.status==='todo'?'prog':'done'}')">→</button>`:''}
+        <button class="btn btn-xs btn-danger" onclick="deleteTask(${t.id})">삭제</button>
+      </td>
+    </tr>`).join('');
+}
+
+function updateStats(list){
+  const now=new Date();
+  document.getElementById('st-total').textContent=list.length;
+  document.getElementById('st-done').textContent=list.filter(t=>t.status==='done').length;
+  document.getElementById('st-prog').textContent=list.filter(t=>t.status==='prog').length;
+  document.getElementById('st-over').textContent=list.filter(t=>t.status!=='done'&&t.due&&new Date(t.due)<now).length;
+}
+
+function getFiltered(){
+  if(currentFilter==='all') return tasks;
+  if(currentFilter==='high') return tasks.filter(t=>t.priority==='high'&&t.status!=='done');
+  return tasks.filter(t=>t.type===currentFilter);
+}
+
+function render(){
+  const list=getFiltered();
+  updateStats(tasks);
+  if(currentView==='kanban') renderKanban(list);
+  else renderList(list);
+}
+
+function setView(v){
+  currentView=v;
+  document.getElementById('view-kanban').style.display=v==='kanban'?'block':'none';
+  document.getElementById('view-list').style.display=v==='list'?'block':'none';
+  document.getElementById('vt-kanban').classList.toggle('on',v==='kanban');
+  document.getElementById('vt-list').classList.toggle('on',v==='list');
+  render();
+}
+
+function filterTask(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+async function addTask(){
+  const title=document.getElementById('t-title').value.trim();
+  if(!title){toast('과제명을 입력해 주세요.','e');return;}
+  const t={
+    id:Date.now(),
+    title,type:document.getElementById('t-type').value,
+    priority:document.getElementById('t-priority').value,
+    assignee:document.getElementById('t-assignee').value.trim(),
+    due:document.getElementById('t-due').value,
+    desc:document.getElementById('t-desc').value.trim(),
+    status:'todo'
+  };
+  tasks.unshift(t);
+  if(!CFG.isMock) await apiPost({action:'addTask',...t}).catch(()=>{});
+  render(); closeModal('add-task-modal'); toast('과제가 등록됐습니다!','s');
+  ['t-title','t-assignee','t-due','t-desc'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function moveTask(id,status){
+  const t=tasks.find(x=>x.id==id);if(!t)return;
+  t.status=status;
+  if(!CFG.isMock) await apiPost({action:'updateTask',id,status}).catch(()=>{});
+  render(); toast(status==='done'?'완료 처리됐습니다! ✅':'상태가 변경됐습니다.','s');
+}
+
+async function deleteTask(id){
+  if(!await confirm2('이 과제를 삭제할까요?'))return;
+  tasks=tasks.filter(t=>t.id!=id);
+  if(!CFG.isMock) await apiPost({action:'deleteTask',id}).catch(()=>{});
+  render(); toast('삭제됐습니다.','s');
+}
+
+tasks=MOCK_TASKS;render();
+</script>
+</body>
+</html>
