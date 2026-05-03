@@ -1,203 +1,232 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>동아리 소개 — GenAI 학습동아리</title>
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Fraunces:ital,wght@0,300;0,700;1,300;1,700&display=swap" rel="stylesheet">
 <style>
-.member-card {
-  display: flex; gap: 1rem; align-items: flex-start;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 1.25rem;
-  transition: all .2s;
-}
-.member-card:hover { border-color: var(--border2); transform: translateY(-2px); }
-.member-av {
-  width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
-  background: var(--em-dim); border: 1px solid rgba(0,212,160,.25);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; color: var(--em); font-size: .95rem;
-}
-.member-name { font-weight: 700; color: var(--text); }
-.member-dept { font-size: .78rem; color: var(--text2); }
-.member-role { }
+:root{--bg:#080c14;--bg2:#0e1520;--bg3:#141d2b;--bg4:#1a2538;--mint:#00e5c3;--mint2:#00b89e;--mint-dim:rgba(0,229,195,.12);--blue:#4a9eff;--text:#e2e8f0;--text2:#94a3b8;--text3:#4a5568;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);--danger:#ff5c5c;--warn:#ffb647;--r:12px;--r2:8px;--nav-h:62px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.7;overflow-x:hidden;}
+a{color:inherit;text-decoration:none}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;padding:0 clamp(1rem,4vw,2rem);gap:.75rem;background:rgba(8,12,20,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Fraunces',serif;font-style:italic;font-size:1.1rem;color:var(--mint);margin-right:auto;}
+.nav-links{display:flex;gap:2px;flex-wrap:nowrap;}
+.nav-links a{color:var(--text2);font-size:.78rem;padding:5px 10px;border-radius:20px;transition:color .2s,background .2s;white-space:nowrap;}
+.nav-links a:hover{color:var(--text);background:var(--bg4)}
+.nav-links a.active{color:var(--mint);background:var(--mint-dim)}
+.nav-join{background:var(--mint);color:#080c14;font-size:.78rem;font-weight:700;padding:6px 16px;border-radius:20px;transition:background .2s;}
+.nav-join:hover{background:var(--mint2)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;border:none;background:transparent;}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text2);border-radius:2px;transition:all .3s;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-drawer{position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;z-index:499;background:rgba(8,12,20,.98);backdrop-filter:blur(20px);padding:2rem 1.5rem;display:flex;flex-direction:column;gap:.5rem;transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);overflow-y:auto;}
+.mobile-drawer.open{transform:translateX(0)}
+.mobile-drawer a{color:var(--text2);font-size:1.1rem;font-weight:500;padding:1rem;border-radius:var(--r2);border:1px solid var(--border);transition:all .2s;display:block;}
+.mobile-drawer a:hover{color:var(--mint);border-color:var(--mint-dim);background:var(--mint-dim)}
+.mobile-drawer .m-join{background:var(--mint);color:#080c14;font-weight:700;border-color:var(--mint);margin-top:.5rem;text-align:center;}
+/* LAYOUT */
+.page{padding-top:var(--nav-h);}
+.container{max-width:960px;margin:0 auto;padding:3rem clamp(1.25rem,4vw,2.5rem);}
+/* PAGE HERO */
+.page-hero{background:linear-gradient(135deg,var(--bg2),var(--bg3));border-bottom:1px solid var(--border);padding:4rem clamp(1.25rem,4vw,2.5rem) 3rem;text-align:center;}
+.page-hero .label{display:inline-block;background:var(--mint-dim);color:var(--mint);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:1rem;}
+.page-hero h1{font-family:'Fraunces',serif;font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;letter-spacing:-.02em;margin-bottom:.75rem;}
+.page-hero p{color:var(--text2);font-size:.95rem;max-width:520px;margin:0 auto;}
+/* SECTIONS */
+.sec{margin-bottom:3rem;}
+.sec-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:1.25rem;color:var(--text);display:flex;align-items:center;gap:.5rem;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+/* VISION GRID */
+.vision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+.vision-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;text-align:center;transition:border-color .2s,transform .2s;}
+.vision-item:hover{border-color:var(--border2);transform:translateY(-2px)}
+.vision-num{font-family:'Fraunces',serif;font-size:3rem;color:var(--mint);line-height:1;margin-bottom:.5rem;}
+.vision-title{font-weight:700;font-size:.95rem;margin-bottom:.4rem;}
+.vision-desc{font-size:.82rem;color:var(--text2);line-height:1.65;}
+/* MEMBER CARDS */
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;}
+.member-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;display:flex;gap:1rem;transition:border-color .2s,transform .2s;}
+.member-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.m-av{width:52px;height:52px;border-radius:50%;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--mint);font-size:.95rem;flex-shrink:0;}
+.m-name{font-weight:700;font-size:1rem;margin-bottom:.2rem;}
+.m-dept{font-size:.78rem;color:var(--text2);margin-bottom:.5rem;}
+.m-role{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.7rem;font-weight:600;}
+.role-leader{background:rgba(0,229,195,.15);color:var(--mint)}
+.role-manager{background:rgba(74,158,255,.15);color:var(--blue)}
+.role-member{background:var(--bg3);color:var(--text2)}
+.m-desc{font-size:.82rem;color:var(--text2);line-height:1.65;margin-top:.5rem;}
+/* INFO CARDS */
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
+.info-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;}
+.info-card-icon{font-size:1.5rem;margin-bottom:.6rem;}
+.info-card-label{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mint);margin-bottom:.3rem;}
+.info-card-title{font-weight:700;font-size:.95rem;margin-bottom:.4rem;}
+.info-card p{font-size:.85rem;color:var(--text2);line-height:1.7;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:500;background:var(--bg4);color:var(--text2);margin:2px 2px 2px 0;}
+/* PHASE TIMELINE */
+.phase-list{display:flex;flex-direction:column;gap:.75rem;}
+.phase-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem 1.4rem;display:flex;gap:1rem;align-items:flex-start;}
+.phase-num{font-family:'Fraunces',serif;font-size:1.8rem;color:var(--mint);line-height:1;flex-shrink:0;width:40px;}
+.phase-title{font-weight:700;margin-bottom:.3rem;}
+.phase-desc{font-size:.85rem;color:var(--text2);line-height:1.65;}
+/* SCHEDULE TABLE */
+.schedule-wrap{overflow-x:auto;}
+.sched-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+.sched-table th{background:var(--bg3);color:var(--text2);padding:9px 14px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
+.sched-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.sched-table tr:last-child td{border-bottom:none}
+.sched-table tr:hover td{background:var(--bg3)}
+.month-badge{display:inline-block;min-width:44px;background:var(--mint-dim);color:var(--mint);font-weight:700;font-size:.78rem;padding:2px 8px;border-radius:20px;text-align:center;}
+.month-badge.current{background:rgba(0,229,195,.35);}
+/* FOOTER */
+.site-footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--text3);font-size:.78rem;margin-top:2rem;}
+.site-footer a{color:var(--text2);}
+.site-footer a:hover{color:var(--mint)}
+/* BREADCRUMB */
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--text2);margin-bottom:1.5rem;flex-wrap:wrap;}
+.breadcrumb a{color:var(--text2);}
+.breadcrumb a:hover{color:var(--mint)}
+.breadcrumb .sep{color:var(--text3);}
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--r2);font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid transparent;font-family:'Noto Sans KR',sans-serif;}
+.btn-primary{background:var(--mint);color:#080c14;border-color:var(--mint);}
+.btn-primary:hover{background:var(--mint2);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border2);}
+.btn-ghost:hover{background:var(--bg4)}
 
-.vision-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1rem; }
-@media(max-width:640px){ .vision-row { grid-template-columns: 1fr; } }
-
-.vision-block {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 1.4rem; text-align: center;
-}
-.vision-icon { font-size: 1.8rem; margin-bottom: .5rem; }
-.vision-num {
-  font-family: 'Fraunces', serif; font-size: 2.2rem;
-  color: var(--em); line-height: 1; margin-bottom: .3rem;
-}
-.vision-title { font-weight: 700; font-size: .9rem; margin-bottom: .4rem; }
-.vision-desc { font-size: .8rem; color: var(--text2); line-height: 1.65; }
-
-.direction-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
-@media(max-width:600px){ .direction-grid { grid-template-columns: 1fr; } }
-.dir-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 1.25rem;
-}
-.dir-num { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--em); margin-bottom: .4rem; }
-.dir-title { font-weight: 700; margin-bottom: .4rem; }
-.dir-desc { font-size: .82rem; color: var(--text2); line-height: 1.7; }
+/* RESPONSIVE */
+@media(max-width:900px){.nav-links{display:none}.nav-join{display:none}.nav-hamburger{display:flex}}
+@media(max-width:640px){.vision-grid{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}.member-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<nav class="topnav">
-  <a class="topnav-logo" href="../index.html">✦ GenAI 동아리</a>
-  <div class="topnav-links">
+<nav>
+  <a class="nav-logo" href="../index.html">✦ GenAI 동아리</a>
+  <div class="nav-links">
     <a href="intro.html" class="active">소개</a>
-    <a href="schedule.html">학습일정</a>
-    <a href="vote.html">대면투표</a>
-    <a href="news.html">뉴스</a>
-    <a href="meeting.html">회의록</a>
-    <a href="board.html">게시판</a>
+    <a href="../index.html#vote">대면일 투표</a>
+    <a href="news.html">AI 뉴스</a>
+    <a href="contest.html">공모전</a>
+    <a href="opinions.html">의견나눔</a>
   </div>
-  <a href="admin.html" class="topnav-admin">⚙ 관리자</a>
-  <a href="register.html" class="topnav-join">회원가입</a>
+  <a href="register.html" class="nav-join">회원가입</a>
+  <button class="nav-hamburger" id="hbg" onclick="toggleD()"><span></span><span></span><span></span></button>
 </nav>
-
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-section">
-    <div class="sidebar-label">동아리 소개</div>
-    <a class="sidebar-item active" href="intro.html" data-page="intro.html"><span class="si-icon">🏠</span>개요·비전</a>
-    <a class="sidebar-item" href="schedule.html" data-page="schedule.html"><span class="si-icon">📅</span>학습 일정</a>
-    <a class="sidebar-item" href="members.html" data-page="members.html"><span class="si-icon">👥</span>멤버 현황</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">학습 활동</div>
-    <a class="sidebar-item" href="vote.html"><span class="si-icon">🗳️</span>대면일 투표</a>
-    <a class="sidebar-item" href="meeting.html"><span class="si-icon">📝</span>회의록</a>
-    <a class="sidebar-item" href="idea.html"><span class="si-icon">💡</span>아이디어 보드</a>
-    <a class="sidebar-item" href="task.html"><span class="si-icon">✅</span>과제·To-Do</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">정보 공유</div>
-    <a class="sidebar-item" href="news.html"><span class="si-icon">📰</span>AI 뉴스</a>
-    <a class="sidebar-item" href="contest.html"><span class="si-icon">🏅</span>AI 공모전</a>
-    <a class="sidebar-item" href="board.html"><span class="si-icon">💬</span>자유 게시판</a>
-    <a class="sidebar-item" href="resource.html"><span class="si-icon">📎</span>자료실</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">운영 관리</div>
-    <a class="sidebar-item" href="admin.html"><span class="si-icon">🛡️</span>관리자</a>
-    <a class="sidebar-item" href="notice.html"><span class="si-icon">📣</span>공지사항</a>
-    <a class="sidebar-item" href="register.html"><span class="si-icon">🙋</span>회원가입</a>
-  </div>
-</aside>
-
-<div class="page-wrap">
-<div class="page-content">
-  <div class="page-header">
-    <div class="breadcrumb">🏠 홈 <span>›</span> 동아리 소개 <span>›</span> 개요·비전</div>
-    <h1>동아리 소개</h1>
-    <p>생성형 AI 학습동아리의 비전, 목표, 멤버를 소개합니다.</p>
-  </div>
-
-  <!-- 비전·목표 -->
-  <div class="sec-label">🎯 핵심 가치</div>
-  <div class="vision-row mb-3">
-    <div class="vision-block">
-      <div class="vision-num">01</div>
-      <div class="vision-title">학습 목표</div>
-      <div class="vision-desc">매월 1개 실용 앱 개발<br>8개월 8개 앱 완성 (5~12월)</div>
-    </div>
-    <div class="vision-block">
-      <div class="vision-num">02</div>
-      <div class="vision-title">비전</div>
-      <div class="vision-desc">AI 기반 업무혁신 선도<br>부서 간 디지털 전환 가속화</div>
-    </div>
-    <div class="vision-block">
-      <div class="vision-num">03</div>
-      <div class="vision-title">운영 방식</div>
-      <div class="vision-desc">월 1회 대면 + 수시 온라인<br>이론 → 실습 → 업무 적용</div>
-    </div>
-  </div>
-
-  <!-- 추진 방향 -->
-  <div class="sec-label mb-1">🧭 추진 방향</div>
-  <div class="direction-grid mb-3">
-    <div class="dir-card"><div class="dir-num">Phase 1</div><div class="dir-title">기초 역량 강화 (5~6월)</div><div class="dir-desc">생성형 AI 개요, 주요 도구 사용법, 프롬프트 엔지니어링 기초 습득</div></div>
-    <div class="dir-card"><div class="dir-num">Phase 2</div><div class="dir-title">실전 개발 역량 (7~8월)</div><div class="dir-desc">API 활용, RAG 구현, 실무 적용 앱 개발 실습</div></div>
-    <div class="dir-card"><div class="dir-num">Phase 3</div><div class="dir-title">고도화·확산 (9~10월)</div><div class="dir-desc">AI 에이전트, 업무 자동화, 공모전 준비</div></div>
-    <div class="dir-card"><div class="dir-num">Phase 4</div><div class="dir-title">성과 정리·공유 (11~12월)</div><div class="dir-desc">연간 성과 발표, 공모전 출품, 차년도 계획 수립</div></div>
-  </div>
-
-  <!-- 멤버 소개 -->
-  <div class="sec-label mb-1">👥 멤버 소개</div>
-  <div class="card-grid card-grid-2 mb-3">
-    <div class="member-card">
-      <div class="member-av">지현</div>
-      <div>
-        <div class="member-name">지현석</div>
-        <div class="member-dept">정보화팀</div>
-        <div class="member-role mt-1"><span class="badge badge-em">리더</span></div>
-        <p class="text-sm text-muted mt-1">전체 운영·기술 총괄, 학습 커리큘럼 설계</p>
-      </div>
-    </div>
-    <div class="member-card">
-      <div class="member-av">최효</div>
-      <div>
-        <div class="member-name">최효진</div>
-        <div class="member-dept">시설평가부</div>
-        <div class="member-role mt-1"><span class="badge badge-blue">매니저</span></div>
-        <p class="text-sm text-muted mt-1">일정 조율, 회의록 관리, 과제 추적</p>
-      </div>
-    </div>
-    <div class="member-card">
-      <div class="member-av">이찬</div>
-      <div>
-        <div class="member-name">이찬영</div>
-        <div class="member-dept">시설평가부</div>
-        <div class="member-role mt-1"><span class="badge badge-muted">회원</span></div>
-        <p class="text-sm text-muted mt-1">학습 참여, 실습 과제 수행</p>
-      </div>
-    </div>
-    <div class="member-card">
-      <div class="member-av">유병</div>
-      <div>
-        <div class="member-name">유병찬</div>
-        <div class="member-dept">혁신기획부</div>
-        <div class="member-role mt-1"><span class="badge badge-muted">회원</span></div>
-        <p class="text-sm text-muted mt-1">학습 참여, 혁신 아이디어 제안</p>
-      </div>
-    </div>
-    <div class="member-card">
-      <div class="member-av">조유</div>
-      <div>
-        <div class="member-name">조유리</div>
-        <div class="member-dept">지역협력부</div>
-        <div class="member-role mt-1"><span class="badge badge-muted">회원</span></div>
-        <p class="text-sm text-muted mt-1">학습 참여, 지역협력 AI 활용 탐구</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 학습 장소 & 기타 -->
-  <div class="sec-label mb-1">📍 운영 정보</div>
-  <div class="card-grid card-grid-3">
-    <div class="card"><div style="font-size:1.4rem;margin-bottom:.5rem">📍</div><div style="font-weight:700;margin-bottom:.4rem">학습 장소</div><p class="text-sm text-muted">정보화팀 회의실 (2층)<br>대면 시 기본 장소 사용<br>필요 시 화상 병행</p></div>
-    <div class="card"><div style="font-size:1.4rem;margin-bottom:.5rem">⏰</div><div style="font-weight:700;margin-bottom:.4rem">학습 주기</div><p class="text-sm text-muted">월 1회 대면 정기 모임<br>수시 온라인 자료 공유<br>투표로 날짜 결정</p></div>
-    <div class="card"><div style="font-size:1.4rem;margin-bottom:.5rem">🎓</div><div style="font-weight:700;margin-bottom:.4rem">주요 학습 주제</div><p class="text-sm text-muted">
-      <span class="tag">프롬프트 엔지니어링</span>
-      <span class="tag">Claude API</span>
-      <span class="tag">RAG</span>
-      <span class="tag">업무 자동화</span>
-      <span class="tag">공공 AI 정책</span>
-    </p></div>
-  </div>
-
-</div>
+<div class="mobile-drawer" id="mdr">
+  <a href="intro.html" onclick="closeD()">📌 동아리 소개</a>
+  <a href="../index.html#vote" onclick="closeD()">📅 대면일 투표</a>
+  <a href="news.html" onclick="closeD()">📰 AI 뉴스</a>
+  <a href="contest.html" onclick="closeD()">🏅 공모전</a>
+  <a href="opinions.html" onclick="closeD()">💬 의견나눔</a>
+  <a href="register.html" class="m-join" onclick="closeD()">🙋 회원가입</a>
 </div>
 
-<div id="toast"></div>
-<script src="../assets/common.js"></script>
+<div class="page">
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="label">📌 동아리 소개</div>
+    <h1>GenAI 학습동아리</h1>
+    <p>생성형 AI 기술을 체계적으로 학습하고, 실무 적용 역량을 키우기 위해 결성된 학습공동체입니다.</p>
+  </div>
+
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">홈</a><span class="sep">›</span><span>동아리 소개</span>
+    </div>
+
+    <!-- 비전·목표 -->
+    <div class="sec">
+      <div class="sec-title">🎯 비전 · 목표</div>
+      <div class="vision-grid">
+        <div class="vision-item"><div class="vision-num">01</div><div class="vision-title">학습 목표</div><div class="vision-desc">매월 1개 실용 앱 개발<br>8개월 8개 앱 완성 (5~12월)</div></div>
+        <div class="vision-item"><div class="vision-num">02</div><div class="vision-title">비전</div><div class="vision-desc">AI 기반 업무혁신 선도<br>디지털 전환 가속화</div></div>
+        <div class="vision-item"><div class="vision-num">03</div><div class="vision-title">운영 방식</div><div class="vision-desc">월 1회 대면 + 수시 온라인<br>이론 → 실습 → 업무 적용</div></div>
+      </div>
+    </div>
+
+    <!-- 멤버 소개 -->
+    <div class="sec">
+      <div class="sec-title">👥 멤버 소개</div>
+      <div class="member-grid">
+        <div class="member-card"><div class="m-av">지현</div><div><div class="m-name">지현석</div><div class="m-dept">정보화팀</div><span class="m-role role-leader">리더</span><div class="m-desc">전체 운영 · 기술 총괄 · 학습 커리큘럼 설계</div></div></div>
+        <div class="member-card"><div class="m-av">최효</div><div><div class="m-name">최효진</div><div class="m-dept">시설평가부</div><span class="m-role role-manager">매니저</span><div class="m-desc">일정 조율 · 회의록 관리 · 과제 추적</div></div></div>
+        <div class="member-card"><div class="m-av">이찬</div><div><div class="m-name">이찬영</div><div class="m-dept">시설평가부</div><span class="m-role role-member">회원</span><div class="m-desc">학습 참여 · 실습 과제 수행</div></div></div>
+        <div class="member-card"><div class="m-av">유병</div><div><div class="m-name">유병찬</div><div class="m-dept">혁신기획부</div><span class="m-role role-member">회원</span><div class="m-desc">학습 참여 · 혁신 아이디어 제안</div></div></div>
+        <div class="member-card"><div class="m-av">조유</div><div><div class="m-name">조유리</div><div class="m-dept">지역협력부</div><span class="m-role role-member">회원</span><div class="m-desc">학습 참여 · 지역협력 AI 활용 탐구</div></div></div>
+      </div>
+    </div>
+
+    <!-- 운영 정보 -->
+    <div class="sec">
+      <div class="sec-title">📍 운영 정보</div>
+      <div class="info-grid">
+        <div class="info-card"><div class="info-card-icon">📍</div><div class="info-card-label">학습 장소</div><div class="info-card-title">정보화팀 회의실 (2층)</div><p>대면 모임 시 기본 장소. 필요 시 화상 진행 병행.</p></div>
+        <div class="info-card"><div class="info-card-icon">⏰</div><div class="info-card-label">학습 주기</div><div class="info-card-title">월 1회 대면 + 수시 온라인</div><p>매월 1회 오프라인 정기 모임 + Slack/Teams 자료 공유</p></div>
+        <div class="info-card"><div class="info-card-icon">🎓</div><div class="info-card-label">주요 학습 주제</div><div class="info-card-title">2026년 커리큘럼</div><p><span class="tag">프롬프트 엔지니어링</span><span class="tag">Claude API</span><span class="tag">RAG</span><span class="tag">업무 자동화</span><span class="tag">데이터 분석</span><span class="tag">공공 AI 정책</span></p></div>
+        <div class="info-card"><div class="info-card-icon">🏆</div><div class="info-card-label">연간 목표</div><div class="info-card-title">8개 앱 개발 (5~12월)</div><p>매월 1개 실용 앱 개발 → 연말 성과 발표회 + 공모전 출품</p></div>
+      </div>
+    </div>
+
+    <!-- 추진 방향 -->
+    <div class="sec">
+      <div class="sec-title">🧭 추진 방향</div>
+      <div class="phase-list">
+        <div class="phase-item"><div class="phase-num">P1</div><div><div class="phase-title">기초 역량 강화 (5~6월)</div><div class="phase-desc">생성형 AI 개요, 주요 도구 사용법, 프롬프트 엔지니어링 기초 습득</div></div></div>
+        <div class="phase-item"><div class="phase-num">P2</div><div><div class="phase-title">실전 개발 역량 (7~8월)</div><div class="phase-desc">API 활용, RAG 구현, 실무 적용 앱 개발 실습</div></div></div>
+        <div class="phase-item"><div class="phase-num">P3</div><div><div class="phase-title">고도화·확산 (9~10월)</div><div class="phase-desc">AI 에이전트, 업무 자동화, 공모전 준비</div></div></div>
+        <div class="phase-item"><div class="phase-num">P4</div><div><div class="phase-title">성과 정리·공유 (11~12월)</div><div class="phase-desc">연간 성과 발표, 공모전 출품, 차년도 계획 수립</div></div></div>
+      </div>
+    </div>
+
+    <!-- 2026년 학습 일정 -->
+    <div class="sec">
+      <div class="sec-title">📅 2026년 학습 일정 (5~12월)</div>
+      <div class="schedule-wrap">
+        <table class="sched-table">
+          <thead><tr><th>월</th><th>학습 주제</th><th>개발 앱</th><th>비고</th></tr></thead>
+          <tbody id="sched-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+      <a href="../index.html#vote" class="btn btn-primary">📅 대면일 투표하기</a>
+      <a href="register.html" class="btn btn-ghost">🙋 회원가입</a>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>© 2026 GenAI 학습동아리 · 정보화팀 운영 · 리더: 지현석</p>
+  <p style="margin-top:.4rem"><a href="../index.html">홈으로</a></p>
+</footer>
+
+<script>
+const SCHED=[
+  {m:'5월',topic:'생성형 AI 개요 & 주요 도구 체험',app:'AI 텍스트 요약 도구',note:'킥오프'},
+  {m:'6월',topic:'프롬프트 엔지니어링 심화',app:'업무 보고서 자동 초안 생성기',note:''},
+  {m:'7월',topic:'Claude / OpenAI API 실습',app:'부서 맞춤형 Q&A 챗봇',note:''},
+  {m:'8월',topic:'RAG(검색 증강 생성) 이론·실습',app:'사내 문서 검색 AI',note:''},
+  {m:'9월',topic:'이미지·멀티모달 AI 활용',app:'홍보물 자동 생성기',note:'중간 성과 공유'},
+  {m:'10월',topic:'AI 에이전트 & 업무 자동화',app:'일정 관리 AI 어시스턴트',note:'공모전 준비'},
+  {m:'11월',topic:'공공 AI 정책·윤리 & 보안',app:'개인정보 마스킹 도구',note:'공모전 출품'},
+  {m:'12월',topic:'연간 성과 정리 & 발표',app:'성과 발표 자료 자동 생성기',note:'🎉 연말 발표회'},
+];
+const nowM = new Date().getMonth()+1;
+document.getElementById('sched-body').innerHTML=SCHED.map((s,i)=>{
+  const isCur=(i+5)===nowM;
+  return`<tr><td><span class="month-badge${isCur?' current':''}">${s.m}</span></td><td>${s.topic}</td><td>${s.app}</td><td style="font-size:.78rem;color:var(--text2)">${s.note}</td></tr>`;
+}).join('');
+
+function toggleD(){const h=document.getElementById('hbg'),d=document.getElementById('mdr');h.classList.toggle('open');d.classList.toggle('open');document.body.style.overflow=d.classList.contains('open')?'hidden':'';}
+function closeD(){document.getElementById('hbg').classList.remove('open');document.getElementById('mdr').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeD();});
+</script>
 </body>
 </html>
