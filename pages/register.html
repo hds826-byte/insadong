@@ -164,25 +164,25 @@ details[open] .db-guide summary::before{transform:rotate(90deg)}
         </div>
 
         <label class="agree-all">
-          <input type="checkbox" id="chk-all" onchange="toggleAll(this)"> <span>전체 동의</span>
+          <input type="checkbox" id="chk-all"> <span>전체 동의</span>
         </label>
         <div>
           <label class="agree-item">
-            <input type="checkbox" id="chk1" onchange="syncAll()">
+            <input type="checkbox" id="chk1">
             <div class="agree-item-text">개인정보 수집·이용 동의<span class="req">(필수)</span></div>
           </label>
           <label class="agree-item">
-            <input type="checkbox" id="chk2" onchange="syncAll()">
+            <input type="checkbox" id="chk2">
             <div class="agree-item-text">동아리 활동 정보 수신 동의<span class="req">(필수)</span></div>
           </label>
           <label class="agree-item">
-            <input type="checkbox" id="chk3" onchange="syncAll()">
+            <input type="checkbox" id="chk3">
             <div class="agree-item-text">마케팅·이벤트 정보 수신<span class="opt">(선택)</span></div>
           </label>
         </div>
 
         <div class="btn-row">
-          <button class="btn-next" id="btn-step1" onclick="goStep2()">다음 단계 →</button>
+          <button type="button" class="btn-next" id="btn-step1">다음 단계 →</button>
         </div>
       </div>
 
@@ -255,8 +255,8 @@ details[open] .db-guide summary::before{transform:rotate(90deg)}
         </div>
 
         <div class="btn-row">
-          <button class="btn-back" onclick="goStep1()">← 이전</button>
-          <button class="btn-next" id="btn-submit" onclick="doRegister()">가입 완료하기</button>
+          <button type="button" class="btn-back" id="btn-back-step1">← 이전</button>
+          <button type="button" class="btn-next" id="btn-submit">가입 완료하기</button>
         </div>
       </div>
 
@@ -268,8 +268,8 @@ details[open] .db-guide summary::before{transform:rotate(90deg)}
           <p>GenAI 학습동아리에 오신 것을 환영합니다.<br>함께 AI를 배우고, 업무에 적용해 봐요!</p>
           <div class="success-info" id="success-info"></div>
           <div class="btn-row" style="flex-direction:column;gap:.6rem">
-            <button class="btn-next" onclick="window.location.href='login.html'">로그인하러 가기</button>
-            <button class="btn-back" onclick="window.location.href='../index.html'" style="width:100%;text-align:center">홈으로 돌아가기</button>
+            <button type="button" class="btn-next" onclick="window.location.href='login.html'">로그인하러 가기</button>
+            <button type="button" class="btn-back" onclick="window.location.href='../index.html'" style="width:100%;text-align:center">홈으로 돌아가기</button>
           </div>
         </div>
       </div>
@@ -356,6 +356,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const u = JSON.parse(sessionStorage.getItem('gai_user') || localStorage.getItem('gai_user') || 'null');
     if (u) window.location.href = '../index.html';
   } catch {}
+
+  // 체크박스 이벤트
+  const chkAll = document.getElementById('chk-all');
+  chkAll.addEventListener('change', function() { toggleAll(this); });
+  ['chk1','chk2','chk3'].forEach(id => document.getElementById(id).addEventListener('change', syncAll));
+
+  // 버튼 이벤트
+  document.getElementById('btn-step1').addEventListener('click', goStep2);
+  document.getElementById('btn-back-step1').addEventListener('click', goStep1);
+  document.getElementById('btn-submit').addEventListener('click', doRegister);
 });
 
 /* ── STEP CONTROLS ── */
@@ -503,14 +513,7 @@ function showSuccess(u) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-let _tt;
-function toast(msg, type) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'show ' + (type||'');
-  clearTimeout(_tt); _tt = setTimeout(() => el.className='', 3200);
-}
+// esc, toast, _tt 는 common.js 에서 제공
 </script>
 </body>
 </html>

@@ -100,7 +100,7 @@ a{color:inherit;text-decoration:none}
         회원가입 후 동일 이메일·비밀번호로 로그인하세요.
       </div>
 
-      <form id="login-form" onsubmit="doLogin(event)">
+      <form id="login-form">
         <div class="field">
           <label for="email">이메일</label>
           <input type="email" id="email" placeholder="example@email.com" autocomplete="username" required>
@@ -111,7 +111,7 @@ a{color:inherit;text-decoration:none}
           <label for="pw">비밀번호</label>
           <div class="pw-wrap">
             <input type="password" id="pw" placeholder="비밀번호 입력" autocomplete="current-password" required>
-            <button type="button" class="pw-toggle" onclick="togglePw('pw',this)" title="비밀번호 표시">👁</button>
+            <button type="button" class="pw-toggle" id="pw-toggle-btn" title="비밀번호 표시">👁</button>
           </div>
           <div class="field-err" id="pw-err"></div>
         </div>
@@ -120,7 +120,7 @@ a{color:inherit;text-decoration:none}
           <label class="check-label">
             <input type="checkbox" id="remember"> 로그인 상태 유지
           </label>
-          <a href="#" class="forget-link" onclick="forgotPw(event)">비밀번호 찾기</a>
+          <a href="#" class="forget-link" id="forgot-link">비밀번호 찾기</a>
         </div>
 
         <button type="submit" class="btn-login" id="login-btn">로그인</button>
@@ -159,6 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // remember me 복원
   const saved = localStorage.getItem('gai_saved_email');
   if (saved) { document.getElementById('email').value = saved; document.getElementById('remember').checked = true; }
+
+  // 이벤트 리스너
+  document.getElementById('login-form').addEventListener('submit', doLogin);
+  document.getElementById('pw-toggle-btn').addEventListener('click', function() { togglePw('pw', this); });
+  document.getElementById('forgot-link').addEventListener('click', forgotPw);
 });
 
 function loadSession() {
@@ -245,12 +250,7 @@ function forgotPw(e) {
 
 function mockDelay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-let _tt;
-function toast(msg, type) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'show ' + (type || '');
-  clearTimeout(_tt); _tt = setTimeout(() => el.className = '', 3200);
-}
+// _tt, toast 는 common.js 에서 제공
 </script>
 </body>
 </html>
