@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>회원가입 — GenAI 학습동아리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Fraunces:ital,wght@0,300;0,700;1,300;1,700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c14;--bg2:#0e1520;--bg3:#141d2b;--bg4:#1a2538;--mint:#00e5c3;--mint2:#00b89e;--mint-dim:rgba(0,229,195,.12);--blue:#4a9eff;--text:#e2e8f0;--text2:#94a3b8;--text3:#4a5568;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);--danger:#ff5c5c;--warn:#ffb647;--success:#00e5a0;--r:12px;--r2:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.7;min-height:100vh;display:flex;flex-direction:column;}
+a{color:inherit;text-decoration:none}
+
+.auth-wrap{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:3rem 1.25rem;}
+.auth-card{width:100%;max-width:480px;}
+
+.auth-logo{text-align:center;margin-bottom:2rem;}
+.auth-logo a{font-family:'Fraunces',serif;font-style:italic;font-size:1.5rem;color:var(--mint);}
+.auth-logo p{font-size:.82rem;color:var(--text2);margin-top:.35rem;}
+
+/* ── STEPS ── */
+.steps{display:flex;align-items:center;margin-bottom:2rem;}
+.step{display:flex;flex-direction:column;align-items:center;flex:1;gap:6px;}
+.step-circle{width:32px;height:32px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:var(--text3);background:var(--bg3);transition:all .3s;}
+.step-label{font-size:.68rem;color:var(--text3);font-weight:500;transition:color .3s;white-space:nowrap;}
+.step.done .step-circle{background:var(--mint);border-color:var(--mint);color:#080c14;}
+.step.done .step-label{color:var(--mint)}
+.step.active .step-circle{border-color:var(--mint);color:var(--mint);background:var(--mint-dim);}
+.step.active .step-label{color:var(--text)}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 4px;margin-bottom:22px;transition:background .3s;}
+.step-line.done{background:var(--mint)}
+
+.auth-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:2.25rem 2rem;}
+.auth-box h2{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;margin-bottom:.4rem;}
+.auth-box .step-desc{font-size:.83rem;color:var(--text2);margin-bottom:1.75rem;}
+
+/* ── FIELDS ── */
+.field{margin-bottom:.9rem;}
+.field label{display:block;font-size:.78rem;font-weight:600;color:var(--text2);letter-spacing:.04em;margin-bottom:5px;}
+.required{color:var(--danger);margin-left:2px;}
+.field input,.field select{width:100%;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r2);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:.9rem;padding:11px 14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.field select option{background:var(--bg3);}
+.field input:focus,.field select:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(0,229,195,.1);}
+.field input::placeholder{color:var(--text3)}
+.field input.err,.field select.err{border-color:var(--danger);}
+.field-err{font-size:.73rem;color:var(--danger);margin-top:4px;display:none;}
+.field-err.show{display:block}
+.field-hint{font-size:.73rem;color:var(--text3);margin-top:4px;}
+.field-ok{font-size:.73rem;color:var(--success);margin-top:4px;display:none;}
+.field-ok.show{display:block}
+
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+
+/* ── PW TOGGLE ── */
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:42px;}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:2px;line-height:1;}
+.pw-toggle:hover{color:var(--text2)}
+
+/* ── PW STRENGTH ── */
+.pw-strength{margin-top:6px;display:flex;gap:4px;align-items:center;}
+.pw-bar{height:3px;flex:1;border-radius:2px;background:var(--bg4);transition:background .3s;}
+.pw-bar.weak{background:var(--danger)}
+.pw-bar.mid{background:var(--warn)}
+.pw-bar.strong{background:var(--success)}
+.pw-level{font-size:.72rem;color:var(--text3);min-width:36px;}
+
+/* ── TERMS ── */
+.terms-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:1rem 1.1rem;max-height:160px;overflow-y:auto;font-size:.78rem;color:var(--text2);line-height:1.8;margin-bottom:1rem;}
+.terms-box h4{color:var(--text);font-size:.85rem;margin-bottom:.5rem;}
+.terms-box table{width:100%;font-size:.75rem;border-collapse:collapse;margin:6px 0;}
+.terms-box td{padding:3px 6px;border:1px solid var(--border2);}
+.terms-box td:first-child{font-weight:600;width:90px;color:var(--text);}
+.agree-all{display:flex;align-items:center;gap:8px;padding:.85rem 1rem;background:var(--mint-dim);border:1.5px solid rgba(0,229,195,.25);border-radius:var(--r2);margin-bottom:.75rem;cursor:pointer;}
+.agree-all input[type=checkbox]{width:17px;height:17px;accent-color:var(--mint);cursor:pointer;flex-shrink:0;}
+.agree-all span{font-weight:700;font-size:.88rem;color:var(--mint);}
+.agree-item{display:flex;align-items:flex-start;gap:8px;padding:.5rem 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.agree-item:last-child{border-bottom:none}
+.agree-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--mint);cursor:pointer;flex-shrink:0;margin-top:3px;}
+.agree-item-text{font-size:.82rem;color:var(--text2);}
+.agree-item-text .req{color:var(--danger);font-size:.72rem;margin-left:4px;}
+.agree-item-text .opt{color:var(--text3);font-size:.72rem;margin-left:4px;}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:.75rem;margin-top:1.5rem;}
+.btn-next{flex:1;padding:13px;background:var(--mint);color:#080c14;font-family:'Noto Sans KR',sans-serif;font-size:.92rem;font-weight:700;border:none;border-radius:var(--r2);cursor:pointer;transition:background .2s,transform .15s;}
+.btn-next:hover{background:var(--mint2);transform:translateY(-1px)}
+.btn-next:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;transform:none;}
+.btn-back{padding:13px 20px;background:transparent;color:var(--text2);font-family:'Noto Sans KR',sans-serif;font-size:.92rem;font-weight:500;border:1.5px solid var(--border2);border-radius:var(--r2);cursor:pointer;transition:all .2s;}
+.btn-back:hover{background:var(--bg3);color:var(--text)}
+
+/* ── SUCCESS ── */
+.success-screen{text-align:center;padding:1rem 0;}
+.success-icon{font-size:3.5rem;margin-bottom:1rem;animation:popIn .5s cubic-bezier(.17,.67,.35,1.3) forwards;}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.success-screen h2{font-family:'Fraunces',serif;font-size:1.6rem;margin-bottom:.5rem;}
+.success-screen p{color:var(--text2);font-size:.88rem;margin-bottom:1.75rem;line-height:1.8;}
+.success-info{background:var(--bg3);border-radius:var(--r2);padding:1rem 1.25rem;text-align:left;margin-bottom:1.5rem;}
+.success-info .row{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.85rem;border-bottom:1px solid var(--border);}
+.success-info .row:last-child{border-bottom:none}
+.success-info .lbl{color:var(--text2);}
+.success-info .val{color:var(--text);font-weight:500;}
+
+/* ── DB GUIDE ── */
+.db-guide{margin-top:1.5rem;}
+.db-guide summary{cursor:pointer;font-size:.8rem;color:var(--text2);padding:.5rem;border-radius:var(--r2);transition:color .2s;list-style:none;display:flex;align-items:center;gap:6px;}
+.db-guide summary::before{content:'▶';font-size:.65rem;transition:transform .2s;}
+details[open] .db-guide summary::before{transform:rotate(90deg)}
+.db-guide summary:hover{color:var(--mint)}
+.db-guide-body{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-top:.5rem;font-size:.78rem;color:var(--text2);line-height:1.9;}
+.db-guide-body h4{color:var(--text);font-size:.85rem;margin:.75rem 0 .3rem;font-weight:700;}
+.db-guide-body h4:first-child{margin-top:0}
+.db-guide-body code{display:block;background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:.75rem 1rem;margin:.4rem 0;font-family:monospace;font-size:.75rem;color:var(--mint);overflow-x:auto;white-space:pre;}
+.db-guide-body .step-no{display:inline-block;width:18px;height:18px;background:var(--mint);color:#080c14;border-radius:50%;font-size:.65rem;font-weight:700;text-align:center;line-height:18px;margin-right:5px;flex-shrink:0;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:10px 22px;border-radius:20px;font-size:.85rem;opacity:0;transition:all .3s;z-index:800;white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.s{border-color:rgba(0,229,195,.4);color:var(--success)}
+#toast.e{border-color:rgba(255,92,92,.4);color:var(--danger)}
+
+.auth-footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--text3);}
+.auth-footer a{color:var(--text2);margin:0 .5rem;}
+.auth-footer a:hover{color:var(--mint)}
+
+@media(max-width:480px){.auth-box{padding:1.75rem 1.25rem}.row-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="../index.html">✦ GenAI 동아리</a>
+      <p>생성형 AI 학습동아리 포털</p>
+    </div>
+
+    <!-- STEP INDICATOR -->
+    <div class="steps" id="steps">
+      <div class="step active" id="s1"><div class="step-circle">1</div><div class="step-label">약관동의</div></div>
+      <div class="step-line" id="l1"></div>
+      <div class="step" id="s2"><div class="step-circle">2</div><div class="step-label">정보입력</div></div>
+      <div class="step-line" id="l2"></div>
+      <div class="step" id="s3"><div class="step-circle">3</div><div class="step-label">가입완료</div></div>
+    </div>
+
+    <div class="auth-box" id="auth-box">
+
+      <!-- ── STEP 1: 약관 ── -->
+      <div id="step1">
+        <h2>약관 동의</h2>
+        <p class="step-desc">서비스 이용을 위해 아래 약관에 동의해 주세요.</p>
+
+        <div class="terms-box">
+          <h4>개인정보 수집·이용 동의</h4>
+          <table>
+            <tr><td>수집 항목</td><td>이름, 이메일, 부서, 연락처</td></tr>
+            <tr><td>수집 목적</td><td>동아리 회원 관리, 모임 안내, 활동 기록</td></tr>
+            <tr><td>보유 기간</td><td>동아리 탈퇴 시 즉시 파기</td></tr>
+          </table>
+          위의 개인정보 수집·이용에 동의하지 않을 권리가 있으나, 동의를 거부할 경우 서비스 이용이 제한될 수 있습니다.
+        </div>
+
+        <label class="agree-all">
+          <input type="checkbox" id="chk-all" onchange="toggleAll(this)"> <span>전체 동의</span>
+        </label>
+        <div>
+          <label class="agree-item">
+            <input type="checkbox" id="chk1" onchange="syncAll()">
+            <div class="agree-item-text">개인정보 수집·이용 동의<span class="req">(필수)</span></div>
+          </label>
+          <label class="agree-item">
+            <input type="checkbox" id="chk2" onchange="syncAll()">
+            <div class="agree-item-text">동아리 활동 정보 수신 동의<span class="req">(필수)</span></div>
+          </label>
+          <label class="agree-item">
+            <input type="checkbox" id="chk3" onchange="syncAll()">
+            <div class="agree-item-text">마케팅·이벤트 정보 수신<span class="opt">(선택)</span></div>
+          </label>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-next" id="btn-step1" onclick="goStep2()">다음 단계 →</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: 정보 입력 ── -->
+      <div id="step2" style="display:none">
+        <h2>기본 정보 입력</h2>
+        <p class="step-desc">가입에 필요한 정보를 입력해 주세요.</p>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="r-name">이름 <span class="required">*</span></label>
+            <input type="text" id="r-name" placeholder="실명 입력" maxlength="10" autocomplete="name">
+            <div class="field-err" id="err-name"></div>
+          </div>
+          <div class="field">
+            <label for="r-dept">소속 부서 <span class="required">*</span></label>
+            <select id="r-dept">
+              <option value="">부서 선택</option>
+              <option>정보화팀</option>
+              <option>시설평가부</option>
+              <option>혁신기획부</option>
+              <option>지역협력부</option>
+              <option>기타</option>
+            </select>
+            <div class="field-err" id="err-dept"></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="r-email">이메일 <span class="required">*</span></label>
+          <input type="email" id="r-email" placeholder="example@email.com" autocomplete="email">
+          <div class="field-err" id="err-email"></div>
+          <div class="field-ok" id="ok-email">✓ 사용 가능한 이메일입니다</div>
+        </div>
+
+        <div class="field">
+          <label for="r-phone">연락처</label>
+          <input type="tel" id="r-phone" placeholder="010-0000-0000" oninput="fmtPhone(this)" maxlength="13" autocomplete="tel">
+          <div class="field-hint">선택 사항 · 모임 안내에만 활용됩니다</div>
+        </div>
+
+        <div class="field">
+          <label for="r-pw">비밀번호 <span class="required">*</span></label>
+          <div class="pw-wrap">
+            <input type="password" id="r-pw" placeholder="8자 이상, 영문+숫자 조합" maxlength="30" oninput="checkStrength()" autocomplete="new-password">
+            <button type="button" class="pw-toggle" onclick="togglePw('r-pw',this)">👁</button>
+          </div>
+          <div class="pw-strength">
+            <div class="pw-bar" id="bar1"></div>
+            <div class="pw-bar" id="bar2"></div>
+            <div class="pw-bar" id="bar3"></div>
+            <span class="pw-level" id="pw-level"></span>
+          </div>
+          <div class="field-err" id="err-pw"></div>
+        </div>
+
+        <div class="field">
+          <label for="r-pw2">비밀번호 확인 <span class="required">*</span></label>
+          <div class="pw-wrap">
+            <input type="password" id="r-pw2" placeholder="비밀번호 재입력" maxlength="30" autocomplete="new-password" oninput="checkPw2Match()">
+            <button type="button" class="pw-toggle" onclick="togglePw('r-pw2',this)">👁</button>
+          </div>
+          <div class="field-err" id="err-pw2"></div>
+          <div class="field-ok" id="ok-pw2">✓ 비밀번호가 일치합니다</div>
+        </div>
+
+        <div class="field">
+          <label for="r-intro">자기소개 <span style="color:var(--text3);font-weight:400">(선택)</span></label>
+          <input type="text" id="r-intro" placeholder="한 줄 소개 (ex. AI 활용 업무 자동화에 관심 있는 혁신기획부)" maxlength="60">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-back" onclick="goStep1()">← 이전</button>
+          <button class="btn-next" id="btn-submit" onclick="doRegister()">가입 완료하기</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: 완료 ── -->
+      <div id="step3" style="display:none">
+        <div class="success-screen">
+          <div class="success-icon">🎉</div>
+          <h2>가입 완료!</h2>
+          <p>GenAI 학습동아리에 오신 것을 환영합니다.<br>함께 AI를 배우고, 업무에 적용해 봐요!</p>
+          <div class="success-info" id="success-info"></div>
+          <div class="btn-row" style="flex-direction:column;gap:.6rem">
+            <button class="btn-next" onclick="window.location.href='login.html'">로그인하러 가기</button>
+            <button class="btn-back" onclick="window.location.href='../index.html'" style="width:100%;text-align:center">홈으로 돌아가기</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /auth-box -->
+
+    <!-- DB 연동 가이드 -->
+    <details class="db-guide" id="db-guide-wrap">
+      <summary class="db-guide">⚙ Google Apps Script DB 연동 가이드</summary>
+      <div class="db-guide-body">
+        <h4>현재 상태</h4>
+        <span id="guide-status" style="color:var(--warn)">⚠ API_URL 미설정 — 로컬 저장소(localStorage)에만 저장됩니다</span>
+
+        <h4><span class="step-no">1</span> Google Sheets 시트 구성</h4>
+        <code>시트명: members
+컬럼: id | name | dept | email | password | phone | intro | role | joinedAt</code>
+
+        <h4><span class="step-no">2</span> Apps Script 코드 추가</h4>
+        <code>// doPost 내 'register' 액션
+case 'register': {
+  const sheet = ss.getSheetByName('members');
+  const email = body.email;
+  // 중복 확인
+  const emails = sheet.getRange(2,4,sheet.getLastRow()).getValues().flat();
+  if (emails.includes(email)) return out({error:'이미 가입된 이메일입니다.'});
+  const id = Utilities.getUuid();
+  const hash = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256,
+    body.password
+  ).map(b=>(b+256).toString(16).slice(-2)).join('');
+  sheet.appendRow([id, body.name, body.dept, email, hash,
+    body.phone||'', body.intro||'', 'member', new Date().toISOString()]);
+  return out({success:true});
+}
+
+// doGet 내 'login' 액션
+case 'login': {
+  const sheet = ss.getSheetByName('members');
+  const rows = sheet.getDataRange().getValues().slice(1);
+  const hash = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256, params.password
+  ).map(b=>(b+256).toString(16).slice(-2)).join('');
+  const row = rows.find(r => r[3]===params.email && r[4]===hash);
+  if (!row) return out({error:'이메일 또는 비밀번호가 올바르지 않습니다.'});
+  return out({success:true, user:{name:row[1],email:row[3],dept:row[2],role:row[7]}});
+}</code>
+
+        <h4><span class="step-no">3</span> common.js에 URL 설정</h4>
+        <code>// common.js 상단
+const CFG = {
+  API_URL: 'https://script.google.com/macros/s/YOUR_ID/exec',
+  ...
+};</code>
+
+        <h4><span class="step-no">4</span> Apps Script 배포</h4>
+        배포 → 웹 앱 → 다음 사용자로 실행: <strong>나</strong> → 액세스 권한: <strong>모든 사용자</strong> → 배포<br>
+        생성된 URL을 <code>CFG.API_URL</code>에 붙여넣기
+      </div>
+    </details>
+
+  </div>
+</div>
+
+<div class="auth-footer">
+  <a href="../index.html">홈</a>
+  <a href="intro.html">동아리 소개</a>
+  <a href="login.html">로그인</a>
+</div>
+
+<div id="toast"></div>
+
+<script src="../common.js"></script>
+<script>
+const API_URL = (typeof CFG !== 'undefined') ? CFG.API_URL : 'YOUR_APPS_SCRIPT_URL_HERE';
+const IS_MOCK = API_URL === 'YOUR_APPS_SCRIPT_URL_HERE';
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!IS_MOCK) document.getElementById('guide-status').innerHTML = '✓ API_URL 설정됨 — 서버에 저장됩니다';
+  if (IS_MOCK) document.getElementById('guide-status').style.color = 'var(--warn)';
+  else { document.getElementById('guide-status').style.color = 'var(--success)'; }
+
+  // 이미 로그인 상태면 홈으로
+  try {
+    const u = JSON.parse(sessionStorage.getItem('gai_user') || localStorage.getItem('gai_user') || 'null');
+    if (u) window.location.href = '../index.html';
+  } catch {}
+});
+
+/* ── STEP CONTROLS ── */
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('step'+i).style.display = i===n ? 'block' : 'none';
+    const s = document.getElementById('s'+i);
+    s.classList.remove('active','done');
+    if (i < n) s.classList.add('done');
+    else if (i === n) s.classList.add('active');
+    if (i < 3) document.getElementById('l'+i).classList.toggle('done', i < n);
+  });
+  document.getElementById('steps').style.display = n === 3 ? 'none' : 'flex';
+}
+
+/* ── STEP 1 ── */
+function toggleAll(cb) {
+  ['chk1','chk2','chk3'].forEach(id => document.getElementById(id).checked = cb.checked);
+}
+function syncAll() {
+  const r1 = document.getElementById('chk1').checked;
+  const r2 = document.getElementById('chk2').checked;
+  const r3 = document.getElementById('chk3').checked;
+  document.getElementById('chk-all').checked = r1 && r2 && r3;
+}
+function goStep2() {
+  if (!document.getElementById('chk1').checked || !document.getElementById('chk2').checked) {
+    toast('필수 약관에 동의해 주세요.', 'e'); return;
+  }
+  setStep(2);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function goStep1() { setStep(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+/* ── VALIDATION ── */
+function showErr(id, msg) {
+  const el = document.getElementById('err-' + id);
+  if (!el) return;
+  el.textContent = msg; el.classList.add('show');
+  const inp = document.getElementById('r-' + id);
+  if (inp) inp.classList.add('err');
+}
+function clearErrs() {
+  document.querySelectorAll('.field-err').forEach(e => { e.classList.remove('show'); e.textContent=''; });
+  document.querySelectorAll('.field-ok').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.field input, .field select').forEach(e => e.classList.remove('err'));
+}
+
+function fmtPhone(el) {
+  let v = el.value.replace(/\D/g,'').slice(0,11);
+  if (v.length > 7) v = v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);
+  else if (v.length > 3) v = v.slice(0,3)+'-'+v.slice(3);
+  el.value = v;
+}
+
+function togglePw(id, btn) {
+  const el = document.getElementById(id);
+  const show = el.type === 'password';
+  el.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
+
+function checkStrength() {
+  const pw = document.getElementById('r-pw').value;
+  const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3')];
+  const lbl = document.getElementById('pw-level');
+  bars.forEach(b => { b.className='pw-bar'; });
+  if (!pw) { lbl.textContent=''; return; }
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[a-zA-Z]/.test(pw) && /[0-9]/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+  const cls = ['weak','mid','strong'];
+  const labels = ['약함','보통','강함'];
+  for (let i=0; i<score; i++) bars[i].className = 'pw-bar ' + cls[score-1];
+  lbl.textContent = labels[score-1] || '';
+
+  checkPw2Match();
+}
+
+function checkPw2Match() {
+  const pw = document.getElementById('r-pw').value;
+  const pw2 = document.getElementById('r-pw2').value;
+  const ok = document.getElementById('ok-pw2');
+  const err = document.getElementById('err-pw2');
+  if (!pw2) { ok.classList.remove('show'); return; }
+  if (pw === pw2) { ok.classList.add('show'); err.classList.remove('show'); }
+  else { ok.classList.remove('show'); }
+}
+
+/* ── STEP 2 SUBMIT ── */
+async function doRegister() {
+  clearErrs();
+  const name = document.getElementById('r-name').value.trim();
+  const dept = document.getElementById('r-dept').value;
+  const email = document.getElementById('r-email').value.trim();
+  const phone = document.getElementById('r-phone').value.trim();
+  const pw = document.getElementById('r-pw').value;
+  const pw2 = document.getElementById('r-pw2').value;
+  const intro = document.getElementById('r-intro').value.trim();
+
+  let valid = true;
+  if (!name) { showErr('name', '이름을 입력해 주세요.'); valid=false; }
+  if (!dept) { showErr('dept', '부서를 선택해 주세요.'); valid=false; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('email', '올바른 이메일 형식을 입력해 주세요.'); valid=false; }
+  if (!pw || pw.length < 8) { showErr('pw', '비밀번호는 8자 이상이어야 합니다.'); valid=false; }
+  else if (!/[a-zA-Z]/.test(pw) || !/[0-9]/.test(pw)) { showErr('pw', '영문과 숫자를 모두 포함해야 합니다.'); valid=false; }
+  if (pw !== pw2) { showErr('pw2', '비밀번호가 일치하지 않습니다.'); valid=false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true; btn.textContent = '처리 중...';
+
+  const payload = { action:'register', name, dept, email, password:pw, phone, intro };
+
+  try {
+    if (IS_MOCK) {
+      await new Promise(r => setTimeout(r, 700));
+      const users = JSON.parse(localStorage.getItem('gai_members') || '[]');
+      if (users.find(u => u.email === email)) {
+        showErr('email', '이미 가입된 이메일입니다.'); btn.disabled=false; btn.textContent='가입 완료하기'; return;
+      }
+      users.push({ id: Date.now(), name, dept, email, password: pw, phone, intro, role:'member', joinedAt: new Date().toISOString() });
+      localStorage.setItem('gai_members', JSON.stringify(users));
+      showSuccess({ name, email, dept });
+    } else {
+      const res = await fetch(API_URL, { method:'POST', body:JSON.stringify(payload) });
+      const data = await res.json();
+      if (data.success) { showSuccess({ name, email, dept }); }
+      else { showErr('email', data.error || '가입 중 오류가 발생했습니다.'); btn.disabled=false; btn.textContent='가입 완료하기'; }
+    }
+  } catch {
+    showErr('email', '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    btn.disabled=false; btn.textContent='가입 완료하기';
+  }
+}
+
+function showSuccess(u) {
+  document.getElementById('success-info').innerHTML = `
+    <div class="row"><span class="lbl">이름</span><span class="val">${esc(u.name)}</span></div>
+    <div class="row"><span class="lbl">이메일</span><span class="val">${esc(u.email)}</span></div>
+    <div class="row"><span class="lbl">소속</span><span class="val">${esc(u.dept)}</span></div>
+  `;
+  setStep(3);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let _tt;
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'show ' + (type||'');
+  clearTimeout(_tt); _tt = setTimeout(() => el.className='', 3200);
+}
+</script>
+</body>
+</html>
