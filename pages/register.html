@@ -345,6 +345,14 @@ const CFG = {
 <script>
 const API_URL = (typeof CFG !== 'undefined') ? CFG.API_URL : 'YOUR_APPS_SCRIPT_URL_HERE';
 const IS_MOCK = API_URL === 'YOUR_APPS_SCRIPT_URL_HERE';
+if (typeof toast !== 'function') {
+  window.toast = function(msg, type) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg; el.className = 'show ' + (type || '');
+    clearTimeout(window._tt); window._tt = setTimeout(() => el.className = '', 3000);
+  };
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!IS_MOCK) document.getElementById('guide-status').innerHTML = '✓ API_URL 설정됨 — 서버에 저장됩니다';
@@ -357,10 +365,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (u) window.location.href = '../index.html';
   } catch {}
 
-  // 체크박스 이벤트
+  // 체크박스 이벤트 (change가 일부 환경에서 미발동하는 경우 대비 click 사용)
   const chkAll = document.getElementById('chk-all');
-  chkAll.addEventListener('change', function() { toggleAll(this); });
-  ['chk1','chk2','chk3'].forEach(id => document.getElementById(id).addEventListener('change', syncAll));
+  const chkItems = ['chk1','chk2','chk3'].map(id => document.getElementById(id));
+  chkAll.addEventListener('click', function() {
+    chkItems.forEach(el => { el.checked = chkAll.checked; });
+  });
+  chkItems.forEach(el => el.addEventListener('click', function() {
+    chkAll.checked = chkItems.every(item => item.checked);
+  }));
 
   // 버튼 이벤트
   document.getElementById('btn-step1').addEventListener('click', goStep2);
