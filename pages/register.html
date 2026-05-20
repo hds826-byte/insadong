@@ -359,10 +359,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (IS_MOCK) document.getElementById('guide-status').style.color = 'var(--warn)';
   else { document.getElementById('guide-status').style.color = 'var(--success)'; }
 
-  // 이미 로그인 상태면 홈으로
+  // 이미 로그인 상태면 마이페이지로
   try {
     const u = JSON.parse(sessionStorage.getItem('gai_user') || localStorage.getItem('gai_user') || 'null');
-    if (u) window.location.href = '../index.html';
+    if (u) {
+      toast('이미 로그인되어 있습니다. 마이페이지로 이동합니다.', 's');
+      setTimeout(() => window.location.href = 'mypage.html', 1200);
+    }
   } catch {}
 
   // 체크박스 이벤트 (change가 일부 환경에서 미발동하는 경우 대비 click 사용)

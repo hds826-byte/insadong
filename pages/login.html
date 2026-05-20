@@ -152,9 +152,13 @@ const IS_MOCK = API_URL === 'YOUR_APPS_SCRIPT_URL_HERE';
 document.addEventListener('DOMContentLoaded', () => {
   if (IS_MOCK) document.getElementById('mock-notice').style.display = 'block';
 
-  // 이미 로그인 상태면 홈으로
+  // 이미 로그인 상태면 마이페이지로
   const sess = loadSession();
-  if (sess) { window.location.href = '../index.html'; return; }
+  if (sess) {
+    toast('이미 로그인되어 있습니다. 마이페이지로 이동합니다.', 's');
+    setTimeout(() => window.location.href = 'mypage.html', 1200);
+    return;
+  }
 
   // remember me 복원
   const saved = localStorage.getItem('gai_saved_email');
