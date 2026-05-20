@@ -227,15 +227,39 @@ async function doLogin(e) {
       toast('환영합니다, ' + user.name + '님! 🎉', 's');
       setTimeout(() => window.location.href = 'mypage.html', 1000);
     } else {
-      const res = await fetch(`${API_URL}?${new URLSearchParams({ action: 'login', email, password: pw })}`);
-      const data = await res.json();
-      if (data.success) {
-        if (remember) localStorage.setItem('gai_saved_email', email);
-        saveSession(data.user, remember);
-        toast('환영합니다, ' + data.user.name + '님! 🎉', 's');
+      let loggedIn = false;
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 7000);
+        const res = await fetch(`${API_URL}?${new URLSearchParams({ action: 'login', email, password: pw })}`, { signal: ctrl.signal });
+        clearTimeout(timer);
+        const data = await res.json();
+        if (data.success && data.user && data.user.name) {
+          if (remember) localStorage.setItem('gai_saved_email', email);
+          else localStorage.removeItem('gai_saved_email');
+          saveSession(data.user, remember);
+          toast('환영합니다, ' + data.user.name + '님! 🎉', 's');
+          loggedIn = true;
+        }
+      } catch (_) { /* API 실패 시 로컬 폴백으로 */ }
+
+      if (!loggedIn) {
+        // API 실패 또는 미응답 시 로컬 저장소에서 확인
+        const users = JSON.parse(localStorage.getItem('gai_members') || '[]');
+        const localUser = users.find(u => u.email === email && u.password === pw);
+        if (localUser) {
+          if (remember) localStorage.setItem('gai_saved_email', email);
+          else localStorage.removeItem('gai_saved_email');
+          saveSession({ name: localUser.name, email: localUser.email, dept: localUser.dept, role: localUser.role || 'member' }, remember);
+          toast('환영합니다, ' + localUser.name + '님! 🎉', 's');
+          loggedIn = true;
+        }
+      }
+
+      if (loggedIn) {
         setTimeout(() => window.location.href = 'mypage.html', 1000);
       } else {
-        showErr('pw-err', data.error || '이메일 또는 비밀번호가 올바르지 않습니다.');
+        showErr('pw-err', '이메일 또는 비밀번호가 올바르지 않습니다.');
         btn.disabled = false; btn.textContent = '로그인';
       }
     }
