@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const user=getSession(), wrap=document.getElementById('nav-auth');
   if(!wrap||!user)return;
   const av=(user.name||'?').slice(0,2);
-  wrap.innerHTML=`<div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text2)"><div style="width:28px;height:28px;border-radius:50%;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--mint)">${av}</div><a href="mypage.html" style="color:var(--text);font-weight:500;">${esc(user.name)}</a><span onclick="logout()" style="color:var(--text3);cursor:pointer;font-size:.72rem;padding:4px 8px;border-radius:10px;">로그아웃</span></div>`;
+  wrap.innerHTML=`<div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text2)"><div style="width:28px;height:28px;border-radius:50%;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--mint)">${av}</div><span style="color:var(--text);font-weight:500;">${esc(user.name)}</span><a href="mypage.html" style="color:var(--mint);font-size:.72rem;padding:4px 10px;border-radius:10px;border:1px solid rgba(0,229,195,.3);">마이페이지</a><span onclick="logout()" style="color:var(--text3);cursor:pointer;font-size:.72rem;padding:4px 8px;border-radius:10px;">로그아웃</span></div>`;
   const mLogin=document.getElementById('m-login-link'), mReg=document.getElementById('m-register-link');
   if(mLogin){mLogin.textContent='👤 마이페이지';mLogin.href='mypage.html';}
   if(mReg)mReg.style.display='none';

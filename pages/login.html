@@ -225,7 +225,7 @@ async function doLogin(e) {
       else localStorage.removeItem('gai_saved_email');
       saveSession({ name: user.name, email: user.email, dept: user.dept, role: user.role || 'member' }, remember);
       toast('환영합니다, ' + user.name + '님! 🎉', 's');
-      setTimeout(() => window.location.href = '../index.html', 1000);
+      setTimeout(() => window.location.href = 'mypage.html', 1000);
     } else {
       const res = await fetch(`${API_URL}?${new URLSearchParams({ action: 'login', email, password: pw })}`);
       const data = await res.json();
@@ -233,7 +233,7 @@ async function doLogin(e) {
         if (remember) localStorage.setItem('gai_saved_email', email);
         saveSession(data.user, remember);
         toast('환영합니다, ' + data.user.name + '님! 🎉', 's');
-        setTimeout(() => window.location.href = '../index.html', 1000);
+        setTimeout(() => window.location.href = 'mypage.html', 1000);
       } else {
         showErr('pw-err', data.error || '이메일 또는 비밀번호가 올바르지 않습니다.');
         btn.disabled = false; btn.textContent = '로그인';

@@ -25,6 +25,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 .nav-user{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text2);}
 .nav-user .av{width:28px;height:28px;border-radius:50%;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--mint);}
 .nav-user .name{color:var(--text);font-weight:500;}
+.nav-user .mypage-btn{color:var(--mint);font-size:.72rem;padding:4px 10px;border-radius:10px;border:1px solid rgba(0,229,195,.3);transition:all .2s;white-space:nowrap;}
+.nav-user .mypage-btn:hover{background:var(--mint-dim)}
 .nav-user .name:hover{color:var(--mint)}
 .nav-user .logout{color:var(--text3);cursor:pointer;font-size:.72rem;padding:4px 8px;border-radius:10px;transition:color .2s;}
 .nav-user .logout:hover{color:var(--danger)}
@@ -312,7 +314,7 @@ function renderNavAuth(){
   const user=getSession(), wrap=document.getElementById('nav-auth');
   if(!wrap||!user)return;
   const av=(user.name||'?').slice(0,2);
-  wrap.innerHTML=`<div class="nav-user"><div class="av">${av}</div><a href="mypage.html" class="name">${esc(user.name)}</a><span class="logout" onclick="logout()">로그아웃</span></div>`;
+  wrap.innerHTML=`<div class="nav-user"><div class="av">${av}</div><span class="name">${esc(user.name)}</span><a href="mypage.html" class="mypage-btn">마이페이지</a><span class="logout" onclick="logout()">로그아웃</span></div>`;
   const mLogin=document.getElementById('m-login-link'), mReg=document.getElementById('m-register-link');
   if(mLogin){mLogin.textContent='👤 마이페이지';mLogin.href='mypage.html';}
   if(mReg)mReg.style.display='none';

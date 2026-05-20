@@ -6,17 +6,34 @@ const CFG = {
 };
 
 // Content-Type: text/plain → CORS preflight 없이 Apps Script POST 가능
-async function apiGet(p) {
-  const r = await fetch(`${CFG.API_URL}?${new URLSearchParams(p)}`);
-  return r.json();
+async function apiGet(p, ms = 7000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    const r = await fetch(`${CFG.API_URL}?${new URLSearchParams(p)}`, { signal: ctrl.signal });
+    clearTimeout(timer);
+    return r.json();
+  } catch(e) {
+    clearTimeout(timer);
+    throw e;
+  }
 }
-async function apiPost(b) {
-  const r = await fetch(CFG.API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify(b)
-  });
-  return r.json();
+async function apiPost(b, ms = 7000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    const r = await fetch(CFG.API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(b),
+      signal: ctrl.signal
+    });
+    clearTimeout(timer);
+    return r.json();
+  } catch(e) {
+    clearTimeout(timer);
+    throw e;
+  }
 }
 
 let _tt;
