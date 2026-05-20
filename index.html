@@ -35,7 +35,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 .nav-join:hover{background:var(--mint2);transform:translateY(-1px)}
 .nav-user{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text2);}
 .nav-user .av{width:28px;height:28px;border-radius:50%;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--mint);}
-.nav-user .name{color:var(--text);font-weight:500;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nav-user .name{color:var(--text);font-weight:500;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration:none;}
+.nav-user .name:hover{color:var(--mint)}
 .nav-user .logout{color:var(--text3);cursor:pointer;font-size:.72rem;padding:4px 8px;border-radius:10px;transition:color .2s;}
 .nav-user .logout:hover{color:var(--danger)}
 
@@ -325,7 +326,7 @@ code{font-size:.78em;background:var(--bg3);padding:1px 6px;border-radius:4px;col
   <a class="nav-logo" href="#hero">✦ GenAI 동아리</a>
   <div class="nav-links">
     <a href="pages/intro.html">소개</a>
-    <a href="#vote" onclick="smoothTo('vote',event)">대면일 투표</a>
+    <a href="pages/vote.html">대면일 투표</a>
     <a href="#news" onclick="smoothTo('news',event)">AI 뉴스</a>
     <a href="#contests" onclick="smoothTo('contests',event)">공모전</a>
     <a href="#opinions" onclick="smoothTo('opinions',event)">의견나눔</a>
@@ -342,7 +343,7 @@ code{font-size:.78em;background:var(--bg3);padding:1px 6px;border-radius:4px;col
 <!-- ══ 모바일 드로어 ══ -->
 <div class="mobile-drawer" id="mobile-drawer">
   <a href="pages/intro.html" onclick="closeDrawer()">📌 동아리 소개</a>
-  <a href="#vote" onclick="closeDrawer();smoothTo('vote',event)">📅 대면일 투표</a>
+  <a href="pages/vote.html" onclick="closeDrawer()">📅 대면일 투표</a>
   <a href="#news" onclick="closeDrawer();smoothTo('news',event)">📰 AI 뉴스</a>
   <a href="#contests" onclick="closeDrawer();smoothTo('contests',event)">🏅 공모전</a>
   <a href="#opinions" onclick="closeDrawer();smoothTo('opinions',event)">💬 의견나눔</a>
@@ -373,7 +374,7 @@ code{font-size:.78em;background:var(--bg3);padding:1px 6px;border-radius:4px;col
       <div class="member-count"><b>5명</b>의 멤버가 함께합니다</div>
     </div>
     <div class="hero-cta">
-      <a href="#vote" class="btn btn-primary" onclick="smoothTo('vote',event)">📅 대면일 투표하기</a>
+      <a href="pages/vote.html" class="btn btn-primary">📅 대면일 투표하기</a>
       <a href="pages/intro.html" class="btn btn-ghost">동아리 소개 보기 →</a>
     </div>
     <!-- 빠른 메뉴 -->
@@ -381,7 +382,7 @@ code{font-size:.78em;background:var(--bg3);padding:1px 6px;border-radius:4px;col
       <a href="pages/intro.html" class="quick-card"><div class="quick-card-icon">📌</div><div class="quick-card-title">동아리 소개</div><div class="quick-card-desc">멤버·비전·일정</div></a>
       <a href="pages/news.html" class="quick-card"><div class="quick-card-icon">📰</div><div class="quick-card-title">AI 뉴스</div><div class="quick-card-desc">매일 7시 자동 업데이트</div></a>
       <a href="pages/contest.html" class="quick-card"><div class="quick-card-icon">🏅</div><div class="quick-card-title">AI 공모전</div><div class="quick-card-desc">공공기관·지자체 공모전</div></a>
-      <a href="pages/register.html" class="quick-card"><div class="quick-card-icon">🙋</div><div class="quick-card-title">회원가입</div><div class="quick-card-desc">동아리 참여 신청</div></a>
+      <a href="pages/mypage.html" class="quick-card" id="quick-mypage"><div class="quick-card-icon">👤</div><div class="quick-card-title">마이페이지</div><div class="quick-card-desc">내 정보 확인</div></a>
     </div>
   </div>
 </section>
@@ -542,8 +543,8 @@ function renderNavAuth(){
   const mReg=document.getElementById('m-register-link');
   if(user){
     const av=(user.name||'?').slice(0,2);
-    wrap.innerHTML=`<div class="nav-user"><div class="av">${av}</div><span class="name">${esc(user.name)}</span><span class="logout" onclick="logout()">로그아웃</span></div>`;
-    if(mLogin){mLogin.textContent='👤 '+user.name;mLogin.href='#';}
+    wrap.innerHTML=`<div class="nav-user"><div class="av">${av}</div><a href="pages/mypage.html" class="name">${esc(user.name)}</a><span class="logout" onclick="logout()">로그아웃</span></div>`;
+    if(mLogin){mLogin.textContent='👤 마이페이지';mLogin.href='pages/mypage.html';}
     if(mReg){mReg.style.display='none';}
   }
 }
@@ -592,7 +593,14 @@ async function loadVote(){
     voteOptions = Array.isArray(opts) ? opts : [];
     voteResults = res && !res.error ? res : {};
     renderVoteGrid();
-  } catch { /* use mock */ }
+  } catch {
+    voteOptions = [
+      {id:1,date:'2026-06-07',time:'14:00',label:'오후 2시'},{id:2,date:'2026-06-14',time:'10:00',label:'오전 10시'},
+      {id:3,date:'2026-07-05',time:'14:00',label:'오후 2시'},{id:4,date:'2026-07-12',time:'10:00',label:'오전 10시'},
+    ];
+    voteResults = {1:['지현석','최효진'],2:['이찬영','유병찬','조유리'],3:['지현석'],4:['최효진']};
+    renderVoteGrid();
+  }
 }
 
 function selectMonth(m, el){
@@ -672,9 +680,14 @@ async function submitVote(){
 
 /* ── NEWS ── */
 async function loadNews(){
-  try { const d=await api({action:'getNews'}); renderNews(Array.isArray(d)?d:[]); }
-  catch { renderNews([]); }
+  try { const d=await api({action:'getNews'}); renderNews(Array.isArray(d)&&d.length?d:MOCK_NEWS_DATA); }
+  catch { renderNews(MOCK_NEWS_DATA); }
 }
+const MOCK_NEWS_DATA=[
+  {title:'OpenAI, GPT-5 공식 출시 — 추론 능력과 멀티모달 대폭 강화',source:'AI타임스',url:'#',published_at:new Date().toISOString()},
+  {title:'행정안전부, 공공기관 생성형 AI 도입 가이드라인 2.0 발표',source:'전자신문',url:'#',published_at:new Date().toISOString()},
+  {title:'Google Gemini 2.0 Flash, 속도·비용 최적화로 기업 시장 공략',source:'IT조선',url:'#',published_at:new Date().toISOString()},
+];
 function renderNews(items){
   const el=document.getElementById('news-list');
   if(!items.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📰</div>뉴스 데이터가 없습니다. Apps Script 트리거를 설정해 주세요.</div>`; return; }
@@ -690,9 +703,14 @@ function renderNews(items){
 
 /* ── CONTESTS ── */
 async function loadContests(){
-  try { const d=await api({action:'getContests'}); allContests=Array.isArray(d)?d:[]; renderContests(allContests.slice(0,3)); }
-  catch { renderContests([]); }
+  try { const d=await api({action:'getContests'}); allContests=Array.isArray(d)&&d.length?d:MOCK_CONTESTS_DATA; renderContests(allContests.slice(0,3)); }
+  catch { allContests=MOCK_CONTESTS_DATA; renderContests(allContests.slice(0,3)); }
 }
+const MOCK_CONTESTS_DATA=[
+  {id:1,title:'2026 공공데이터 AI 활용 아이디어 공모전',organizer:'행정안전부',deadline:'2026-08-31',prize:'장관상·500만원',category:'중앙부처',url:'#',description:'공공데이터를 활용한 AI 기반 서비스 아이디어 발굴'},
+  {id:2,title:'스마트시티 AI 솔루션 경진대회',organizer:'국토교통부',deadline:'2026-09-15',prize:'최우수상·300만원',category:'중앙부처',url:'#',description:'도시 문제 해결을 위한 AI 솔루션 개발'},
+  {id:3,title:'서울시 AI 혁신 서비스 공모전',organizer:'서울특별시',deadline:'2026-07-20',prize:'시장상·200만원',category:'지자체',url:'#',description:'서울시민 생활 편의 향상 AI 서비스'},
+];
 function renderContests(list){
   const el=document.getElementById('contest-grid');
   if(!list.length){ el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🏅</div>공모전 정보가 없습니다.</div>`; return; }
@@ -712,9 +730,13 @@ function renderContests(list){
 
 /* ── OPINIONS ── */
 async function loadOpinions(){
-  try { const d=await api({action:'getOpinions'}); opinions=Array.isArray(d)?d:[]; renderOpinions(); }
-  catch { renderOpinions(); }
+  try { const d=await api({action:'getOpinions'}); opinions=Array.isArray(d)&&d.length?d:MOCK_OPINIONS_DATA; renderOpinions(); }
+  catch { opinions=MOCK_OPINIONS_DATA; renderOpinions(); }
 }
+const MOCK_OPINIONS_DATA=[
+  {id:1,author:'지현석',content:'첫 모임 준비가 완료됐습니다! 다음 대면 일자 투표 꼭 참여해 주세요. 🙌',timestamp:new Date().toISOString()},
+  {id:2,author:'최효진',content:'ChatGPT를 활용해서 업무 보고서 자동 초안 작성 테스트해봤는데 생각보다 훨씬 잘 되네요!',timestamp:new Date().toISOString()},
+];
 function renderOpinions(){
   const el=document.getElementById('op-list');
   if(!opinions.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">💬</div>첫 번째로 의견을 남겨보세요!</div>`; return; }

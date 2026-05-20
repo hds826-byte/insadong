@@ -3,210 +3,248 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI 뉴스 — GenAI 동아리</title>
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Fraunces:ital,wght@0,300;0,700;1,300;1,700&display=swap" rel="stylesheet">
 <style>
-.news-hero{
-  background:var(--ink);padding:2rem;border-radius:var(--r);margin-bottom:2rem;
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
-}
-.news-hero-left h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:var(--lime);margin-bottom:.3rem}
-.news-hero-left p{font-size:.82rem;color:rgba(245,242,235,.5)}
-.news-refresh-badge{
-  background:rgba(184,255,87,.15);border:1px solid var(--lime);
-  color:var(--lime);font-size:.72rem;font-weight:700;
-  padding:6px 16px;border-radius:20px;font-family:'Syne',sans-serif;
-  display:flex;align-items:center;gap:6px;cursor:pointer;transition:background .18s;
-}
-.news-refresh-badge:hover{background:rgba(184,255,87,.25)}
-.news-refresh-dot{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:pulse 2s infinite}
-
-.news-main{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-@media(max-width:768px){.news-main{grid-template-columns:1fr}}
-.news-card{
-  background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);
-  padding:1.3rem;display:flex;flex-direction:column;gap:.6rem;
-  transition:all .18s;cursor:pointer;text-decoration:none;color:var(--ink);
-}
-.news-card:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:var(--shadow2)}
-.news-card.featured{border:2px solid var(--ink);background:var(--ink);color:var(--bg)}
-.news-card.featured .news-card-source{color:var(--lime)}
-.news-card.featured .news-card-date{color:rgba(245,242,235,.5)}
-.news-num{font-family:'Syne',sans-serif;font-weight:800;font-size:2.5rem;line-height:1;opacity:.15;margin-bottom:-.2rem}
-.news-card.featured .news-num{opacity:.25;color:var(--lime)}
-.news-card-title{font-weight:700;font-size:.95rem;line-height:1.5}
-.news-card-summary{font-size:.8rem;color:var(--ink3);line-height:1.7}
-.news-card.featured .news-card-summary{color:rgba(245,242,235,.6)}
-.news-card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:.3rem}
-.news-card-source{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3)}
-.news-card-date{font-size:.7rem;color:var(--ink4)}
-.news-list-item{
-  background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r2);
-  padding:.9rem 1.1rem;display:flex;gap:1rem;align-items:flex-start;
-  transition:all .18s;cursor:pointer;text-decoration:none;color:var(--ink);
-}
+:root{--bg:#080c14;--bg2:#0e1520;--bg3:#141d2b;--bg4:#1a2538;--mint:#00e5c3;--mint2:#00b89e;--mint-dim:rgba(0,229,195,.12);--blue:#4a9eff;--text:#e2e8f0;--text2:#94a3b8;--text3:#4a5568;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);--danger:#ff5c5c;--warn:#ffb647;--r:12px;--r2:8px;--nav-h:62px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.7;overflow-x:hidden;}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;padding:0 clamp(1rem,4vw,2rem);gap:.75rem;background:rgba(8,12,20,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Fraunces',serif;font-style:italic;font-size:1.1rem;color:var(--mint);margin-right:auto;}
+.nav-links{display:flex;gap:2px;flex-wrap:nowrap;}
+.nav-links a{color:var(--text2);font-size:.78rem;padding:5px 10px;border-radius:20px;transition:color .2s,background .2s;white-space:nowrap;}
+.nav-links a:hover{color:var(--text);background:var(--bg4)}
+.nav-links a.active{color:var(--mint);background:var(--mint-dim)}
+.nav-auth{display:flex;align-items:center;gap:.5rem;flex-shrink:0;}
+.nav-login{color:var(--text2);font-size:.78rem;padding:6px 12px;border-radius:20px;border:1px solid var(--border2);transition:all .2s;white-space:nowrap;}
+.nav-login:hover{color:var(--mint);border-color:rgba(0,229,195,.3)}
+.nav-join{background:var(--mint);color:#080c14;font-size:.78rem;font-weight:700;padding:6px 16px;border-radius:20px;white-space:nowrap;transition:background .2s;}
+.nav-join:hover{background:var(--mint2)}
+.nav-user{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text2);}
+.nav-user .av{width:28px;height:28px;border-radius:50%;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--mint);}
+.nav-user .name{color:var(--text);font-weight:500;}
+.nav-user .name:hover{color:var(--mint)}
+.nav-user .logout{color:var(--text3);cursor:pointer;font-size:.72rem;padding:4px 8px;border-radius:10px;transition:color .2s;}
+.nav-user .logout:hover{color:var(--danger)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;border:none;background:transparent;}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text2);border-radius:2px;transition:all .3s;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-drawer{position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;z-index:499;background:rgba(8,12,20,.98);backdrop-filter:blur(20px);padding:2rem 1.5rem;display:flex;flex-direction:column;gap:.5rem;transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);overflow-y:auto;}
+.mobile-drawer.open{transform:translateX(0)}
+.mobile-drawer a{color:var(--text2);font-size:1.1rem;font-weight:500;padding:1rem;border-radius:var(--r2);border:1px solid var(--border);transition:all .2s;display:block;}
+.mobile-drawer a:hover{color:var(--mint);border-color:var(--mint-dim);background:var(--mint-dim)}
+.mobile-drawer .m-join{background:var(--mint);color:#080c14;font-weight:700;border-color:var(--mint);margin-top:.5rem;text-align:center;}
+.page{padding-top:var(--nav-h);}
+.page-hero{background:linear-gradient(135deg,var(--bg2),var(--bg3));border-bottom:1px solid var(--border);padding:3.5rem clamp(1.25rem,4vw,2.5rem) 2.5rem;text-align:center;}
+.page-hero .label{display:inline-block;background:var(--mint-dim);color:var(--mint);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:1rem;}
+.page-hero h1{font-family:'Fraunces',serif;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.1;letter-spacing:-.02em;margin-bottom:.6rem;}
+.page-hero p{color:var(--text2);font-size:.9rem;max-width:480px;margin:0 auto .75rem;}
+.refresh-badge{display:inline-flex;align-items:center;gap:6px;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);color:var(--mint);font-size:.72rem;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;transition:background .18s;}
+.refresh-badge:hover{background:rgba(0,229,195,.2)}
+.refresh-dot{width:6px;height:6px;border-radius:50%;background:var(--mint);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.container{max-width:920px;margin:0 auto;padding:2.5rem clamp(1.25rem,4vw,2.5rem);}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--text2);margin-bottom:1.75rem;flex-wrap:wrap;}
+.breadcrumb a:hover{color:var(--mint)}
+.breadcrumb .sep{color:var(--text3);}
+.cat-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.75rem;}
+.cat-tab{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:500;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all .2s;font-family:'Noto Sans KR',sans-serif;}
+.cat-tab:hover{border-color:var(--border2);color:var(--text)}
+.cat-tab.active{background:var(--mint-dim);border-color:rgba(0,229,195,.3);color:var(--mint)}
+.news-featured{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.news-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);padding:1.4rem;display:flex;flex-direction:column;gap:.6rem;transition:all .2s;color:var(--text);}
+.news-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.news-card.featured{background:var(--bg3);border-color:var(--border2);}
+.nc-num{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:700;line-height:1;opacity:.2;margin-bottom:-.3rem;}
+.news-card.featured .nc-num{opacity:.35;color:var(--mint)}
+.nc-title{font-weight:700;font-size:.95rem;line-height:1.5;}
+.nc-summary{font-size:.82rem;color:var(--text2);line-height:1.7;flex:1;}
+.nc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:.4rem;font-size:.75rem;}
+.nc-source{color:var(--mint);font-weight:600;}
+.nc-date{color:var(--text3);}
+.news-list-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:.9rem 1.2rem;display:flex;gap:1rem;align-items:flex-start;transition:all .2s;color:var(--text);margin-bottom:.6rem;}
 .news-list-item:hover{border-color:var(--border2);transform:translateX(3px)}
-.news-list-num{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:var(--ink4);line-height:1;flex-shrink:0;padding-top:2px;min-width:28px}
-.news-list-title{font-weight:600;font-size:.88rem;margin-bottom:3px;line-height:1.4}
-.news-list-meta{display:flex;gap:.6rem;font-size:.72rem;color:var(--ink3)}
-.news-list-src{color:var(--ink2);font-weight:600}
-
-.cat-filter{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
-.cat-btn{
-  padding:5px 14px;border-radius:20px;font-size:.75rem;font-weight:600;
-  border:1.5px solid var(--border);background:var(--bg2);color:var(--ink3);
-  cursor:pointer;transition:all .18s;font-family:'Noto Sans KR',sans-serif;
-}
-.cat-btn.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}
+.nl-num{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700;color:var(--text3);line-height:1;flex-shrink:0;min-width:30px;padding-top:1px;}
+.nl-title{font-weight:600;font-size:.9rem;margin-bottom:3px;line-height:1.45;}
+.nl-meta{display:flex;gap:.6rem;font-size:.74rem;color:var(--text2);flex-wrap:wrap;}
+.nl-source{color:var(--mint);font-weight:600;}
+.cat-badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.68rem;background:var(--bg4);color:var(--text2);}
+.spin-wrap{display:flex;align-items:center;justify-content:center;gap:8px;padding:3rem;color:var(--text2);font-size:.88rem;}
+.spin{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--mint);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text2);}
+.empty-icon{font-size:2rem;margin-bottom:.75rem;opacity:.4;}
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:10px 22px;border-radius:20px;font-size:.85rem;opacity:0;transition:all .3s;z-index:800;white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.s{border-color:rgba(0,229,195,.4);color:#00e5a0}
+#toast.e{border-color:rgba(255,92,92,.4);color:#ff5c5c}
+.site-footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--text3);font-size:.78rem;margin-top:2rem;}
+.site-footer a{color:var(--text2);}
+.site-footer a:hover{color:var(--mint)}
+@media(max-width:900px){.nav-links{display:none}.nav-auth{display:none}.nav-hamburger{display:flex}}
+@media(max-width:640px){.news-featured{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<nav class="topnav">
-  <a class="nav-logo" href="../index.html"><div class="logo-dot">AI</div>GENAI 동아리</a>
+
+<nav>
+  <a class="nav-logo" href="../index.html">✦ GenAI 동아리</a>
   <div class="nav-links">
-    <a href="intro.html">소개</a><a href="schedule.html">일정</a>
-    <a href="vote.html">투표</a><a href="news.html" class="active">뉴스</a>
-    <a href="meeting.html">회의록</a><a href="board.html">게시판</a>
+    <a href="intro.html">소개</a>
+    <a href="vote.html">대면일 투표</a>
+    <a href="news.html" class="active">AI 뉴스</a>
+    <a href="contest.html">공모전</a>
+    <a href="../index.html#opinions">의견나눔</a>
   </div>
-  <button class="nav-btn nav-btn-ghost" onclick="location.href='admin.html'">⚙ 관리자</button>
-  <button class="nav-btn nav-btn-primary" onclick="location.href='register.html'">회원가입</button>
+  <div class="nav-auth" id="nav-auth">
+    <a href="login.html" class="nav-login">로그인</a>
+    <a href="register.html" class="nav-join">회원가입</a>
+  </div>
+  <button class="nav-hamburger" id="hbg" onclick="toggleD()" aria-label="메뉴"><span></span><span></span><span></span></button>
 </nav>
-<aside class="sidebar">
-  <div class="sidebar-sec"><div class="sidebar-sec-label">동아리 소개</div>
-    <a class="sidebar-link" href="intro.html"><span class="sidebar-icon">🏠</span>개요·비전</a>
-    <a class="sidebar-link" href="schedule.html"><span class="sidebar-icon">📅</span>학습 일정</a>
-    <a class="sidebar-link" href="members.html"><span class="sidebar-icon">👥</span>멤버 현황</a>
-    <a class="sidebar-link" href="notice.html"><span class="sidebar-icon">📣</span>공지사항</a>
-  </div>
-  <div class="sidebar-sec"><div class="sidebar-sec-label">학습 활동</div>
-    <a class="sidebar-link" href="vote.html"><span class="sidebar-icon">🗳️</span>대면일 투표</a>
-    <a class="sidebar-link" href="meeting.html"><span class="sidebar-icon">📝</span>회의록</a>
-    <a class="sidebar-link" href="idea.html"><span class="sidebar-icon">💡</span>아이디어 보드</a>
-    <a class="sidebar-link" href="task.html"><span class="sidebar-icon">✅</span>과제·To-Do</a>
-  </div>
-  <div class="sidebar-sec"><div class="sidebar-sec-label">정보 공유</div>
-    <a class="sidebar-link active" href="news.html" data-p="news.html"><span class="sidebar-icon">📰</span>AI 뉴스</a>
-    <a class="sidebar-link" href="contest.html"><span class="sidebar-icon">🏅</span>AI 공모전</a>
-    <a class="sidebar-link" href="board.html"><span class="sidebar-icon">💬</span>자유 게시판</a>
-    <a class="sidebar-link" href="resource.html"><span class="sidebar-icon">📎</span>자료실</a>
-  </div>
-  <div class="sidebar-sec"><div class="sidebar-sec-label">운영 관리</div>
-    <a class="sidebar-link" href="admin.html"><span class="sidebar-icon">🛡️</span>관리자</a>
-    <a class="sidebar-link" href="register.html"><span class="sidebar-icon">🙋</span>회원가입</a>
-  </div>
-</aside>
 
-<div class="page-wrap">
-<div class="page-body">
-  <div class="page-hd">
-    <div class="breadcrumb">홈 <span class="sep">›</span> 정보 공유 <span class="sep">›</span> AI 뉴스</div>
-    <h1>AI 뉴스</h1>
-    <p>매일 오전 7시, 생성형 AI 최신 뉴스 5건이 자동 업데이트됩니다.</p>
-  </div>
+<div class="mobile-drawer" id="mdr">
+  <a href="intro.html" onclick="closeD()">📌 동아리 소개</a>
+  <a href="vote.html" onclick="closeD()">📅 대면일 투표</a>
+  <a href="news.html" onclick="closeD()">📰 AI 뉴스</a>
+  <a href="contest.html" onclick="closeD()">🏅 공모전</a>
+  <a href="../index.html#opinions" onclick="closeD()">💬 의견나눔</a>
+  <a href="login.html" onclick="closeD()" id="m-login-link">🔑 로그인</a>
+  <a href="register.html" class="m-join" onclick="closeD()" id="m-register-link">🙋 회원가입</a>
+</div>
 
-  <!-- 뉴스 히어로 -->
-  <div class="news-hero">
-    <div class="news-hero-left">
-      <h2>오늘의 AI 소식</h2>
-      <p id="last-update">마지막 업데이트: 확인 중...</p>
-    </div>
-    <div class="news-refresh-badge" onclick="loadNews(true)">
-      <div class="news-refresh-dot"></div>매일 오전 7시 자동 업데이트
+<div class="page">
+  <div class="page-hero">
+    <div class="label">📰 AI 뉴스</div>
+    <h1>오늘의 생성형 AI 소식</h1>
+    <p>최신 생성형 AI 뉴스를 한눈에 확인하세요.</p>
+    <div class="refresh-badge" onclick="loadNews(true)">
+      <div class="refresh-dot"></div>매일 오전 7시 자동 업데이트
     </div>
   </div>
 
-  <!-- 카테고리 필터 -->
-  <div class="cat-filter">
-    <button class="cat-btn on" onclick="filterNews('all',this)">전체</button>
-    <button class="cat-btn" onclick="filterNews('LLM',this)">LLM·모델</button>
-    <button class="cat-btn" onclick="filterNews('공공',this)">공공·정책</button>
-    <button class="cat-btn" onclick="filterNews('서비스',this)">서비스·제품</button>
-    <button class="cat-btn" onclick="filterNews('기술',this)">기술·연구</button>
-  </div>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">홈</a><span class="sep">›</span><span>AI 뉴스</span>
+    </div>
 
-  <!-- 피처드 뉴스 (상위 2개) -->
-  <div class="news-main" id="news-featured"></div>
+    <div class="cat-tabs">
+      <button class="cat-tab active" onclick="filterCat('all',this)">전체</button>
+      <button class="cat-tab" onclick="filterCat('LLM',this)">LLM·모델</button>
+      <button class="cat-tab" onclick="filterCat('공공',this)">공공·정책</button>
+      <button class="cat-tab" onclick="filterCat('서비스',this)">서비스·제품</button>
+      <button class="cat-tab" onclick="filterCat('기술',this)">기술·연구</button>
+    </div>
 
-  <!-- 리스트 뉴스 -->
-  <div style="display:flex;flex-direction:column;gap:.6rem" id="news-list"></div>
-
-  <!-- 뉴스 없을 때 안내 -->
-  <div id="news-setup" style="display:none">
-    <div class="card mt-3" style="border-left:4px solid var(--amber)">
-      <div style="font-weight:700;margin-bottom:.5rem">⚙ 뉴스 자동 수집 설정 안내</div>
-      <p class="ts c-muted">Apps Script에서 <code>fetchAndCacheNews()</code> 트리거를 매일 오전 6~7시로 설정하면 Google 뉴스 RSS에서 자동 수집됩니다. 수동 실행: Apps Script 편집기 → 함수 선택 → ▶ 실행</p>
+    <div id="news-featured" class="news-featured">
+      <div class="spin-wrap" style="grid-column:1/-1"><div class="spin"></div>뉴스를 불러오는 중...</div>
+    </div>
+    <div id="news-list"></div>
+    <div id="news-empty" style="display:none" class="empty">
+      <div class="empty-icon">📰</div>
+      해당 카테고리 뉴스가 없습니다.
     </div>
   </div>
 </div>
-</div>
+
+<footer class="site-footer">
+  <a href="../index.html">홈</a> &nbsp;·&nbsp; <a href="intro.html">소개</a> &nbsp;·&nbsp; <a href="news.html">AI 뉴스</a> &nbsp;·&nbsp; <a href="contest.html">공모전</a> &nbsp;·&nbsp; <a href="login.html">로그인</a>
+</footer>
 
 <div id="toast"></div>
-<script src="../assets/common.js"></script>
+<script src="../common.js"></script>
 <script>
-let allNews=[];
 const MOCK_NEWS=[
   {id:1,title:'OpenAI, GPT-5 공식 출시 — 추론 능력과 멀티모달 대폭 강화',summary:'OpenAI가 차세대 모델 GPT-5를 공식 출시했다. 이전 모델 대비 수학·코딩·추론 성능이 2배 이상 향상됐으며, 실시간 음성·이미지·문서 처리가 통합됐다.',source:'AI타임스',url:'#',category:'LLM',published_at:new Date().toISOString()},
   {id:2,title:'행정안전부, 공공기관 생성형 AI 도입 가이드라인 2.0 발표',summary:'행정안전부가 공공기관의 AI 서비스 도입 시 준수해야 할 보안·윤리 가이드라인 개정판을 발표했다. 개인정보 처리, 알고리즘 투명성, AI 결과 검수 의무가 강화됐다.',source:'전자신문',url:'#',category:'공공',published_at:new Date().toISOString()},
-  {id:3,title:'Anthropic Claude 4.5 업데이트 — 한국어 성능·코드 분석 강화',summary:'Anthropic이 Claude 모델의 한국어 처리 능력과 코드 분석 기능을 대폭 강화한 업데이트를 공개했다. 공공 문서 및 법령 분석 정확도가 특히 향상됐다.',source:'ZDNet Korea',url:'#',category:'LLM',published_at:new Date().toISOString()},
+  {id:3,title:'Anthropic Claude 업데이트 — 한국어 성능·코드 분석 강화',summary:'Anthropic이 Claude 모델의 한국어 처리 능력과 코드 분석 기능을 대폭 강화한 업데이트를 공개했다. 공공 문서 및 법령 분석 정확도가 특히 향상됐다.',source:'ZDNet Korea',url:'#',category:'LLM',published_at:new Date().toISOString()},
   {id:4,title:'국내 기업 70%, 2026년 내 생성형 AI 본격 도입 계획',summary:'KISA 설문조사에 따르면 국내 주요 기업과 공공기관의 70%가 올해 내 생성형 AI를 업무에 본격 도입할 계획인 것으로 나타났다.',source:'디지털타임스',url:'#',category:'공공',published_at:new Date().toISOString()},
   {id:5,title:'Google Gemini 2.0 Flash, 속도·비용 최적화로 기업 시장 공략',summary:'Google이 Gemini 2.0 Flash 모델을 공개했다. 이전 버전 대비 응답 속도 3배, 비용 40% 절감을 달성해 기업 환경에서의 대규모 적용이 가능해졌다.',source:'IT조선',url:'#',category:'서비스',published_at:new Date().toISOString()},
+  {id:6,title:'국내 AI 스타트업, 공공 문서 분류 자동화 솔루션 출시',summary:'국내 AI 스타트업이 LLM 기반 공공 문서 자동 분류 솔루션을 출시했다. 민원 서류 분류 정확도 97% 달성으로 주목받고 있다.',source:'디지털데일리',url:'#',category:'서비스',published_at:new Date().toISOString()},
 ];
 
-async function loadNews(force=false){
-  document.getElementById('news-featured').innerHTML=MOCK_NEWS.slice(0,2).map(()=>`<div style="height:180px;background:var(--bg3);border-radius:var(--r);animation:pulse 1.5s infinite"></div>`).join('');
+let allNews=[], curCat='all';
 
+async function loadNews(force=false){
+  document.getElementById('news-featured').innerHTML=`<div class="spin-wrap" style="grid-column:1/-1"><div class="spin"></div>뉴스를 불러오는 중...</div>`;
+  document.getElementById('news-list').innerHTML='';
   if(CFG.isMock){allNews=MOCK_NEWS;renderNews(allNews);return;}
   const cache=!force&&cacheGet('news_cache');
   if(cache){allNews=cache;renderNews(allNews);return;}
   try{
     const data=await apiGet({action:'getNews'});
-    allNews=Array.isArray(data)?data:[];
-    if(allNews.length)cacheSet('news_cache',allNews,300);
+    allNews=Array.isArray(data)&&data.length?data:MOCK_NEWS;
+    if(Array.isArray(data)&&data.length)cacheSet('news_cache',allNews,300);
     renderNews(allNews);
   }catch{allNews=MOCK_NEWS;renderNews(allNews);}
 }
 
 function renderNews(list){
-  if(!list.length){
-    document.getElementById('news-featured').innerHTML='';
-    document.getElementById('news-list').innerHTML='';
-    document.getElementById('news-setup').style.display='block';
-    return;
-  }
-  document.getElementById('news-setup').style.display='none';
-  document.getElementById('last-update').textContent='마지막 업데이트: '+fmtDate(list[0]?.published_at||new Date().toISOString());
-
-  const top=list.slice(0,2);const rest=list.slice(2);
-  document.getElementById('news-featured').innerHTML=top.map((n,i)=>`
+  const filtered=curCat==='all'?list:list.filter(n=>n.category===curCat);
+  const fe=document.getElementById('news-featured');
+  const nl=document.getElementById('news-list');
+  const em=document.getElementById('news-empty');
+  if(!filtered.length){fe.innerHTML='';nl.innerHTML='';em.style.display='block';return;}
+  em.style.display='none';
+  const top=filtered.slice(0,2), rest=filtered.slice(2);
+  fe.innerHTML=top.map((n,i)=>`
     <a class="news-card${i===0?' featured':''}" href="${esc(n.url||'#')}" target="_blank" rel="noopener">
-      <div class="news-num">0${i+1}</div>
-      <div class="news-card-title">${esc(n.title)}</div>
-      ${n.summary?`<div class="news-card-summary">${esc(n.summary)}</div>`:''}
-      <div class="news-card-foot">
-        <span class="news-card-source">${esc(n.source||'')}</span>
-        <span class="news-card-date">${fmtDate(n.published_at)}</span>
-      </div>
+      <div class="nc-num">0${i+1}</div>
+      <div class="nc-title">${esc(n.title)}</div>
+      ${n.summary?`<div class="nc-summary">${esc(n.summary)}</div>`:''}
+      <div class="nc-foot"><span class="nc-source">${esc(n.source||'')}</span><span class="nc-date">${fmtDate(n.published_at)}</span></div>
     </a>`).join('');
-
-  document.getElementById('news-list').innerHTML=rest.map((n,i)=>`
+  nl.innerHTML=rest.map((n,i)=>`
     <a class="news-list-item" href="${esc(n.url||'#')}" target="_blank" rel="noopener">
-      <div class="news-list-num">0${i+3}</div>
+      <div class="nl-num">0${i+3}</div>
       <div>
-        <div class="news-list-title">${esc(n.title)}</div>
-        <div class="news-list-meta">
-          <span class="news-list-src">${esc(n.source||'')}</span>
+        <div class="nl-title">${esc(n.title)}</div>
+        <div class="nl-meta">
+          <span class="nl-source">${esc(n.source||'')}</span>
           <span>${fmtDate(n.published_at)}</span>
-          ${n.category?`<span class="badge bdg-ghost">${esc(n.category)}</span>`:''}
+          ${n.category?`<span class="cat-badge">${esc(n.category)}</span>`:''}
         </div>
       </div>
     </a>`).join('');
 }
 
-function filterNews(cat,btn){
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
-  renderNews(cat==='all'?allNews:allNews.filter(n=>n.category===cat));
+function filterCat(cat,btn){
+  curCat=cat;
+  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderNews(allNews);
 }
 
-loadNews();
+function getSession(){try{return JSON.parse(sessionStorage.getItem('gai_user')||localStorage.getItem('gai_user')||'null');}catch{return null;}}
+function renderNavAuth(){
+  const user=getSession(), wrap=document.getElementById('nav-auth');
+  if(!wrap||!user)return;
+  const av=(user.name||'?').slice(0,2);
+  wrap.innerHTML=`<div class="nav-user"><div class="av">${av}</div><a href="mypage.html" class="name">${esc(user.name)}</a><span class="logout" onclick="logout()">로그아웃</span></div>`;
+  const mLogin=document.getElementById('m-login-link'), mReg=document.getElementById('m-register-link');
+  if(mLogin){mLogin.textContent='👤 마이페이지';mLogin.href='mypage.html';}
+  if(mReg)mReg.style.display='none';
+}
+function logout(){
+  sessionStorage.removeItem('gai_user');localStorage.removeItem('gai_user');
+  toast('로그아웃 됐습니다.','');
+  setTimeout(()=>location.href='../index.html',800);
+}
+function toggleD(){
+  const h=document.getElementById('hbg'),d=document.getElementById('mdr');
+  h.classList.toggle('open');d.classList.toggle('open');
+  document.body.style.overflow=d.classList.contains('open')?'hidden':'';
+}
+function closeD(){
+  document.getElementById('hbg').classList.remove('open');
+  document.getElementById('mdr').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('DOMContentLoaded',()=>{renderNavAuth();loadNews();});
 </script>
 </body>
 </html>

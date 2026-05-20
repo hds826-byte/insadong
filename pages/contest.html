@@ -3,111 +3,199 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI 공모전 — GenAI 동아리</title>
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Fraunces:ital,wght@0,300;0,700;1,300;1,700&display=swap" rel="stylesheet">
 <style>
-.contest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
-.contest-card{
-  background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);
-  padding:1.4rem;display:flex;flex-direction:column;gap:.5rem;
-  transition:all .2s;
-}
-.contest-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow2)}
-.contest-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
-.cc-title{font-weight:700;font-size:.95rem;line-height:1.45;flex:1}
-.cc-org{font-size:.78rem;color:var(--ink3)}
-.cc-desc{font-size:.8rem;color:var(--ink2);line-height:1.7;flex:1}
-.cc-meta{display:flex;justify-content:space-between;align-items:center;margin-top:.4rem}
-.cc-deadline{font-size:.75rem;font-weight:700}
-.cc-deadline.urgent{color:var(--coral)}
-.cc-deadline.soon{color:var(--amber)}
-.cc-deadline.ok{color:var(--ink3)}
-.cc-link{font-size:.78rem;font-weight:700;color:var(--ink);text-decoration:none;font-family:'Syne',sans-serif}
-.cc-link:hover{color:var(--lime2)}
-.filter-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
-.flt{
-  padding:5px 14px;border-radius:20px;font-size:.75rem;font-weight:600;
-  border:1.5px solid var(--border);background:var(--bg2);color:var(--ink3);
-  cursor:pointer;transition:all .18s;font-family:'Noto Sans KR',sans-serif;
-}
-.flt.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}
-.dday-badge{
-  display:inline-block;padding:2px 8px;border-radius:4px;
-  font-family:'Syne',sans-serif;font-size:.65rem;font-weight:800;
-}
+:root{--bg:#080c14;--bg2:#0e1520;--bg3:#141d2b;--bg4:#1a2538;--mint:#00e5c3;--mint2:#00b89e;--mint-dim:rgba(0,229,195,.12);--blue:#4a9eff;--text:#e2e8f0;--text2:#94a3b8;--text3:#4a5568;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);--danger:#ff5c5c;--warn:#ffb647;--r:12px;--r2:8px;--nav-h:62px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.7;overflow-x:hidden;}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;padding:0 clamp(1rem,4vw,2rem);gap:.75rem;background:rgba(8,12,20,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Fraunces',serif;font-style:italic;font-size:1.1rem;color:var(--mint);margin-right:auto;}
+.nav-links{display:flex;gap:2px;flex-wrap:nowrap;}
+.nav-links a{color:var(--text2);font-size:.78rem;padding:5px 10px;border-radius:20px;transition:color .2s,background .2s;white-space:nowrap;}
+.nav-links a:hover{color:var(--text);background:var(--bg4)}
+.nav-links a.active{color:var(--mint);background:var(--mint-dim)}
+.nav-auth{display:flex;align-items:center;gap:.5rem;flex-shrink:0;}
+.nav-login{color:var(--text2);font-size:.78rem;padding:6px 12px;border-radius:20px;border:1px solid var(--border2);transition:all .2s;white-space:nowrap;}
+.nav-login:hover{color:var(--mint);border-color:rgba(0,229,195,.3)}
+.nav-join{background:var(--mint);color:#080c14;font-size:.78rem;font-weight:700;padding:6px 16px;border-radius:20px;white-space:nowrap;transition:background .2s;}
+.nav-join:hover{background:var(--mint2)}
+.nav-user{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text2);}
+.nav-user .av{width:28px;height:28px;border-radius:50%;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--mint);}
+.nav-user .name{color:var(--text);font-weight:500;}
+.nav-user .name:hover{color:var(--mint)}
+.nav-user .logout{color:var(--text3);cursor:pointer;font-size:.72rem;padding:4px 8px;border-radius:10px;transition:color .2s;}
+.nav-user .logout:hover{color:var(--danger)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;border:none;background:transparent;}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text2);border-radius:2px;transition:all .3s;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-drawer{position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;z-index:499;background:rgba(8,12,20,.98);backdrop-filter:blur(20px);padding:2rem 1.5rem;display:flex;flex-direction:column;gap:.5rem;transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);overflow-y:auto;}
+.mobile-drawer.open{transform:translateX(0)}
+.mobile-drawer a{color:var(--text2);font-size:1.1rem;font-weight:500;padding:1rem;border-radius:var(--r2);border:1px solid var(--border);transition:all .2s;display:block;}
+.mobile-drawer a:hover{color:var(--mint);border-color:var(--mint-dim);background:var(--mint-dim)}
+.mobile-drawer .m-join{background:var(--mint);color:#080c14;font-weight:700;border-color:var(--mint);margin-top:.5rem;text-align:center;}
+.page{padding-top:var(--nav-h);}
+.page-hero{background:linear-gradient(135deg,var(--bg2),var(--bg3));border-bottom:1px solid var(--border);padding:3.5rem clamp(1.25rem,4vw,2.5rem) 2.5rem;text-align:center;}
+.page-hero .label{display:inline-block;background:var(--mint-dim);color:var(--mint);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:1rem;}
+.page-hero h1{font-family:'Fraunces',serif;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.1;letter-spacing:-.02em;margin-bottom:.6rem;}
+.page-hero p{color:var(--text2);font-size:.9rem;max-width:480px;margin:0 auto;}
+.container{max-width:960px;margin:0 auto;padding:2.5rem clamp(1.25rem,4vw,2.5rem);}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--text2);margin-bottom:1.75rem;flex-wrap:wrap;}
+.breadcrumb a:hover{color:var(--mint)}
+.breadcrumb .sep{color:var(--text3);}
+/* 통계 카드 */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:2rem;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1rem;text-align:center;}
+.stat-num{font-family:'Fraunces',serif;font-size:2rem;line-height:1.1;color:var(--text);margin-bottom:.2rem;}
+.stat-num.urgent{color:var(--danger)}
+.stat-label{font-size:.72rem;color:var(--text2);}
+/* 필터 */
+.filter-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.filter-tab{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:500;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all .2s;font-family:'Noto Sans KR',sans-serif;}
+.filter-tab:hover{border-color:var(--border2);color:var(--text)}
+.filter-tab.active{background:var(--mint-dim);border-color:rgba(0,229,195,.3);color:var(--mint)}
+/* 공모전 그리드 */
+.contest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+.contest-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;display:flex;flex-direction:column;gap:.5rem;transition:all .2s;}
+.contest-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.contest-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;}
+.cc-cat{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--mint-dim);color:var(--mint);}
+.cc-dday{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;}
+.cc-dday.d-urgent{background:rgba(255,92,92,.15);color:var(--danger)}
+.cc-dday.d-soon{background:rgba(255,182,71,.12);color:var(--warn)}
+.cc-dday.d-ok{background:var(--bg4);color:var(--text2)}
+.cc-dday.d-closed{background:var(--bg4);color:var(--text3)}
+.cc-title{font-weight:700;font-size:.95rem;color:var(--text);line-height:1.4;}
+.cc-org{font-size:.8rem;color:var(--text2);}
+.cc-desc{font-size:.82rem;color:var(--text2);line-height:1.65;flex:1;}
+.cc-meta{display:flex;justify-content:space-between;align-items:center;margin-top:.4rem;flex-wrap:wrap;gap:.3rem;}
+.cc-deadline{font-size:.78rem;font-weight:600;}
+.cc-deadline.urgent{color:var(--danger)}
+.cc-deadline.soon{color:var(--warn)}
+.cc-deadline.ok{color:var(--text2)}
+.cc-deadline.closed{color:var(--text3)}
+.cc-prize{font-size:.78rem;color:var(--text2);}
+.cc-link{font-size:.78rem;color:var(--mint);font-weight:600;margin-top:.25rem;display:inline-block;}
+.cc-link:hover{text-decoration:underline}
+/* 모달 */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem;}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:2rem;width:100%;max-width:500px;}
+.modal h3{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:.4rem;}
+.modal p{color:var(--text2);font-size:.85rem;margin-bottom:1.25rem;}
+.form-row{display:flex;gap:.75rem;margin-bottom:.75rem;}
+.form-row>*{flex:1}
+.form-group{margin-bottom:.75rem;}
+.form-label{font-size:.75rem;color:var(--text2);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;display:block;}
+input,textarea,select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:.88rem;padding:9px 13px;outline:none;transition:border-color .2s;}
+input:focus,textarea:focus,select:focus{border-color:rgba(0,229,195,.4)}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+textarea{resize:vertical}
+.modal-actions{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1rem;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--r2);font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid transparent;font-family:'Noto Sans KR',sans-serif;}
+.btn-primary{background:var(--mint);color:#080c14;border-color:var(--mint);}
+.btn-primary:hover{background:var(--mint2)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border2);}
+.btn-ghost:hover{background:var(--bg4)}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+/* 로딩·빈 */
+.spin-wrap{display:flex;align-items:center;justify-content:center;gap:8px;padding:3rem;color:var(--text2);font-size:.88rem;}
+.spin{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--mint);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text2);grid-column:1/-1;}
+.empty-icon{font-size:2rem;margin-bottom:.75rem;opacity:.4;}
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:10px 22px;border-radius:20px;font-size:.85rem;opacity:0;transition:all .3s;z-index:800;white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.s{border-color:rgba(0,229,195,.4);color:#00e5a0}
+#toast.e{border-color:rgba(255,92,92,.4);color:#ff5c5c}
+.site-footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--text3);font-size:.78rem;margin-top:2rem;}
+.site-footer a{color:var(--text2);}
+.site-footer a:hover{color:var(--mint)}
+@media(max-width:900px){.nav-links{display:none}.nav-auth{display:none}.nav-hamburger{display:flex}}
+@media(max-width:640px){.stat-grid{grid-template-columns:repeat(2,1fr)}.form-row{flex-direction:column}}
 </style>
 </head>
 <body>
-<nav class="topnav">
-  <a class="nav-logo" href="../index.html"><div class="logo-dot">AI</div>GENAI 동아리</a>
+
+<nav>
+  <a class="nav-logo" href="../index.html">✦ GenAI 동아리</a>
   <div class="nav-links">
-    <a href="intro.html">소개</a><a href="schedule.html">일정</a>
-    <a href="vote.html">투표</a><a href="news.html">뉴스</a>
-    <a href="meeting.html">회의록</a><a href="board.html">게시판</a>
+    <a href="intro.html">소개</a>
+    <a href="vote.html">대면일 투표</a>
+    <a href="news.html">AI 뉴스</a>
+    <a href="contest.html" class="active">공모전</a>
+    <a href="../index.html#opinions">의견나눔</a>
   </div>
-  <button class="nav-btn nav-btn-ghost" onclick="location.href='admin.html'">⚙ 관리자</button>
-  <button class="nav-btn nav-btn-primary" onclick="location.href='register.html'">회원가입</button>
+  <div class="nav-auth" id="nav-auth">
+    <a href="login.html" class="nav-login">로그인</a>
+    <a href="register.html" class="nav-join">회원가입</a>
+  </div>
+  <button class="nav-hamburger" id="hbg" onclick="toggleD()" aria-label="메뉴"><span></span><span></span><span></span></button>
 </nav>
-<aside class="sidebar">
-  <div class="sidebar-sec"><div class="sidebar-sec-label">동아리 소개</div>
-    <a class="sidebar-link" href="intro.html"><span class="sidebar-icon">🏠</span>개요·비전</a>
-    <a class="sidebar-link" href="schedule.html"><span class="sidebar-icon">📅</span>학습 일정</a>
-    <a class="sidebar-link" href="members.html"><span class="sidebar-icon">👥</span>멤버 현황</a>
-    <a class="sidebar-link" href="notice.html"><span class="sidebar-icon">📣</span>공지사항</a>
-  </div>
-  <div class="sidebar-sec"><div class="sidebar-sec-label">학습 활동</div>
-    <a class="sidebar-link" href="vote.html"><span class="sidebar-icon">🗳️</span>대면일 투표</a>
-    <a class="sidebar-link" href="meeting.html"><span class="sidebar-icon">📝</span>회의록</a>
-    <a class="sidebar-link" href="idea.html"><span class="sidebar-icon">💡</span>아이디어 보드</a>
-    <a class="sidebar-link" href="task.html"><span class="sidebar-icon">✅</span>과제·To-Do</a>
-  </div>
-  <div class="sidebar-sec"><div class="sidebar-sec-label">정보 공유</div>
-    <a class="sidebar-link" href="news.html"><span class="sidebar-icon">📰</span>AI 뉴스</a>
-    <a class="sidebar-link active" href="contest.html" data-p="contest.html"><span class="sidebar-icon">🏅</span>AI 공모전</a>
-    <a class="sidebar-link" href="board.html"><span class="sidebar-icon">💬</span>자유 게시판</a>
-    <a class="sidebar-link" href="resource.html"><span class="sidebar-icon">📎</span>자료실</a>
-  </div>
-  <div class="sidebar-sec"><div class="sidebar-sec-label">운영 관리</div>
-    <a class="sidebar-link" href="admin.html"><span class="sidebar-icon">🛡️</span>관리자</a>
-    <a class="sidebar-link" href="register.html"><span class="sidebar-icon">🙋</span>회원가입</a>
-  </div>
-</aside>
-<div class="page-wrap">
-<div class="page-body">
-  <div class="page-hd">
-    <div class="breadcrumb">홈 <span class="sep">›</span> 정보 공유 <span class="sep">›</span> AI 공모전</div>
-    <h1>AI 공모전</h1>
-    <p>공공기관·지자체·민간 AI 활용 공모전 정보를 한눈에 확인하세요. 관리자가 Sheets에서 직접 관리합니다.</p>
-    <div class="page-hd-actions">
-      <button class="btn btn-ghost btn-sm" onclick="openModal('add-contest-modal')">+ 공모전 등록 (관리자)</button>
-    </div>
-  </div>
-  <div class="grid-4 mb-3">
-    <div class="stat-card"><div class="stat-num" id="cc-total">0</div><div class="stat-label">전체 공모전</div></div>
-    <div class="stat-card"><div class="stat-num c-coral" id="cc-urgent">0</div><div class="stat-label">마감 임박 (7일)</div></div>
-    <div class="stat-card"><div class="stat-num" id="cc-open">0</div><div class="stat-label">진행 중</div></div>
-    <div class="stat-card"><div class="stat-num" id="cc-closed">0</div><div class="stat-label">마감</div></div>
-  </div>
-  <div class="filter-row">
-    <button class="flt on" onclick="fltContest('all',this)">전체</button>
-    <button class="flt" onclick="fltContest('중앙부처',this)">중앙부처</button>
-    <button class="flt" onclick="fltContest('공공기관',this)">공공기관</button>
-    <button class="flt" onclick="fltContest('지자체',this)">지자체</button>
-    <button class="flt" onclick="fltContest('민간',this)">민간</button>
-    <button class="flt" onclick="fltContest('open',this)">🟢 진행 중</button>
-  </div>
-  <div class="contest-grid" id="contest-grid"><div class="loading-row"><div class="spin"></div></div></div>
-</div>
+
+<div class="mobile-drawer" id="mdr">
+  <a href="intro.html" onclick="closeD()">📌 동아리 소개</a>
+  <a href="vote.html" onclick="closeD()">📅 대면일 투표</a>
+  <a href="news.html" onclick="closeD()">📰 AI 뉴스</a>
+  <a href="contest.html" onclick="closeD()">🏅 공모전</a>
+  <a href="../index.html#opinions" onclick="closeD()">💬 의견나눔</a>
+  <a href="login.html" onclick="closeD()" id="m-login-link">🔑 로그인</a>
+  <a href="register.html" class="m-join" onclick="closeD()" id="m-register-link">🙋 회원가입</a>
 </div>
 
-<div class="overlay" id="add-contest-modal">
-  <div class="modal modal-lg">
-    <div class="modal-hd"><h3>공모전 등록</h3><p>공모전 정보를 입력하세요. Sheets에 저장됩니다.</p></div>
+<div class="page">
+  <div class="page-hero">
+    <div class="label">🏅 AI 공모전</div>
+    <h1>AI 활용 공모전 정보</h1>
+    <p>공공기관·지자체·민간 AI 공모전 정보를 한눈에 확인하세요.</p>
+  </div>
+
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">홈</a><span class="sep">›</span><span>AI 공모전</span>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num" id="cc-total">—</div><div class="stat-label">전체 공모전</div></div>
+      <div class="stat-card"><div class="stat-num urgent" id="cc-urgent">—</div><div class="stat-label">마감 임박 (7일)</div></div>
+      <div class="stat-card"><div class="stat-num" id="cc-open">—</div><div class="stat-label">진행 중</div></div>
+      <div class="stat-card"><div class="stat-num" id="cc-closed">—</div><div class="stat-label">마감</div></div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
+      <div class="filter-tabs" id="filter-tabs">
+        <button class="filter-tab active" onclick="filterContest('all',this)">전체</button>
+        <button class="filter-tab" onclick="filterContest('중앙부처',this)">중앙부처</button>
+        <button class="filter-tab" onclick="filterContest('공공기관',this)">공공기관</button>
+        <button class="filter-tab" onclick="filterContest('지자체',this)">지자체</button>
+        <button class="filter-tab" onclick="filterContest('민간',this)">민간</button>
+        <button class="filter-tab" onclick="filterContest('open',this)">🟢 진행 중</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openModal('add-modal')">+ 공모전 등록</button>
+    </div>
+
+    <div class="contest-grid" id="contest-grid">
+      <div class="spin-wrap" style="grid-column:1/-1"><div class="spin"></div>불러오는 중...</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="add-modal">
+  <div class="modal">
+    <h3>공모전 등록</h3>
+    <p>공모전 정보를 입력하세요.</p>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">공모전명 <span class="req">*</span></label><input type="text" id="co-title" placeholder="공모전 이름"></div>
-      <div class="form-group"><label class="form-label">주최기관 <span class="req">*</span></label><input type="text" id="co-org" placeholder="행정안전부"></div>
+      <div class="form-group"><label class="form-label">공모전명 *</label><input type="text" id="co-title" placeholder="공모전 이름"></div>
+      <div class="form-group"><label class="form-label">주최기관 *</label><input type="text" id="co-org" placeholder="행정안전부"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">카테고리</label><select id="co-cat"><option>중앙부처</option><option>공공기관</option><option>지자체</option><option>민간</option></select></div>
+      <div class="form-group"><label class="form-label">카테고리</label>
+        <select id="co-cat"><option>중앙부처</option><option>공공기관</option><option>지자체</option><option>민간</option></select>
+      </div>
       <div class="form-group"><label class="form-label">마감일</label><input type="date" id="co-deadline"></div>
     </div>
     <div class="form-row">
@@ -115,17 +203,20 @@
       <div class="form-group"><label class="form-label">공모전 URL</label><input type="url" id="co-url" placeholder="https://..."></div>
     </div>
     <div class="form-group"><label class="form-label">설명</label><textarea id="co-desc" rows="3" placeholder="공모전 개요, 지원 자격 등"></textarea></div>
-    <div class="modal-ft">
-      <button class="btn btn-ghost btn-sm" onclick="closeModal('add-contest-modal')">취소</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('add-modal')">취소</button>
       <button class="btn btn-primary btn-sm" onclick="addContest()">등록</button>
     </div>
   </div>
 </div>
 
+<footer class="site-footer">
+  <a href="../index.html">홈</a> &nbsp;·&nbsp; <a href="intro.html">소개</a> &nbsp;·&nbsp; <a href="news.html">AI 뉴스</a> &nbsp;·&nbsp; <a href="contest.html">공모전</a> &nbsp;·&nbsp; <a href="login.html">로그인</a>
+</footer>
+
 <div id="toast"></div>
-<script src="../assets/common.js"></script>
+<script src="../common.js"></script>
 <script>
-let contests=[];
 const MOCK_CONTESTS=[
   {id:1,title:'2026 공공데이터 AI 활용 아이디어 공모전',org:'행정안전부',cat:'중앙부처',deadline:'2026-08-31',prize:'장관상·500만원',url:'#',desc:'공공데이터와 AI를 결합한 혁신 서비스 아이디어 발굴. 공공기관 소속 누구나 참여 가능.'},
   {id:2,title:'스마트시티 AI 솔루션 경진대회',org:'국토교통부',cat:'중앙부처',deadline:'2026-09-15',prize:'최우수·300만원',url:'#',desc:'도시 문제 해결을 위한 AI 솔루션 개발 및 시연.'},
@@ -135,45 +226,68 @@ const MOCK_CONTESTS=[
   {id:6,title:'지역 AI 디지털 혁신 공모전',org:'경기도',cat:'지자체',deadline:'2026-08-10',prize:'도지사상·150만원',url:'#',desc:'경기도 소재 공공기관 AI 기반 지역사회 혁신 아이디어.'},
 ];
 
-function ddayClass(d){if(!d)return'ok';const diff=Math.ceil((new Date(d)-new Date())/86400000);return diff<0?'closed':diff<=7?'urgent':diff<=30?'soon':'ok'}
-function ddayLabel(d){const v=dDay(d);return v}
-function deadlineClass(d){const c=ddayClass(d);return{closed:'c-muted',urgent:'urgent',soon:'soon',ok:'ok'}[c]}
+let contests=[], curFilter='all';
+
+function ddayStatus(d){
+  if(!d)return'ok';
+  const diff=Math.ceil((new Date(d)-new Date())/86400000);
+  if(diff<0)return'closed';
+  if(diff<=7)return'urgent';
+  if(diff<=30)return'soon';
+  return'ok';
+}
+function ddayLabel(d){
+  if(!d)return'';
+  const diff=Math.ceil((new Date(d)-new Date())/86400000);
+  if(diff<0)return'마감';
+  if(diff===0)return'D-day';
+  return`D-${diff}`;
+}
 
 function renderContests(list){
   const el=document.getElementById('contest-grid');
-  if(!list.length){el.innerHTML=emptyHTML('🏅','공모전 정보가 없습니다.');return;}
-  const now=new Date();
-  const catBdg={중앙부처:'bdg-ink',공공기관:'bdg-sky',지자체:'bdg-lime',민간:'bdg-amber'};
+  if(!list.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🏅</div>해당 조건의 공모전이 없습니다.</div>`;return;}
   el.innerHTML=list.map(c=>{
-    const dd=dDay(c.deadline),isClosed=dd==='마감';
+    const st=ddayStatus(c.deadline);
     return`<div class="contest-card">
       <div class="contest-card-top">
-        <div><span class="badge ${catBdg[c.cat]||'bdg-ghost'}">${esc(c.cat)}</span></div>
-        <span class="dday-badge ${ddayClass(c.deadline)==='urgent'?'bdg-coral':ddayClass(c.deadline)==='soon'?'bdg-amber':'bdg-ghost'}" style="white-space:nowrap">${dd}</span>
+        <span class="cc-cat">${esc(c.cat||c.category||'기타')}</span>
+        <span class="cc-dday d-${st}">${ddayLabel(c.deadline)}</span>
       </div>
       <div class="cc-title">${esc(c.title)}</div>
-      <div class="cc-org">📌 ${esc(c.org)}</div>
-      ${c.desc?`<div class="cc-desc">${esc(c.desc)}</div>`:''}
+      <div class="cc-org">📌 ${esc(c.org||c.organizer||'')}</div>
+      ${c.desc||c.description?`<div class="cc-desc">${esc(c.desc||c.description)}</div>`:''}
       <div class="cc-meta">
-        <span class="cc-deadline ${deadlineClass(c.deadline)}">🗓 마감: ${c.deadline||'미정'}</span>
-        ${c.prize?`<span class="txs c-muted">🏆 ${esc(c.prize)}</span>`:''}
+        <span class="cc-deadline ${st}">🗓 마감: ${c.deadline||'미정'}</span>
+        ${c.prize?`<span class="cc-prize">🏆 ${esc(c.prize)}</span>`:''}
       </div>
-      ${c.url&&c.url!=='#'?`<a class="cc-link" href="${esc(c.url)}" target="_blank">자세히 보기 ↗</a>`:''}
+      ${(c.url&&c.url!=='#')?`<a class="cc-link" href="${esc(c.url)}" target="_blank">자세히 보기 →</a>`:''}
     </div>`;
   }).join('');
-  const now2=new Date();
+  const now=new Date();
   document.getElementById('cc-total').textContent=contests.length;
-  document.getElementById('cc-urgent').textContent=contests.filter(c=>c.deadline&&Math.ceil((new Date(c.deadline)-now2)/86400000)<=7&&Math.ceil((new Date(c.deadline)-now2)/86400000)>=0).length;
-  document.getElementById('cc-open').textContent=contests.filter(c=>!c.deadline||new Date(c.deadline)>=now2).length;
-  document.getElementById('cc-closed').textContent=contests.filter(c=>c.deadline&&new Date(c.deadline)<now2).length;
+  document.getElementById('cc-urgent').textContent=contests.filter(c=>c.deadline&&Math.ceil((new Date(c.deadline)-now)/86400000)<=7&&Math.ceil((new Date(c.deadline)-now)/86400000)>=0).length;
+  document.getElementById('cc-open').textContent=contests.filter(c=>!c.deadline||new Date(c.deadline)>=now).length;
+  document.getElementById('cc-closed').textContent=contests.filter(c=>c.deadline&&new Date(c.deadline)<now).length;
 }
 
-function fltContest(f,btn){
-  document.querySelectorAll('.flt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+function filterContest(f,btn){
+  curFilter=f;
+  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
   const now=new Date();
   if(f==='all')renderContests(contests);
   else if(f==='open')renderContests(contests.filter(c=>!c.deadline||new Date(c.deadline)>=now));
-  else renderContests(contests.filter(c=>c.cat===f));
+  else renderContests(contests.filter(c=>(c.cat||c.category)===f));
+}
+
+async function load(){
+  if(CFG.isMock){contests=MOCK_CONTESTS;renderContests(contests);return;}
+  try{
+    const d=await apiGet({action:'getContests'});
+    contests=Array.isArray(d)&&d.length?d:MOCK_CONTESTS;
+    renderContests(contests);
+  }catch{contests=MOCK_CONTESTS;renderContests(contests);}
 }
 
 async function addContest(){
@@ -181,16 +295,44 @@ async function addContest(){
   const org=document.getElementById('co-org').value.trim();
   if(!title||!org){toast('공모전명과 주최기관은 필수입니다.','e');return;}
   const c={id:Date.now(),title,org,cat:document.getElementById('co-cat').value,deadline:document.getElementById('co-deadline').value,prize:document.getElementById('co-prize').value.trim(),url:document.getElementById('co-url').value.trim(),desc:document.getElementById('co-desc').value.trim()};
-  contests.unshift(c);renderContests(contests);closeModal('add-contest-modal');toast('공모전이 등록됐습니다!','s');
+  contests.unshift(c);
+  filterContest(curFilter, document.querySelector('.filter-tab.active'));
+  closeModal('add-modal');
+  toast('공모전이 등록됐습니다!','s');
   if(!CFG.isMock)await apiPost({action:'addContest',...c}).catch(()=>{});
 }
 
-async function load(){
-  if(CFG.isMock){contests=MOCK_CONTESTS;renderContests(contests);return;}
-  try{const d=await apiGet({action:'getContests'});contests=Array.isArray(d)?d:[];renderContests(contests);}
-  catch{contests=MOCK_CONTESTS;renderContests(contests);}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));});
+
+function getSession(){try{return JSON.parse(sessionStorage.getItem('gai_user')||localStorage.getItem('gai_user')||'null');}catch{return null;}}
+function renderNavAuth(){
+  const user=getSession(), wrap=document.getElementById('nav-auth');
+  if(!wrap||!user)return;
+  const av=(user.name||'?').slice(0,2);
+  wrap.innerHTML=`<div class="nav-user"><div class="av">${av}</div><a href="mypage.html" class="name">${esc(user.name)}</a><span class="logout" onclick="logout()">로그아웃</span></div>`;
+  const mLogin=document.getElementById('m-login-link'), mReg=document.getElementById('m-register-link');
+  if(mLogin){mLogin.textContent='👤 마이페이지';mLogin.href='mypage.html';}
+  if(mReg)mReg.style.display='none';
 }
-load();
+function logout(){
+  sessionStorage.removeItem('gai_user');localStorage.removeItem('gai_user');
+  toast('로그아웃 됐습니다.','');
+  setTimeout(()=>location.href='../index.html',800);
+}
+function toggleD(){
+  const h=document.getElementById('hbg'),d=document.getElementById('mdr');
+  h.classList.toggle('open');d.classList.toggle('open');
+  document.body.style.overflow=d.classList.contains('open')?'hidden':'';
+}
+function closeD(){
+  document.getElementById('hbg').classList.remove('open');
+  document.getElementById('mdr').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('DOMContentLoaded',()=>{renderNavAuth();load();});
 </script>
 </body>
 </html>

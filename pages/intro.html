@@ -110,21 +110,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
   <a class="nav-logo" href="../index.html">✦ GenAI 동아리</a>
   <div class="nav-links">
     <a href="intro.html" class="active">소개</a>
-    <a href="../index.html#vote">대면일 투표</a>
+    <a href="vote.html">대면일 투표</a>
     <a href="news.html">AI 뉴스</a>
     <a href="contest.html">공모전</a>
-    <a href="opinions.html">의견나눔</a>
+    <a href="../index.html#opinions">의견나눔</a>
   </div>
-  <a href="register.html" class="nav-join">회원가입</a>
+  <div class="nav-auth" id="nav-auth" style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;">
+    <a href="login.html" class="nav-login" style="color:var(--text2);font-size:.78rem;padding:6px 12px;border-radius:20px;border:1px solid var(--border2);transition:all .2s;white-space:nowrap;">로그인</a>
+    <a href="register.html" class="nav-join">회원가입</a>
+  </div>
   <button class="nav-hamburger" id="hbg" onclick="toggleD()"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-drawer" id="mdr">
   <a href="intro.html" onclick="closeD()">📌 동아리 소개</a>
-  <a href="../index.html#vote" onclick="closeD()">📅 대면일 투표</a>
+  <a href="vote.html" onclick="closeD()">📅 대면일 투표</a>
   <a href="news.html" onclick="closeD()">📰 AI 뉴스</a>
   <a href="contest.html" onclick="closeD()">🏅 공모전</a>
-  <a href="opinions.html" onclick="closeD()">💬 의견나눔</a>
-  <a href="register.html" class="m-join" onclick="closeD()">🙋 회원가입</a>
+  <a href="../index.html#opinions" onclick="closeD()">💬 의견나눔</a>
+  <a href="login.html" onclick="closeD()" id="m-login-link">🔑 로그인</a>
+  <a href="register.html" class="m-join" onclick="closeD()" id="m-register-link">🙋 회원가입</a>
 </div>
 
 <div class="page">
@@ -227,6 +231,19 @@ document.getElementById('sched-body').innerHTML=SCHED.map((s,i)=>{
 function toggleD(){const h=document.getElementById('hbg'),d=document.getElementById('mdr');h.classList.toggle('open');d.classList.toggle('open');document.body.style.overflow=d.classList.contains('open')?'hidden':'';}
 function closeD(){document.getElementById('hbg').classList.remove('open');document.getElementById('mdr').classList.remove('open');document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeD();});
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function getSession(){try{return JSON.parse(sessionStorage.getItem('gai_user')||localStorage.getItem('gai_user')||'null');}catch{return null;}}
+function logout(){sessionStorage.removeItem('gai_user');localStorage.removeItem('gai_user');location.href='../index.html';}
+document.addEventListener('DOMContentLoaded',()=>{
+  const user=getSession(), wrap=document.getElementById('nav-auth');
+  if(!wrap||!user)return;
+  const av=(user.name||'?').slice(0,2);
+  wrap.innerHTML=`<div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text2)"><div style="width:28px;height:28px;border-radius:50%;background:var(--mint-dim);border:1px solid rgba(0,229,195,.25);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--mint)">${av}</div><a href="mypage.html" style="color:var(--text);font-weight:500;">${esc(user.name)}</a><span onclick="logout()" style="color:var(--text3);cursor:pointer;font-size:.72rem;padding:4px 8px;border-radius:10px;">로그아웃</span></div>`;
+  const mLogin=document.getElementById('m-login-link'), mReg=document.getElementById('m-register-link');
+  if(mLogin){mLogin.textContent='👤 마이페이지';mLogin.href='mypage.html';}
+  if(mReg)mReg.style.display='none';
+});
 </script>
 </body>
 </html>
