@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>자유 게시판 — GenAI 동아리</title>|' /mnt/c/insadong/pages/board.html)",
+      "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>공지사항 — GenAI 동아리</title>|' /mnt/c/insadong/pages/notice.html)",
+      "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>관리자 — GenAI 동아리</title>|' /mnt/c/insadong/pages/admin.html)",
+      "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>자료실 — GenAI 동아리</title>|' /mnt/c/insadong/pages/resource.html)"
     ]
   }
 }
