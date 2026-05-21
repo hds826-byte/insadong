@@ -528,7 +528,6 @@ code{font-size:.78em;background:var(--bg3);padding:1px 6px;border-radius:4px;col
 <script src="common.js"></script>
 <script>
 /* ── STATE ── */
-const DAYS = ['일','월','화','수','목','금','토'];
 let voteOptions = [], voteResults = {}, selectedDates = new Set();
 let opinions = [], allContests = [];
 let deleteTargetId = null;
@@ -682,15 +681,21 @@ async function submitVote(){
 }
 
 /* ── NEWS ── */
-async function loadNews(){
-  try { const d=await api({action:'getNews'}); renderNews(Array.isArray(d)&&d.length?d:MOCK_NEWS_DATA); }
-  catch { renderNews(MOCK_NEWS_DATA); }
-}
 const MOCK_NEWS_DATA=[
-  {title:'OpenAI, GPT-5 공식 출시 — 추론 능력과 멀티모달 대폭 강화',source:'AI타임스',url:'#',published_at:new Date().toISOString()},
-  {title:'행정안전부, 공공기관 생성형 AI 도입 가이드라인 2.0 발표',source:'전자신문',url:'#',published_at:new Date().toISOString()},
-  {title:'Google Gemini 2.0 Flash, 속도·비용 최적화로 기업 시장 공략',source:'IT조선',url:'#',published_at:new Date().toISOString()},
+  {title:'OpenAI, GPT-5 공식 출시 — 추론 능력과 멀티모달 대폭 강화',source:'AI타임스',url:'https://www.aitimes.com',published_at:'2026-05-15T09:00:00.000Z'},
+  {title:'행정안전부, 공공기관 생성형 AI 도입 가이드라인 2.0 발표',source:'전자신문',url:'https://www.etnews.com',published_at:'2026-05-14T08:30:00.000Z'},
+  {title:'Google Gemini 2.0 Flash, 속도·비용 최적화로 기업 시장 공략',source:'IT조선',url:'https://it.chosun.com',published_at:'2026-05-13T10:00:00.000Z'},
+  {title:'Anthropic Claude, 한국어 처리 및 코드 분석 성능 대폭 강화',source:'ZDNet Korea',url:'https://zdnet.co.kr',published_at:'2026-05-12T11:00:00.000Z'},
+  {title:'국내 기업 70%, 2026년 내 생성형 AI 본격 도입 계획',source:'디지털타임스',url:'https://www.dt.co.kr',published_at:'2026-05-11T09:00:00.000Z'},
+  {title:'AI 에이전트 시대 본격화 — 업무 자동화 플랫폼 경쟁 가열',source:'디지털데일리',url:'https://www.ddaily.co.kr',published_at:'2026-05-10T10:00:00.000Z'},
 ];
+async function loadNews(){
+  renderNews(MOCK_NEWS_DATA);
+  try {
+    const d=await api({action:'getNews'});
+    if(Array.isArray(d)&&d.length) renderNews(d);
+  } catch {}
+}
 function renderNews(items){
   const el=document.getElementById('news-list');
   if(!items.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">📰</div>뉴스 데이터가 없습니다. Apps Script 트리거를 설정해 주세요.</div>`; return; }

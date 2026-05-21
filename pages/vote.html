@@ -257,7 +257,11 @@ function renderVoteGrid(){
   hdr.textContent=`📅 ${currentMonth}월 대면 일자 투표`;
   const monthOpts=voteOptions.filter(o=>{const d=new Date(o.date);return d.getMonth()+1===currentMonth;});
   if(!monthOpts.length){
-    el.innerHTML=`<div class="empty"><div class="empty-icon">📅</div>${currentMonth}월 날짜 후보가 없습니다.<br><small>위 관리자 패널에서 날짜를 추가하세요.</small></div>`;
+    if(!voteOptions.length){
+      el.innerHTML=`<div class="spin-wrap" style="grid-column:1/-1"><div class="spin"></div>날짜 데이터를 불러오는 중...</div>`;
+    } else {
+      el.innerHTML=`<div class="empty"><div class="empty-icon">📅</div>${currentMonth}월 날짜 후보가 없습니다.<br><small>위 관리자 패널에서 날짜를 추가하세요.</small></div>`;
+    }
     return;
   }
   const max=Math.max(1,...monthOpts.map(o=>(voteResults[o.id]||[]).length));
@@ -363,12 +367,13 @@ function closeD(){
 
 document.addEventListener('DOMContentLoaded',()=>{
   renderNavAuth();
-  loadVote();
-  // 현재 월 자동 선택
+  // 현재 월 자동 선택 먼저 설정
   const nowM=new Date().getMonth()+1;
   const initM=nowM>=5&&nowM<=12?nowM:5;
   const tabs=document.querySelectorAll('.month-tab');
   tabs.forEach(t=>{if(parseInt(t.textContent)===initM){t.classList.add('active');currentMonth=initM;}});
+  renderVoteGrid();
+  loadVote();
 });
 </script>
 </body>

@@ -6,7 +6,7 @@ const CFG = {
 };
 
 // Content-Type: text/plain → CORS preflight 없이 Apps Script POST 가능
-async function apiGet(p, ms = 7000) {
+async function apiGet(p, ms = 15000) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), ms);
   try {
@@ -18,7 +18,7 @@ async function apiGet(p, ms = 7000) {
     throw e;
   }
 }
-async function apiPost(b, ms = 7000) {
+async function apiPost(b, ms = 15000) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), ms);
   try {

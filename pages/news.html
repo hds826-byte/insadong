@@ -161,28 +161,32 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 <script src="../common.js"></script>
 <script>
 const MOCK_NEWS=[
-  {id:1,title:'OpenAI, GPT-5 공식 출시 — 추론 능력과 멀티모달 대폭 강화',summary:'OpenAI가 차세대 모델 GPT-5를 공식 출시했다. 이전 모델 대비 수학·코딩·추론 성능이 2배 이상 향상됐으며, 실시간 음성·이미지·문서 처리가 통합됐다.',source:'AI타임스',url:'#',category:'LLM',published_at:new Date().toISOString()},
-  {id:2,title:'행정안전부, 공공기관 생성형 AI 도입 가이드라인 2.0 발표',summary:'행정안전부가 공공기관의 AI 서비스 도입 시 준수해야 할 보안·윤리 가이드라인 개정판을 발표했다. 개인정보 처리, 알고리즘 투명성, AI 결과 검수 의무가 강화됐다.',source:'전자신문',url:'#',category:'공공',published_at:new Date().toISOString()},
-  {id:3,title:'Anthropic Claude 업데이트 — 한국어 성능·코드 분석 강화',summary:'Anthropic이 Claude 모델의 한국어 처리 능력과 코드 분석 기능을 대폭 강화한 업데이트를 공개했다. 공공 문서 및 법령 분석 정확도가 특히 향상됐다.',source:'ZDNet Korea',url:'#',category:'LLM',published_at:new Date().toISOString()},
-  {id:4,title:'국내 기업 70%, 2026년 내 생성형 AI 본격 도입 계획',summary:'KISA 설문조사에 따르면 국내 주요 기업과 공공기관의 70%가 올해 내 생성형 AI를 업무에 본격 도입할 계획인 것으로 나타났다.',source:'디지털타임스',url:'#',category:'공공',published_at:new Date().toISOString()},
-  {id:5,title:'Google Gemini 2.0 Flash, 속도·비용 최적화로 기업 시장 공략',summary:'Google이 Gemini 2.0 Flash 모델을 공개했다. 이전 버전 대비 응답 속도 3배, 비용 40% 절감을 달성해 기업 환경에서의 대규모 적용이 가능해졌다.',source:'IT조선',url:'#',category:'서비스',published_at:new Date().toISOString()},
-  {id:6,title:'국내 AI 스타트업, 공공 문서 분류 자동화 솔루션 출시',summary:'국내 AI 스타트업이 LLM 기반 공공 문서 자동 분류 솔루션을 출시했다. 민원 서류 분류 정확도 97% 달성으로 주목받고 있다.',source:'디지털데일리',url:'#',category:'서비스',published_at:new Date().toISOString()},
+  {id:1,title:'OpenAI, GPT-5 공식 출시 — 추론 능력과 멀티모달 대폭 강화',summary:'OpenAI가 차세대 모델 GPT-5를 공식 출시했다. 이전 모델 대비 수학·코딩·추론 성능이 2배 이상 향상됐으며, 실시간 음성·이미지·문서 처리가 통합됐다.',source:'AI타임스',url:'https://www.aitimes.com',category:'LLM',published_at:'2026-05-15T09:00:00.000Z'},
+  {id:2,title:'행정안전부, 공공기관 생성형 AI 도입 가이드라인 2.0 발표',summary:'행정안전부가 공공기관의 AI 서비스 도입 시 준수해야 할 보안·윤리 가이드라인 개정판을 발표했다. 개인정보 처리, 알고리즘 투명성, AI 결과 검수 의무가 강화됐다.',source:'전자신문',url:'https://www.etnews.com',category:'공공',published_at:'2026-05-14T08:30:00.000Z'},
+  {id:3,title:'Anthropic Claude, 한국어 처리 및 코드 분석 성능 대폭 강화',summary:'Anthropic이 Claude 모델의 한국어 처리 능력과 코드 분석 기능을 대폭 강화한 업데이트를 공개했다. 공공 문서 및 법령 분석 정확도가 특히 향상됐다.',source:'ZDNet Korea',url:'https://zdnet.co.kr',category:'LLM',published_at:'2026-05-13T11:00:00.000Z'},
+  {id:4,title:'국내 기업 70%, 2026년 내 생성형 AI 본격 도입 계획',summary:'KISA 설문조사에 따르면 국내 주요 기업과 공공기관의 70%가 올해 내 생성형 AI를 업무에 본격 도입할 계획인 것으로 나타났다.',source:'디지털타임스',url:'https://www.dt.co.kr',category:'공공',published_at:'2026-05-12T09:00:00.000Z'},
+  {id:5,title:'Google Gemini 2.0 Flash, 속도·비용 최적화로 기업 시장 공략',summary:'Google이 Gemini 2.0 Flash 모델을 공개했다. 이전 버전 대비 응답 속도 3배, 비용 40% 절감을 달성해 기업 환경에서의 대규모 적용이 가능해졌다.',source:'IT조선',url:'https://it.chosun.com',category:'서비스',published_at:'2026-05-11T10:00:00.000Z'},
+  {id:6,title:'AI 에이전트 시대 본격화 — 업무 자동화 플랫폼 경쟁 가열',summary:'LLM 기반 자율 에이전트가 이메일 작성·일정 관리·데이터 분석 등 복합 업무를 독립 처리하는 사례가 확산되면서, 국내외 기업들의 에이전트 플랫폼 경쟁이 치열해지고 있다.',source:'디지털데일리',url:'https://www.ddaily.co.kr',category:'서비스',published_at:'2026-05-10T10:00:00.000Z'},
+  {id:7,title:'삼성·LG, 온디바이스 AI 반도체 독자 개발 박차',summary:'삼성전자와 LG전자가 클라우드 의존도를 낮추기 위해 스마트폰·가전에 탑재할 온디바이스 AI 전용 칩 개발을 가속화하고 있다.',source:'전자신문',url:'https://www.etnews.com',category:'공공',published_at:'2026-05-09T09:30:00.000Z'},
+  {id:8,title:'교육부, AI 디지털 교과서 전국 초·중 확대 적용 발표',summary:'교육부가 생성형 AI를 활용한 맞춤형 디지털 교과서를 2026년 2학기부터 전국 초등 3~4학년 및 중학교 1학년에 확대 적용한다고 밝혔다.',source:'조선에듀',url:'https://edu.chosun.com',category:'공공',published_at:'2026-05-08T08:00:00.000Z'},
 ];
 
 let allNews=[], curCat='all';
 
 async function loadNews(force=false){
-  document.getElementById('news-featured').innerHTML=`<div class="spin-wrap" style="grid-column:1/-1"><div class="spin"></div>뉴스를 불러오는 중...</div>`;
-  document.getElementById('news-list').innerHTML='';
   if(CFG.isMock){allNews=MOCK_NEWS;renderNews(allNews);return;}
   const cache=!force&&cacheGet('news_cache');
   if(cache){allNews=cache;renderNews(allNews);return;}
+  // 샘플 뉴스 즉시 표시 후 API 결과로 교체
+  allNews=MOCK_NEWS; renderNews(allNews);
   try{
     const data=await apiGet({action:'getNews'});
-    allNews=Array.isArray(data)&&data.length?data:MOCK_NEWS;
-    if(Array.isArray(data)&&data.length)cacheSet('news_cache',allNews,300);
-    renderNews(allNews);
-  }catch{allNews=MOCK_NEWS;renderNews(allNews);}
+    if(Array.isArray(data)&&data.length){
+      allNews=data;
+      cacheSet('news_cache',allNews,300);
+      renderNews(allNews);
+    }
+  }catch{}
 }
 
 function renderNews(list){

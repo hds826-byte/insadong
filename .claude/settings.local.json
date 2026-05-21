@@ -5,7 +5,14 @@
       "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>자유 게시판 — GenAI 동아리</title>|' /mnt/c/insadong/pages/board.html)",
       "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>공지사항 — GenAI 동아리</title>|' /mnt/c/insadong/pages/notice.html)",
       "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>관리자 — GenAI 동아리</title>|' /mnt/c/insadong/pages/admin.html)",
-      "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>자료실 — GenAI 동아리</title>|' /mnt/c/insadong/pages/resource.html)"
+      "Bash(sed -i 's|<title>준비 중 — GenAI 동아리</title>|<title>자료실 — GenAI 동아리</title>|' /mnt/c/insadong/pages/resource.html)",
+      "Bash(curl -s -L --max-time 10 \"https://script.google.com/macros/s/AKfycbzF2cRuKxJmUQ0dgOZMPkbYjadgKDU0OFDpghPByhhyQ7uI54IFyax4gh7pYrANk6ZWzg/exec?action=getVoteOptions\")",
+      "Bash(curl -s -L --max-time 10 \"https://script.google.com/macros/s/AKfycbzF2cRuKxJmUQ0dgOZMPkbYjadgKDU0OFDpghPByhhyQ7uI54IFyax4gh7pYrANk6ZWzg/exec?action=getNews\")",
+      "Bash(curl -s -L --max-time 10 \"https://script.google.com/macros/s/AKfycbzF2cRuKxJmUQ0dgOZMPkbYjadgKDU0OFDpghPByhhyQ7uI54IFyax4gh7pYrANk6ZWzg/exec?action=getContests\")",
+      "Bash(curl -s -L --max-time 10 \"https://script.google.com/macros/s/AKfycbzF2cRuKxJmUQ0dgOZMPkbYjadgKDU0OFDpghPByhhyQ7uI54IFyax4gh7pYrANk6ZWzg/exec?action=getOpinions\")",
+      "Bash(curl -s -L --max-time 10 \"https://script.google.com/macros/s/AKfycbzF2cRuKxJmUQ0dgOZMPkbYjadgKDU0OFDpghPByhhyQ7uI54IFyax4gh7pYrANk6ZWzg/exec?action=getVotes\")",
+      "Bash(curl -s -I --max-time 10 \"https://script.google.com/macros/s/AKfycbzF2cRuKxJmUQ0dgOZMPkbYjadgKDU0OFDpghPByhhyQ7uI54IFyax4gh7pYrANk6ZWzg/exec?action=getVoteOptions\")",
+      "Bash(curl -s -L --max-time 15 -D - \"https://script.google.com/macros/s/AKfycbzF2cRuKxJmUQ0dgOZMPkbYjadgKDU0OFDpghPByhhyQ7uI54IFyax4gh7pYrANk6ZWzg/exec?action=getContests\")"
     ]
   }
 }

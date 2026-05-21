@@ -91,10 +91,12 @@ function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
     switch (body.action) {
-      case 'register':      return out(handleRegister(body));
-      case 'addVote':       return out(handleAddVote(body));
-      case 'addOpinion':    return out(handleAddOpinion(body));
-      case 'deleteOpinion': return out(handleDeleteOpinion(body));
+      case 'register':         return out(handleRegister(body));
+      case 'addVote':          return out(handleAddVote(body));
+      case 'addVoteOption':    return out(handleAddVoteOption(body));
+      case 'deleteVoteOption': return out(handleDeleteVoteOption(body));
+      case 'addOpinion':       return out(handleAddOpinion(body));
+      case 'deleteOpinion':    return out(handleDeleteOpinion(body));
       default:              return out({ error: '알 수 없는 action: ' + body.action });
     }
   } catch (err) {
@@ -147,6 +149,30 @@ function getVotes() {
     if (!result[oid].includes(r[2])) result[oid].push(r[2]);
   });
   return result;
+}
+
+// ── 투표 날짜 후보 추가 ──────────────────────────────────────────
+
+function handleAddVoteOption(body) {
+  if (!body.date) return { error: '날짜를 입력해 주세요.' };
+  const sh = getSheet('vote_options');
+  sh.appendRow([newId(), body.date, body.time || '14:00', body.label || '']);
+  return { success: true };
+}
+
+// ── 투표 날짜 후보 삭제 ──────────────────────────────────────────
+
+function handleDeleteVoteOption(body) {
+  if (!body.id) return { error: '잘못된 요청입니다.' };
+  const sh = getSheet('vote_options');
+  const rows = sh.getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]) === String(body.id)) {
+      sh.deleteRow(i + 1);
+      return { success: true };
+    }
+  }
+  return { error: '해당 날짜 후보를 찾을 수 없습니다.' };
 }
 
 // ── 투표 저장 ────────────────────────────────────────────────────
