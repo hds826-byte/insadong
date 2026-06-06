@@ -563,8 +563,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // 현재 월로 탭 자동 선택
   const nowM = new Date().getMonth() + 1;
   const initM = nowM >= 5 && nowM <= 12 ? nowM : 5;
-  const tabs = document.querySelectorAll('.month-tab');
-  tabs.forEach(t => { if(parseInt(t.textContent) === initM) { t.classList.add('active'); currentMonth = initM; renderVoteGrid(); } });
+  document.querySelectorAll('.month-tab').forEach(t => {
+    if(parseInt(t.textContent.trim()) === initM) { t.classList.add('active'); currentMonth = initM; }
+  });
+  renderVoteGrid(); // 탭 선택 여부와 무관하게 항상 렌더
 
   if(CFG.isMock){
     document.getElementById('config-banner').style.display='block';
@@ -711,8 +713,9 @@ function renderNews(items){
 
 /* ── CONTESTS ── */
 async function loadContests(){
-  try { const d=await api({action:'getContests'}); allContests=Array.isArray(d)&&d.length?d:MOCK_CONTESTS_DATA; renderContests(allContests.slice(0,3)); }
-  catch { allContests=MOCK_CONTESTS_DATA; renderContests(allContests.slice(0,3)); }
+  allContests=MOCK_CONTESTS_DATA; renderContests(allContests.slice(0,3));
+  try { const d=await api({action:'getContests'}); if(Array.isArray(d)&&d.length){ allContests=d; renderContests(allContests.slice(0,3)); } }
+  catch {}
 }
 const MOCK_CONTESTS_DATA=[
   {id:1,title:'2026 공공데이터 AI 활용 아이디어 공모전',organizer:'행정안전부',deadline:'2026-08-31',prize:'장관상·500만원',category:'중앙부처',url:'#',description:'공공데이터를 활용한 AI 기반 서비스 아이디어 발굴'},
@@ -738,8 +741,9 @@ function renderContests(list){
 
 /* ── OPINIONS ── */
 async function loadOpinions(){
-  try { const d=await api({action:'getOpinions'}); opinions=Array.isArray(d)&&d.length?d:MOCK_OPINIONS_DATA; renderOpinions(); }
-  catch { opinions=MOCK_OPINIONS_DATA; renderOpinions(); }
+  opinions=MOCK_OPINIONS_DATA; renderOpinions();
+  try { const d=await api({action:'getOpinions'}); if(Array.isArray(d)&&d.length){ opinions=d; renderOpinions(); } }
+  catch {}
 }
 const MOCK_OPINIONS_DATA=[
   {id:1,author:'지현석',content:'첫 모임 준비가 완료됐습니다! 다음 대면 일자 투표 꼭 참여해 주세요. 🙌',timestamp:new Date().toISOString()},
