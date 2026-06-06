@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>아이디어 보드 — GenAI 학습동아리</title>
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../style.css">
 <style>
 .idea-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
 .idea-card {
@@ -139,7 +139,7 @@
 </div>
 
 <div id="toast"></div>
-<script src="../assets/common.js"></script>
+<script src="../common.js"></script>
 <script>
 let ideas = [];
 let myVotes = new Set(JSON.parse(localStorage.getItem('myVotes')||'[]'));
