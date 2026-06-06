@@ -414,14 +414,14 @@ code{font-size:.78em;background:var(--bg3);padding:1px 6px;border-radius:4px;col
 
   <!-- 월 탭 -->
   <div class="month-tabs" id="month-tabs">
-    <button class="month-tab" onclick="selectMonth(5,this)">5월</button>
-    <button class="month-tab" onclick="selectMonth(6,this)">6월</button>
-    <button class="month-tab" onclick="selectMonth(7,this)">7월</button>
-    <button class="month-tab" onclick="selectMonth(8,this)">8월</button>
-    <button class="month-tab" onclick="selectMonth(9,this)">9월</button>
-    <button class="month-tab" onclick="selectMonth(10,this)">10월</button>
-    <button class="month-tab" onclick="selectMonth(11,this)">11월</button>
-    <button class="month-tab" onclick="selectMonth(12,this)">12월</button>
+    <button class="month-tab">5월</button>
+    <button class="month-tab">6월</button>
+    <button class="month-tab">7월</button>
+    <button class="month-tab">8월</button>
+    <button class="month-tab">9월</button>
+    <button class="month-tab">10월</button>
+    <button class="month-tab">11월</button>
+    <button class="month-tab">12월</button>
   </div>
 
   <div id="vote-month-header" class="vote-month-title"></div>
@@ -560,13 +560,15 @@ function logout(){
 document.addEventListener('DOMContentLoaded', () => {
   renderNavAuth();
 
-  // 현재 월로 탭 자동 선택
+  // 현재 월로 탭 자동 선택 + 클릭 이벤트 등록
   const nowM = new Date().getMonth() + 1;
   const initM = nowM >= 5 && nowM <= 12 ? nowM : 5;
   document.querySelectorAll('.month-tab').forEach(t => {
-    if(parseInt(t.textContent.trim()) === initM) { t.classList.add('active'); currentMonth = initM; }
+    const m = parseInt(t.textContent.trim());
+    t.addEventListener('click', () => selectMonth(m, t));
+    if(m === initM) { t.classList.add('active'); currentMonth = m; }
   });
-  renderVoteGrid(); // 탭 선택 여부와 무관하게 항상 렌더
+  renderVoteGrid();
 
   if(CFG.isMock){
     document.getElementById('config-banner').style.display='block';
