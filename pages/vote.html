@@ -68,7 +68,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 .bar-wrap{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
 .bar{height:100%;background:var(--mint);border-radius:2px;transition:width .5s ease;}
 .vo-cnt{font-size:.72rem;color:var(--text2);margin-top:4px;}
-.vo-voters{font-size:.68rem;color:var(--text3);margin-top:2px;}
 /* 투표 폼 */
 .vote-form{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-top:.5rem;}
 .vote-form-title{font-weight:700;margin-bottom:1rem;font-size:.9rem;}
@@ -144,7 +143,7 @@ input::placeholder{color:var(--text3)}
   <div class="page-hero">
     <div class="label">📅 대면일 투표</div>
     <h1>모임 날짜를 골라주세요</h1>
-    <p>월을 선택하고 원하는 날짜를 고른 후 이름을 입력하고 투표하세요. 중복 선택 가능합니다.</p>
+    <p>월을 선택하고 원하는 날짜를 고른 후 투표하세요. 회원가입한 분만 참여할 수 있으며, 투표는 익명으로 집계됩니다. 중복 선택 가능합니다.</p>
   </div>
 
   <div class="container">
@@ -185,13 +184,15 @@ input::placeholder{color:var(--text3)}
 
     <div class="vote-form">
       <div class="vote-form-title">📝 투표하기</div>
-      <div class="form-row">
-        <div class="input-group">
-          <label class="input-label" for="voter-name">이름 <span style="color:var(--danger)">*</span></label>
-          <input type="text" id="voter-name" placeholder="본인 이름 또는 닉네임" maxlength="20">
-        </div>
+      <div id="vote-form-guest" style="font-size:.85rem;color:var(--text2);">
+        🔒 회원가입 후 로그인하면 투표에 참여할 수 있습니다 (투표는 익명으로 집계됩니다).
+        <a href="login.html" class="nav-login" style="margin-left:.5rem;display:inline-block;">로그인</a>
+        <a href="register.html" class="nav-join" style="margin-left:.25rem;display:inline-block;">회원가입</a>
+      </div>
+      <div id="vote-form-member" class="form-row" style="display:none;">
         <button class="btn btn-primary" id="vote-btn" onclick="submitVote()">투표하기 →</button>
         <span class="sel-count" id="sel-count">선택한 날짜: 0개</span>
+        <span style="font-size:.75rem;color:var(--text3);">※ 투표 결과는 익명으로 집계됩니다.</span>
       </div>
       <p style="font-size:.75rem;color:var(--text2);margin-top:.75rem;">날짜 후보는 위 관리자 패널 또는 Google Sheets <code style="font-size:.72em;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--mint)">vote_options</code> 시트에서 관리합니다.</p>
     </div>
@@ -232,7 +233,7 @@ function renderAll(){renderAdminList();renderVoteGrid();}
 function renderAdminList(){
   const el=document.getElementById('opt-admin-list');
   el.innerHTML=voteOptions.length
-    ?voteOptions.map(o=>`<div class="opt-row"><span>📅 ${o.date} ${o.time||''} ${o.label?'· '+o.label:''}</span><button class="btn-danger-sm" onclick="removeOption(${o.id})">삭제</button></div>`).join('')
+    ?voteOptions.map(o=>`<div class="opt-row"><span>📅 ${o.date} ${o.time||''} ${o.label?'· '+o.label:''}</span><button class="btn-danger-sm" onclick="removeOption('${o.id}')">삭제</button></div>`).join('')
     :`<div style="font-size:.82rem;color:var(--text2)">등록된 날짜 후보가 없습니다.</div>`;
 }
 
@@ -271,15 +272,13 @@ function renderVoteGrid(){
     const d=new Date(o.date);
     const mm=d.getMonth()+1, dd=d.getDate(), dow=DAYS[d.getDay()];
     const isSel=selected.has(String(o.id));
-    const voters=(voteResults[o.id]||[]).slice(0,3).join(', ');
     return`<div class="vote-opt${isSel?' sel':''}" onclick="toggleVote('${o.id}')">
       <div class="vo-month">${mm}월</div>
       <div class="vo-date">${dd}</div>
       <div class="vo-dow">${dow}요일</div>
       <div class="vo-time">${o.time||''}${o.label?' ('+o.label+')':''}</div>
       <div class="bar-wrap"><div class="bar" style="width:${pct}%"></div></div>
-      <div class="vo-cnt">${cnt}명 참여</div>
-      ${voters?`<div class="vo-voters">${voters}${cnt>3?' 외 '+(cnt-3)+'명':''}</div>`:''}
+      <div class="vo-cnt">${cnt}명 참여 (익명)</div>
     </div>`;
   }).join('');
 }
@@ -298,13 +297,12 @@ async function addOption(){
   const time=document.getElementById('add-time').value;
   const label=document.getElementById('add-label').value.trim();
   if(!date){toast('날짜를 선택해 주세요.','e');return;}
-  const newOpt={id:Date.now(),date,time,label};
-  if(CFG.isMock){voteOptions.push(newOpt);renderAll();toast('날짜 후보가 추가됐습니다.','s');return;}
+  if(CFG.isMock){voteOptions.push({id:Date.now(),date,time,label});renderAll();toast('날짜 후보가 추가됐습니다.','s');return;}
   try{
     const r=await apiPost({action:'addVoteOption',date,time,label});
     if(r.success){await loadVote();toast('추가됐습니다.','s');}
-    else toast(r.error||'오류','e');
-  }catch{voteOptions.push(newOpt);renderAll();toast('날짜 후보가 추가됐습니다. (오프라인)','s');}
+    else toast(r.error||'추가에 실패했습니다.','e');
+  }catch(e){toast('서버 연결에 실패해 추가하지 못했습니다.','e');}
 }
 
 async function removeOption(id){
@@ -313,28 +311,30 @@ async function removeOption(id){
   try{
     const r=await apiPost({action:'deleteVoteOption',id});
     if(r.success){await loadVote();toast('삭제됐습니다.','s');}
-    else toast(r.error||'오류','e');
-  }catch{voteOptions=voteOptions.filter(o=>o.id!=id);delete voteResults[id];renderAll();toast('삭제됐습니다.','s');}
+    else toast(r.error||'삭제에 실패했습니다.','e');
+  }catch(e){toast('서버 연결에 실패해 삭제하지 못했습니다.','e');}
 }
 
 async function submitVote(){
-  const name=document.getElementById('voter-name').value.trim();
-  if(!name){toast('이름을 입력해 주세요.','e');return;}
+  const user=getSession();
+  if(!user){toast('로그인 후 투표할 수 있습니다.','e');return;}
   if(!selected.size){toast('날짜를 하나 이상 선택해 주세요.','e');return;}
-  if(CFG.isMock){
-    selected.forEach(id=>{if(!voteResults[id])voteResults[id]=[];if(!voteResults[id].includes(name))voteResults[id].push(name);});
-    selected.clear();document.getElementById('voter-name').value='';
+  const voterKey=user.email||user.name;
+  const resetForm=()=>{
+    selected.clear();
     document.getElementById('vote-btn').textContent='투표하기 →';
     document.getElementById('sel-count').textContent='선택한 날짜: 0개';
-    renderVoteGrid();toast('투표 완료! 감사합니다 🙌','s');return;
+  };
+  if(CFG.isMock){
+    selected.forEach(id=>{if(!voteResults[id])voteResults[id]=[];if(!voteResults[id].includes(voterKey))voteResults[id].push(voterKey);});
+    resetForm();
+    renderVoteGrid();toast('투표 완료! 감사합니다 🙌 (익명 처리됨)','s');return;
   }
   try{
-    const r=await apiPost({action:'addVote',voter:name,optionIds:[...selected]});
+    const r=await apiPost({action:'addVote',voter:voterKey,optionIds:[...selected]});
     if(r.success){
-      selected.clear();document.getElementById('voter-name').value='';
-      document.getElementById('vote-btn').textContent='투표하기 →';
-      document.getElementById('sel-count').textContent='선택한 날짜: 0개';
-      await loadVote();toast('투표 완료! 감사합니다 🙌','s');
+      resetForm();
+      await loadVote();toast('투표 완료! 감사합니다 🙌 (익명 처리됨)','s');
     }else toast(r.error||'오류','e');
   }catch{toast('서버 오류가 발생했습니다.','e');}
 }
@@ -348,6 +348,13 @@ function renderNavAuth(){
   const mLogin=document.getElementById('m-login-link'), mReg=document.getElementById('m-register-link');
   if(mLogin){mLogin.textContent='👤 마이페이지';mLogin.href='mypage.html';}
   if(mReg)mReg.style.display='none';
+}
+function renderVoteFormAuth(){
+  const guest=document.getElementById('vote-form-guest'), member=document.getElementById('vote-form-member');
+  if(!guest||!member)return;
+  const loggedIn=!!getSession();
+  guest.style.display=loggedIn?'none':'block';
+  member.style.display=loggedIn?'flex':'none';
 }
 function logout(){
   sessionStorage.removeItem('gai_user');localStorage.removeItem('gai_user');
@@ -367,6 +374,7 @@ function closeD(){
 
 document.addEventListener('DOMContentLoaded',()=>{
   renderNavAuth();
+  renderVoteFormAuth();
   // 현재 월 자동 선택 먼저 설정
   const nowM=new Date().getMonth()+1;
   const initM=nowM>=5&&nowM<=12?nowM:5;

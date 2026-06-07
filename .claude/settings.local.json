@@ -15,7 +15,20 @@
       "Bash(curl -s -L --max-time 15 -D - \"https://script.google.com/macros/s/AKfycbzF2cRuKxJmUQ0dgOZMPkbYjadgKDU0OFDpghPByhhyQ7uI54IFyax4gh7pYrANk6ZWzg/exec?action=getContests\")",
       "Read(//home/pasjhs1218ass/**)",
       "Bash(ssh -T git@github.com)",
-      "Bash(gh auth *)"
+      "Bash(gh auth *)",
+      "Bash(node *)",
+      "Bash(python3 -m http.server 8743)",
+      "Bash(pkill -f \"http.server 8743\")",
+      "Bash(gh api *)",
+      "Bash(curl *)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(sudo apt-get install -y libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2 libatspi2.0-0)",
+      "Bash(apt-get install *)",
+      "Bash(ldd ~/.cache/ms-playwright/chromium-1223/chrome-linux64/chrome)",
+      "Bash(dpkg --print-architecture)",
+      "Bash(apt-cache policy *)",
+      "Read(//tmp/votetest/**)",
+      "Bash(LD_LIBRARY_PATH=/tmp/votetest/extracted/usr/lib/x86_64-linux-gnu node test.js)"
     ]
   }
 }
